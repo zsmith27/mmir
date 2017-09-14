@@ -17,7 +17,8 @@
 
 
 taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
-                      high.taxa.col, taxon = NULL, count.na = TRUE) {
+                          high.taxa.col, taxon = NULL, count.na = TRUE) {
+  if (is.null(taxon)) stop("Must specify 'taxon'.")
   # Prep.
   unique.id.col <- rlang::enquo(unique.id.col)
   low.taxa.col <- rlang::enquo(low.taxa.col)
@@ -29,26 +30,15 @@ taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
     dplyr::distinct() %>%
     dplyr::rename(UNIQUE_ID = !!unique.id.col)
   #----------------------------------------------------------------------------
-  if (is.null(taxon)) {
-    stop("Must specify 'taxon'.")
-  } else {
+  distinct.df <- taxa.counts %>%
+    dplyr::select(UNIQUE_ID) %>%
+    dplyr::distinct()
 
-    distinct.df <- taxa.counts %>%
-      dplyr::select(UNIQUE_ID) %>%
-      dplyr::distinct()
-
-    final.vec <- taxa.counts %>%
-      dplyr::group_by(UNIQUE_ID, !!low.taxa.col) %>%
-      dplyr::count(rlang::UQ(high.taxa.col)) %>%
-      dplyr::filter(rlang::UQ(low.taxa.col) %in% taxon) %>%
-      dplyr::group_by(UNIQUE_ID) %>%
-      dplyr::summarise(n = sum(n)) %>%
-      dplyr::right_join(distinct.df, by = "UNIQUE_ID") %>%
-      dplyr::mutate(n = dplyr::if_else(!is.na(n), n, as.integer(0)),
-                    rich = taxa_rich(long.df, !!unique.id.col, !!low.taxa.col, !!high.taxa.col),
-                    pct_rich = n / rich * 100) %>%
-      dplyr::pull(pct_rich)
-  }
+  final.vec2 <- distinct.df %>%
+    dplyr::mutate(rich = taxa_rich(long.df, !!unique.id.col, !!low.taxa.col, !!high.taxa.col),
+                  taxa_rich = taxa_rich(long.df, !!unique.id.col, !!low.taxa.col, !!high.taxa.col, taxon),
+                  pct_rich = if_else(taxa_rich == 0, 0, taxa_rich / rich * 100)) %>%
+    pull(pct_rich)
   #----------------------------------------------------------------------------
   return(final.vec)
 }

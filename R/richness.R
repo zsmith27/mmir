@@ -23,15 +23,16 @@ taxa_rich <- function(long.df, unique.id.col, low.taxa.col,
     dplyr::distinct() %>%
     dplyr::rename(UNIQUE_ID = !!unique.id.col)
   #----------------------------------------------------------------------------
+  distinct.df <- taxa.counts %>%
+    dplyr::select(UNIQUE_ID) %>%
+    dplyr::distinct()
+
   if (is.null(taxon)) {
     final.vec <- taxa.counts %>%
       dplyr::count(UNIQUE_ID) %>%
+      dplyr::right_join(distinct.df, by = "UNIQUE_ID") %>%
       dplyr::pull(n)
   } else {
-    distinct.df <- taxa.counts %>%
-      dplyr::select(UNIQUE_ID) %>%
-      dplyr::distinct()
-
     final.vec <- taxa.counts %>%
       dplyr::group_by(UNIQUE_ID, !!low.taxa.col) %>%
       dplyr::count(rlang::UQ(high.taxa.col)) %>%
