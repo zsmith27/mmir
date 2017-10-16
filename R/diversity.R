@@ -71,10 +71,10 @@ taxa_div <- function(long.df, unique.id.col, count.col, taxon.col, taxon = NULL,
   }
   #------------------------------------------------------------------------------
   if(job %in% c("pielou", "margalef", "menhinick")) {
-    rich.vec <- taxon_richness(long.df, UNIQUE_ID, !!count.col, !!taxon.col)
+    rich.vec <- taxa_rich(long.df, UNIQUE_ID, !!count.col, !!taxon.col)
     if(job == "pielou") final.vec <- log10(rich.vec)
     if(job %in% c("margalef", "menhinick")) {
-      abund.vec <- abund_taxon(long.df, UNIQUE_ID, !!count.col, !!taxon.col)
+      abund.vec <- taxa_abund(long.df, UNIQUE_ID, !!count.col, !!taxon.col)
       if(job == "margalef") final.vec <- (rich.vec - 1) / log10(abund.vec)
       if(job == "menhinick") final.vec <- rich.vec / sqrt(abund.vec)
     }

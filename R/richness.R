@@ -17,6 +17,8 @@ taxa_rich <- function(long.df, unique.id.col, low.taxa.col,
   low.taxa.col <- rlang::enquo(low.taxa.col)
   high.taxa.col <- rlang::enquo(high.taxa.col)
   #----------------------------------------------------------------------------
+
+  #----------------------------------------------------------------------------
   # Aggregate taxonomic counts at the specified taxonomic levels.
   taxa.counts <- long.df %>%
     dplyr::select(!!unique.id.col, !!low.taxa.col, !!high.taxa.col) %>%
