@@ -1,0 +1,6 @@
+#setwd("C:/Users/Owner/Desktop/MMI/MMI")
+#devtools::use_package("tidyr")
+#devtools::use_package("ggplot2")
+#devtools::use_package("dplyr")
+#devtools::use_package("plyr")
+#devtools::use_package("gridExtra")

@@ -22,12 +22,17 @@ taxa_pct <- function(long.df, unique.id.col, count.col, taxon.col, taxon,
   taxon.col <- enquo(taxon.col)
   count.col <- enquo(count.col)
   #----------------------------------------------------------------------------
+  distinct.df <- long.df %>%
+    dplyr::select(!!unique.id.col) %>%
+    dplyr::distinct()
+  #----------------------------------------------------------------------------
   # Calculate the percentage of the specified taxon.
   final.vec <- long.df %>%
     group_by(rlang::UQ(unique.id.col)) %>%
     summarise(TOTAL = sum(rlang::UQ(count.col)),
               INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon]),
               PCT = INDV / TOTAL * 100) %>%
+    dplyr::right_join(distinct.df, by = rlang::sym(rlang::UQ(unique.id.col))) %>%
     pull(PCT)
   #----------------------------------------------------------------------------
   return(final.vec)
@@ -54,16 +59,22 @@ taxa_abund <- function(long.df, unique.id.col, count.col, taxon.col, taxon = NUL
   taxon.col <- enquo(taxon.col)
   count.col <- enquo(count.col)
   #----------------------------------------------------------------------------
+  distinct.df <- long.df %>%
+    dplyr::select(!!unique.id.col) %>%
+    dplyr::distinct()
+  #----------------------------------------------------------------------------
   # Calculate the percentage of the specified taxon.
   if (is.null(taxon)) {
     final.vec <- long.df %>%
       group_by(!!unique.id.col) %>%
       summarise(INDV = sum(UQ(count.col))) %>%
+      dplyr::right_join(distinct.df, by = rlang::sym(!!unique.id.col)) %>%
       pull(INDV)
   } else {
     final.vec <- long.df %>%
       group_by(!!unique.id.col) %>%
       summarise(INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon])) %>%
+      dplyr::right_join(distinct.df, by = rlang::sym(!!unique.id.col)) %>%
       pull(INDV)
   }
   #----------------------------------------------------------------------------
