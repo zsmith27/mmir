@@ -16,24 +16,47 @@
 #'@export
 
 taxa_pct <- function(long.df, unique.id.col, count.col, taxon.col, taxon,
-                     keep.na = FALSE) {
+                     attribute.df = NULL, attribute.col = NULL,
+                     exclusion.col = NULL, exclusion.vec = NULL) {
   # Prep.
   unique.id.col <- enquo(unique.id.col)
   taxon.col <- enquo(taxon.col)
   count.col <- enquo(count.col)
+  exclusion.col <- enquo(exclusion.col)
+  attribute.col <- enquo(attribute.col)
   #----------------------------------------------------------------------------
-  distinct.df <- long.df %>%
-    dplyr::select(!!unique.id.col) %>%
-    dplyr::distinct()
+  if (is.null(attribute.df)) {
+    join.df <- long.df
+  } else {
+    long.col <- rlang::quo_name(taxon.col)
+    att.col <- rlang::quo_name(attribute.col)
+    join.df <- dplyr::left_join(long.df, attribute.df,
+                                by = c(long.col = att.col))
+  }
+
+  if (rlang::quo_is_null(exclusion.col)) {
+    # Aggregate taxonomic counts at the specified taxonomic levels.
+    taxa.counts <- join.df %>%
+      dplyr::select(!!unique.id.col, !!taxon.col, !!count.col)
+  } else {
+    taxa.counts <- join.df %>%
+      dplyr::select(!!unique.id.col, !!taxon.col,
+                    !!count.col, !!exclusion.col) %>%
+      dplyr::filter(!rlang::UQ(exclusion.col) %in% exclusion.vec)
+  }
   #----------------------------------------------------------------------------
   # Calculate the percentage of the specified taxon.
-  final.vec <- long.df %>%
+  final.vec <- join.df %>%
     group_by(rlang::UQ(unique.id.col)) %>%
-    summarise(TOTAL = sum(rlang::UQ(count.col))),
-              INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon]),
-              PCT = INDV / TOTAL * 100) %>%
-    original_order(!!unique.id.col)
-    #dplyr::right_join(distinct.df, by = rlang::sym(rlang::UQ(unique.id.col))) %>%
+    summarise(TOTAL = sum(rlang::UQ(count.col))) %>%
+    original_order(long.df, !!unique.id.col) %>%
+    mutate(INDV = taxa_abund(join.df, !!unique.id.col, !!count.col,
+                             !!taxon.col, taxon,
+                             !!exclusion.col, exclusion.vec),
+           #INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon]),
+           PCT = INDV / TOTAL * 100) %>%
+    original_order(long.df, !!unique.id.col) %>%
+    dplyr::mutate(PCT = dplyr::if_else(!is.na(PCT), PCT, as.double(0))) %>%
     pull(PCT)
   #----------------------------------------------------------------------------
   return(final.vec)
@@ -54,28 +77,38 @@ taxa_pct <- function(long.df, unique.id.col, count.col, taxon.col, taxon,
 #'@export
 
 taxa_abund <- function(long.df, unique.id.col, count.col, taxon.col, taxon = NULL,
-                       keep.na = FALSE) {
+                       exclusion.col = NULL, exclusion.vec = NULL) {
   # Prep.
   unique.id.col <- enquo(unique.id.col)
   taxon.col <- enquo(taxon.col)
   count.col <- enquo(count.col)
+  exclusion.col <- enquo(exclusion.col)
   #----------------------------------------------------------------------------
-  distinct.df <- long.df %>%
-    dplyr::select(!!unique.id.col) %>%
-    dplyr::distinct()
+  if (rlang::quo_is_null(exclusion.col)) {
+    # Aggregate taxonomic counts at the specified taxonomic levels.
+    taxa.counts <- long.df %>%
+      dplyr::select(!!unique.id.col, !!taxon.col, !!count.col)
+  } else {
+    taxa.counts <- long.df %>%
+      dplyr::select(!!unique.id.col, !!taxon.col,
+                    !!count.col, !!exclusion.col) %>%
+      dplyr::filter(!rlang::UQ(exclusion.col) %in% exclusion.vec)
+  }
   #----------------------------------------------------------------------------
   # Calculate the percentage of the specified taxon.
   if (is.null(taxon)) {
-    final.vec <- long.df %>%
+    final.vec <- taxa.counts %>%
       group_by(!!unique.id.col) %>%
       summarise(INDV = sum(UQ(count.col))) %>%
-      dplyr::right_join(distinct.df, by = rlang::sym(!!unique.id.col)) %>%
+      original_order(long.df, !!unique.id.col) %>%
       pull(INDV)
   } else {
-    final.vec <- long.df %>%
+    final.vec <- taxa.counts %>%
       group_by(!!unique.id.col) %>%
       summarise(INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon])) %>%
-      dplyr::right_join(distinct.df, by = rlang::sym(!!unique.id.col)) %>%
+      original_order(long.df, !!unique.id.col) %>%
+      dplyr::mutate(INDV = as.numeric(INDV),
+                    INDV = dplyr::if_else(!is.na(INDV), INDV, as.double(0))) %>%
       pull(INDV)
   }
   #----------------------------------------------------------------------------

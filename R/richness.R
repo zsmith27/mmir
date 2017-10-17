@@ -11,37 +11,41 @@
 #'@export
 
 taxa_rich <- function(long.df, unique.id.col, low.taxa.col,
-                      high.taxa.col, taxon = NULL) {
+                      high.taxa.col, taxon = NULL,
+                      exclusion.col = NULL, exclusion.vec = NULL) {
+  if (nrow(long.df) < 1) return(0)
   # Prep.
   unique.id.col <- rlang::enquo(unique.id.col)
   low.taxa.col <- rlang::enquo(low.taxa.col)
   high.taxa.col <- rlang::enquo(high.taxa.col)
+  exclusion.col <- rlang::enquo(exclusion.col)
   #----------------------------------------------------------------------------
-
+  if (rlang::quo_is_null(exclusion.col)) {
+    # Aggregate taxonomic counts at the specified taxonomic levels.
+    taxa.counts <- long.df %>%
+      dplyr::select(!!unique.id.col, !!low.taxa.col, !!high.taxa.col) %>%
+      dplyr::distinct()
+  } else {
+    taxa.counts <- long.df %>%
+      dplyr::select(!!unique.id.col, !!low.taxa.col,
+                    !!high.taxa.col, !!exclusion.col) %>%
+      dplyr::distinct() %>%
+      dplyr::filter(!rlang::UQ(exclusion.col) %in% exclusion.vec)
+  }
   #----------------------------------------------------------------------------
-  # Aggregate taxonomic counts at the specified taxonomic levels.
-  taxa.counts <- long.df %>%
-    dplyr::select(!!unique.id.col, !!low.taxa.col, !!high.taxa.col) %>%
-    dplyr::distinct() %>%
-    dplyr::rename(UNIQUE_ID = !!unique.id.col)
-  #----------------------------------------------------------------------------
-  distinct.df <- taxa.counts %>%
-    dplyr::select(UNIQUE_ID) %>%
-    dplyr::distinct()
-
   if (is.null(taxon)) {
     final.vec <- taxa.counts %>%
-      dplyr::count(UNIQUE_ID) %>%
-      dplyr::right_join(distinct.df, by = "UNIQUE_ID") %>%
+      dplyr::count(!!unique.id.col) %>%
+      original_order(long.df, !!unique.id.col) %>%
       dplyr::pull(n)
   } else {
     final.vec <- taxa.counts %>%
-      dplyr::group_by(UNIQUE_ID, !!low.taxa.col) %>%
+      dplyr::group_by(!!unique.id.col, !!low.taxa.col) %>%
       dplyr::count(rlang::UQ(high.taxa.col)) %>%
       dplyr::filter(rlang::UQ(low.taxa.col) %in% taxon) %>%
-      dplyr::group_by(UNIQUE_ID) %>%
+      dplyr::group_by(!!unique.id.col) %>%
       dplyr::summarise(n = sum(n)) %>%
-      dplyr::right_join(distinct.df, by = "UNIQUE_ID") %>%
+      original_order(long.df, !!unique.id.col) %>%
       dplyr::mutate(n = dplyr::if_else(!is.na(n), n, as.integer(0))) %>%
       dplyr::pull(n)
   }

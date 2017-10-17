@@ -17,29 +17,56 @@
 
 
 taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
-                          high.taxa.col, taxon = NULL, count.na = TRUE) {
-  if (is.null(taxon)) stop("Must specify 'taxon'.")
-  # Prep.
+                          high.taxa.col, taxon = NULL,
+                          exclusion.col = NULL, exclusion.vec = NULL) {
   unique.id.col <- rlang::enquo(unique.id.col)
   low.taxa.col <- rlang::enquo(low.taxa.col)
   high.taxa.col <- rlang::enquo(high.taxa.col)
+  exclusion.col <- rlang::enquo(exclusion.col)
+
+  if (is.null(taxon)) stop("Must specify 'taxon'.")
+  if (!rlang::quo_is_null(exclusion.col) && is.null(exclusion.vec)) {
+    stop("Specifying an exclusion.col also requires that you specify the
+         objects you want to exclude (i.e. exclusion.vec) from that column.")
+  }
+  if (!is.null(exclusion.vec) && rlang::quo_is_null(exclusion.col)) {
+    stop("Specifying an exclusion.vec also requires that you specify the
+         column (i.e. exclusion.col) from which to exclude the objects.")
+  }
   #----------------------------------------------------------------------------
-  # Aggregate taxonomic counts at the specified taxonomic levels.
-  taxa.counts <- long.df %>%
-    dplyr::select(!!unique.id.col, !!low.taxa.col, !!high.taxa.col) %>%
-    dplyr::distinct() %>%
-    dplyr::rename(UNIQUE_ID = !!unique.id.col)
+
+  #----------------------------------------------------------------------------
+  if (rlang::quo_is_null(exclusion.col)) {
+    # Aggregate taxonomic counts at the specified taxonomic levels.
+    taxa.counts <- long.df %>%
+      dplyr::select(!!unique.id.col, !!low.taxa.col, !!high.taxa.col) %>%
+      dplyr::distinct()
+  } else {
+    taxa.counts <- long.df %>%
+      dplyr::select(!!unique.id.col, !!low.taxa.col,
+                    !!high.taxa.col, !!exclusion.col) %>%
+      dplyr::distinct()
+  }
   #----------------------------------------------------------------------------
   distinct.df <- taxa.counts %>%
-    dplyr::select(UNIQUE_ID) %>%
+    dplyr::select(!!unique.id.col) %>%
     dplyr::distinct()
 
-  final.vec2 <- distinct.df %>%
-    dplyr::mutate(rich = taxa_rich(long.df, !!unique.id.col, !!low.taxa.col, !!high.taxa.col),
-                  taxa_rich = taxa_rich(long.df, !!unique.id.col, !!low.taxa.col, !!high.taxa.col, taxon),
+  final.vec <- distinct.df %>%
+    dplyr::mutate(rich = taxa_rich(taxa.counts,
+                                   !!unique.id.col,
+                                   !!low.taxa.col,
+                                   !!high.taxa.col),
+                  taxa_rich = taxa_rich(taxa.counts,
+                                        !!unique.id.col,
+                                        !!low.taxa.col,
+                                        !!high.taxa.col,
+                                        taxon,
+                                        exclusion.col = !!exclusion.col,
+                                        exclusion.vec = exclusion.vec),
                   pct_rich = if_else(taxa_rich == 0, 0, taxa_rich / rich * 100)) %>%
+    original_order(long.df, !!unique.id.col) %>%
     pull(pct_rich)
   #----------------------------------------------------------------------------
   return(final.vec)
-}
-
+  }

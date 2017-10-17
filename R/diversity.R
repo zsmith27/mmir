@@ -31,52 +31,47 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col = NULL,
   }
   #------------------------------------------------------------------------------
   # Prep.
-  unique.id.col <- enquo(unique.id.col)
-  high.taxa.col <- enquo(high.taxa.col)
-  count.col <- enquo(count.col)
+  unique.id.col <- rlang::enquo(unique.id.col)
+  high.taxa.col <- rlang::enquo(high.taxa.col)
+  count.col <- rlang::enquo(count.col)
   #------------------------------------------------------------------------------
   if (!is.null(taxon) && !is.null(low.taxa.col)) {
     long.df <- long.df %>%
-      filter(rlang::UQ(low.taxa.col) %in% taxon)
+      dplyr::filter(rlang::UQ(low.taxa.col) %in% taxon)
   }
   #------------------------------------------------------------------------------
-  long.df <- long.df %>%
+  agg.df <- long.df %>%
     dplyr::select(!!unique.id.col, !!high.taxa.col, !!count.col) %>%
     dplyr::group_by(!!unique.id.col) %>%
-    dplyr::mutate(total = sum(!!count.col)) %>%
-    dplyr::rename(UNIQUE_ID = !!unique.id.col)
-
-  distinct.df <- long.df %>%
-    dplyr::select(UNIQUE_ID) %>%
-    dplyr::distinct()
+    dplyr::mutate(total = sum(!!count.col))
   #------------------------------------------------------------------------------
   if (!is.null(taxon)) {
-    long.df <- dplyr::filter(long.df, rlang::UQ(high.taxa.col) %in% rlang::UQ(taxon))
+    agg.df<- dplyr::filter(agg.df, rlang::UQ(high.taxa.col) %in% rlang::UQ(taxon))
   }
   #------------------------------------------------------------------------------
   if(job %in% c("shannon", "effective_shannon")) {
-    final.vec <- long.df %>%
-      dplyr::group_by(UNIQUE_ID, !!high.taxa.col, total) %>%
+    final.vec <- agg.df %>%
+      dplyr::group_by(!!unique.id.col, !!high.taxa.col, total) %>%
       dplyr::summarize(count = sum(rlang::UQ(count.col))) %>%
       dplyr::mutate(p = count / total) %>%
       dplyr::mutate(log_p = -p * log(p, base.log)) %>%
-      dplyr::group_by(UNIQUE_ID) %>%
+      dplyr::group_by(!!unique.id.col) %>%
       dplyr::summarize(final = sum(log_p)) %>%
-      dplyr::right_join(distinct.df, by = "UNIQUE_ID") %>%
+      original_order(long.df, !!unique.id.col) %>%
       dplyr::mutate(final = dplyr::if_else(!is.na(final), final, as.double(0))) %>%
       dplyr::pull(final)
     if(job == "effective_shannon") final.vec <- exp(final.vec)
   }
   #------------------------------------------------------------------------------
   if(job %in% c("simpson", "invsimpson", "gini_simpson", "effective_simpson")) {
-    final.vec <- long.df %>%
-      dplyr::group_by(UNIQUE_ID, !!high.taxa.col, total) %>%
+    final.vec <- agg.df %>%
+      dplyr::group_by(!!unique.id.col, !!high.taxa.col, total) %>%
       dplyr::summarize(count = sum(rlang::UQ(count.col))) %>%
       dplyr::mutate(p = count / total,
                     p = p ^ 2) %>%
-      dplyr::group_by(UNIQUE_ID) %>%
+      dplyr::group_by(!!unique.id.col) %>%
       dplyr::summarize(final = sum(p)) %>%
-      dplyr::right_join(distinct.df, by = "UNIQUE_ID") %>%
+      original_order(long.df, !!unique.id.col) %>%
       dplyr::mutate(final = dplyr::if_else(!is.na(final), final, as.double(0))) %>%
       dplyr::pull(final)
     if(job == "simpson") final.vec
@@ -88,23 +83,24 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col = NULL,
   }
   #------------------------------------------------------------------------------
   if(job %in% c("pielou", "margalef", "menhinick")) {
-    rich.vec <- taxon_richness(long.df, UNIQUE_ID, !!count.col, !!high.taxa.col)
+    rich.vec <- taxa_rich(agg.df, !!unique.id.col, !!count.col, !!high.taxa.col)
     if(job == "pielou") final.vec <- log10(rich.vec)
     if(job %in% c("margalef", "menhinick")) {
-      abund.vec <- abund_taxon(long.df, UNIQUE_ID, !!count.col, !!high.taxa.col)
+      abund.vec <- taxa_abund(agg.df, !!unique.id.col, !!count.col, !!high.taxa.col)
       if(job == "margalef") final.vec <- (rich.vec - 1) / log10(abund.vec)
       if(job == "menhinick") final.vec <- rich.vec / sqrt(abund.vec)
     }
   }
   #------------------------------------------------------------------------------
   if(job %in% c("hill", "renyi")) {
-    final.vec <- long.df %>%
-      dplyr::group_by(UNIQUE_ID, !!high.taxa.col, total) %>%
+    final.vec <- agg.df %>%
+      dplyr::group_by(!!unique.id.col, !!high.taxa.col, total) %>%
       dplyr::summarize(count.col = sum(rlang::UQ(count.col))) %>%
       dplyr::mutate(p = count.col / total,
                     p = p ^ q) %>%
-      dplyr::group_by(UNIQUE_ID) %>%
+      dplyr::group_by(!!unique.id.col) %>%
       dplyr::summarize(final = sum(p)) %>%
+      original_order(long.df, !!unique.id.col) %>%
       dplyr::pull(final)
     if(job == "hill") final.vec <- final.vec ^ (1 / (1 - q))
     if(job == "renyi") final.vec <- (1 / (1 - q)) * ln(final.vec)

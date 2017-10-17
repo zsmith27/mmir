@@ -5,7 +5,7 @@
 \title{Abundance of a Specified Taxon}
 \usage{
 taxa_abund(long.df, unique.id.col, count.col, taxon.col, taxon = NULL,
-  keep.na = FALSE)
+  exclusion.col = NULL, exclusion.vec = NULL)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}

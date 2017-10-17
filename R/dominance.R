@@ -32,13 +32,14 @@ pct_dom <- function(long.df, unique.id.col, count.col, taxa.col, dom.level){
   taxa.col = rlang::enquo(taxa.col)
   #----------------------------------------------------------------------------
   final.vec <- long.df %>%
-    group_by(!!unique.id.col, !!taxa.col) %>%
-    summarise(COUNT = sum(rlang::UQ(count.col))) %>%
-    group_by(!!unique.id.col) %>%
-    mutate(TOTAL = sum(COUNT)) %>%
-    filter(row_number(desc(COUNT)) <= dom.level) %>%
-    summarise(percent = sum(COUNT) / unique(TOTAL) * 100) %>%
-    pull(percent)
+    dplyr::group_by(!!unique.id.col, !!taxa.col) %>%
+    dplyr::summarise(COUNT = sum(rlang::UQ(count.col))) %>%
+    dplyr::group_by(!!unique.id.col) %>%
+    dplyr::mutate(TOTAL = sum(COUNT)) %>%
+    dplyr::filter(row_number(desc(COUNT)) <= dom.level) %>%
+    dplyr::summarise(percent = sum(COUNT) / unique(TOTAL) * 100) %>%
+    original_order(long.df, !!unique.id.col) %>%
+    dplyr::pull(percent)
   #----------------------------------------------------------------------------
   return(final.vec)
 }

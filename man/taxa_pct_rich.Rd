@@ -5,7 +5,7 @@
 \title{Percentage of a Specified Taxon}
 \usage{
 taxa_pct_rich(long.df, unique.id.col, low.taxa.col, high.taxa.col,
-  taxon = NULL, count.na = TRUE)
+  taxon = NULL, exclusion.col = NULL, exclusion.vec = NULL)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}
