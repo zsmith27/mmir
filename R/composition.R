@@ -16,24 +16,13 @@
 #'@export
 
 taxa_pct <- function(long.df, unique.id.col, count.col, taxon.col, taxon,
-                     attribute.df = NULL, attribute.col = NULL,
                      exclusion.col = NULL, exclusion.vec = NULL) {
   # Prep.
   unique.id.col <- enquo(unique.id.col)
   taxon.col <- enquo(taxon.col)
   count.col <- enquo(count.col)
   exclusion.col <- enquo(exclusion.col)
-  attribute.col <- enquo(attribute.col)
   #----------------------------------------------------------------------------
-  if (is.null(attribute.df)) {
-    join.df <- long.df
-  } else {
-    long.col <- rlang::quo_name(taxon.col)
-    att.col <- rlang::quo_name(attribute.col)
-    join.df <- dplyr::left_join(long.df, attribute.df,
-                                by = c(long.col = att.col))
-  }
-
   if (rlang::quo_is_null(exclusion.col)) {
     # Aggregate taxonomic counts at the specified taxonomic levels.
     taxa.counts <- join.df %>%
