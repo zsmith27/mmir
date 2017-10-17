@@ -174,19 +174,17 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpICU+JSBcbiAgaW52aXNpYmxlKClcbmxpYnJhcnkobW1pcilcbmxpYnJhcnkoQmVudGhvcylcbmBgYCJ9 -->
-<pre class="r"><code>library(tidyverse) %&gt;% 
-  invisible()
-library(mmir)
-library(Benthos)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW52aXNpYmxlKGxpYnJhcnkodGlkeXZlcnNlKSlcbiAgXG5saWJyYXJ5KG1taXIpXG5gYGAifQ== -->
+<pre class="r"><code>invisible(library(tidyverse))
+  
+library(mmir)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShcIm1hc3RlclwiKVxubWFzdGVyIDwtIG1hc3RlciAlPiUgXG4gIHNlbGVjdChGSU5BTF9JRDpTUEVDSUVTLCBCRUNLX0NMQVNTLCBBU1BULCBCSUJJX1RWLCBCSUJJX0ZGRywgQklCSV9IQUJJVCkgJT4lIFxuICByZW5hbWVfYWxsKHRvbG93ZXIpICU+JSBcbiAgbXV0YXRlX2lmKGlzLmNoYXJhY3RlciwgdG9sb3dlcilcbmBgYCJ9 -->
-<pre class="r"><code>data(&quot;master&quot;)
-master &lt;- master %&gt;% 
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFzdGVyIDwtIEJlbnRob3M6Om1hc3RlciAlPiUgXG4gIHNlbGVjdChGSU5BTF9JRDpTUEVDSUVTLCBCRUNLX0NMQVNTLCBBU1BULCBCSUJJX1RWLCBCSUJJX0ZGRywgQklCSV9IQUJJVCkgJT4lIFxuICByZW5hbWVfYWxsKHRvbG93ZXIpICU+JSBcbiAgbXV0YXRlX2lmKGlzLmNoYXJhY3RlciwgdG9sb3dlcilcbmBgYCJ9 -->
+<pre class="r"><code>master &lt;- Benthos::master %&gt;% 
   select(FINAL_ID:SPECIES, BECK_CLASS, ASPT, BIBI_TV, BIBI_FFG, BIBI_HABIT) %&gt;% 
   rename_all(tolower) %&gt;% 
   mutate_if(is.character, tolower)</code></pre>
@@ -195,15 +193,11 @@ master &lt;- master %&gt;%
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub25vbmRhZ2EgPC0gb25vbmRhZ2EgJT4lIFxuICBzZWxlY3QoLXBoeWx1bTpzcGVjaWVzKVxuXG5gYGAifQ== -->
-<pre class="r"><code>onondaga &lt;- onondaga %&gt;% 
-  select(-phylum:species)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShcIm9ub25kYWdhXCIpXG5vbm9uZGFnYSA8LSBvbm9uZGFnYSAlPiUgXG4gIHNlbGVjdCgtcGh5bHVtOi1zcGVjaWVzKVxuYGBgIn0= -->
+<pre class="r"><code>data(&quot;onondaga&quot;)
+onondaga &lt;- onondaga %&gt;% 
+  select(-phylum:-species)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gY29tYmluZV92YXJzKHZhcnMsIGluZF9saXN0KSA6IFxuICBFYWNoIGFyZ3VtZW50IG11c3QgeWllbGQgZWl0aGVyIHBvc2l0aXZlIG9yIG5lZ2F0aXZlIGludGVnZXJzXG4ifQ== -->
-<pre><code>Error in combine_vars(vars, ind_list) : 
-  Each argument must yield either positive or negative integers</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -211,29 +205,28 @@ master &lt;- master %&gt;%
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub25vbi5kZiA8LSBsZWZ0X2pvaW4ob25vbmRhZ2EsIG1hc3RlciwgYnkgPSBcImZpbmFsX2lkXCIpXG5gYGAifQ== -->
 <pre class="r"><code>onon.df &lt;- left_join(onondaga, master, by = &quot;final_id&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IGBieWAgY2FuJ3QgY29udGFpbiBqb2luIGNvbHVtbiBgZmluYWxfaWRgIHdoaWNoIGlzIG1pc3NpbmcgZnJvbSBSSFNcbiJ9 -->
-<pre><code>Error: `by` can't contain join column `final_id` which is missing from RHS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWV0cmljcy5kZiA8LSBvbm9uLmRmICU+JSBcbiAgc2VsZWN0KHVuaXF1ZV9pZCkgJT4lIFxuICBkaXN0aW5jdCgpICU+JSBcbiAgbXV0YXRlKHJpY2ggPSB0YXhhX3JpY2gob25vbi5kZiwgdW5pcXVlX2lkLCBvcmRlciwgZ2VudXMsIHRheG9uID0gXCJlcGhlbWVyb3B0ZXJhXCIpKVxuXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWV0cmljcy5kZiA8LSBvbm9uLmRmICU+JSBcbiAgc2VsZWN0KHVuaXF1ZV9pZCkgJT4lIFxuICBkaXN0aW5jdCgpICU+JSBcbiAgbXV0YXRlKHJpY2ggPSB0YXhhX3JpY2gob25vbi5kZiwgdW5pcXVlX2lkLCBvcmRlciwgZ2VudXMsIHRheG9uID0gTlVMTCksXG4gICAgICAgICByaWNoX2VwaGVtID0gdGF4YV9yaWNoKG9ub24uZGYsIHVuaXF1ZV9pZCwgb3JkZXIsIGdlbnVzLCB0YXhvbiA9IFwiZXBoZW1lcm9wdGVyYVwiKSxcbiAgICAgICAgIHBjdF9lcGhlbSA9IHRheGFfcGN0KG9ub24uZGYsIHVuaXF1ZV9pZCwgY291bnQsIG9yZGVyLCBcImVwaGVtZXJvcHRlcmFcIikpXG5cbmBgYCJ9 -->
 <pre class="r"><code>metrics.df &lt;- onon.df %&gt;% 
   select(unique_id) %&gt;% 
   distinct() %&gt;% 
-  mutate(rich = taxa_rich(onon.df, unique_id, order, genus, taxon = &quot;ephemeroptera&quot;))
+  mutate(rich = taxa_rich(onon.df, unique_id, order, genus, taxon = NULL),
+         rich_ephem = taxa_rich(onon.df, unique_id, order, genus, taxon = &quot;ephemeroptera&quot;),
+         pct_ephem = taxa_pct(onon.df, unique_id, count, order, &quot;ephemeroptera&quot;))
 </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gbXV0YXRlX2ltcGwoLmRhdGEsIGRvdHMpIDogXG4gIEV2YWx1YXRpb24gZXJyb3I6IEV2YWx1YXRpb24gZXJyb3I6IGludmFsaWQgJ3R5cGUnIChjaGFyYWN0ZXIpIG9mIGFyZ3VtZW50Li5cbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gbXV0YXRlX2ltcGwoLmRhdGEsIGRvdHMpIDogXG4gIEV2YWx1YXRpb24gZXJyb3I6IEV2YWx1YXRpb24gZXJyb3I6IGludmFsaWQgJ3R5cGUnIChjbG9zdXJlKSBvZiBhcmd1bWVudC4uXG4ifQ== -->
 <pre><code>Error in mutate_impl(.data, dots) : 
-  Evaluation error: Evaluation error: invalid 'type' (character) of argument..</code></pre>
+  Evaluation error: Evaluation error: invalid 'type' (closure) of argument..</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7cn0NCmxpYnJhcnkodGlkeXZlcnNlKSAlPiUgDQogIGludmlzaWJsZSgpDQpsaWJyYXJ5KG1taXIpDQpsaWJyYXJ5KEJlbnRob3MpDQpgYGANCg0KDQpgYGB7cn0NCmRhdGEoIm1hc3RlciIpDQptYXN0ZXIgPC0gbWFzdGVyICU+JSANCiAgc2VsZWN0KEZJTkFMX0lEOlNQRUNJRVMsIEJFQ0tfQ0xBU1MsIEFTUFQsIEJJQklfVFYsIEJJQklfRkZHLCBCSUJJX0hBQklUKSAlPiUgDQogIHJlbmFtZV9hbGwodG9sb3dlcikgJT4lIA0KICBtdXRhdGVfaWYoaXMuY2hhcmFjdGVyLCB0b2xvd2VyKQ0KYGBgDQoNCmBgYHtyfQ0KZGF0YSgib25vbmRhZ2EiKQ0Kb25vbmRhZ2EgPC0gb25vbmRhZ2EgJT4lIA0KICBzZWxlY3QoLXBoeWx1bTotc3BlY2llcykNCmBgYA0KDQpgYGB7cn0NCm9ub24uZGYgPC0gbGVmdF9qb2luKG9ub25kYWdhLCBtYXN0ZXIsIGJ5ID0gImZpbmFsX2lkIikNCmBgYA0KDQpgYGB7cn0NCm1ldHJpY3MuZGYgPC0gb25vbi5kZiAlPiUgDQogIHNlbGVjdCh1bmlxdWVfaWQpICU+JSANCiAgZGlzdGluY3QoKSAlPiUgDQogIG11dGF0ZShyaWNoID0gdGF4YV9yaWNoKG9ub24uZGYsIHVuaXF1ZV9pZCwgb3JkZXIsIGdlbnVzLCB0YXhvbiA9ICJlcGhlbWVyb3B0ZXJhIikpDQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7ciBtZXNzYWdlPUZBTFNFfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQogIA0KbGlicmFyeShtbWlyKQ0KYGBgDQoNCg0KYGBge3J9DQptYXN0ZXIgPC0gQmVudGhvczo6bWFzdGVyICU+JSANCiAgc2VsZWN0KEZJTkFMX0lEOlNQRUNJRVMsIEJFQ0tfQ0xBU1MsIEFTUFQsIEJJQklfVFYsIEJJQklfRkZHLCBCSUJJX0hBQklUKSAlPiUgDQogIHJlbmFtZV9hbGwodG9sb3dlcikgJT4lIA0KICBtdXRhdGVfaWYoaXMuY2hhcmFjdGVyLCB0b2xvd2VyKQ0KYGBgDQoNCmBgYHtyfQ0KZGF0YSgib25vbmRhZ2EiKQ0Kb25vbmRhZ2EgPC0gb25vbmRhZ2EgJT4lIA0KICBzZWxlY3QoLXBoeWx1bTotc3BlY2llcykNCmBgYA0KDQpgYGB7cn0NCm9ub24uZGYgPC0gbGVmdF9qb2luKG9ub25kYWdhLCBtYXN0ZXIsIGJ5ID0gImZpbmFsX2lkIikNCmBgYA0KDQpgYGB7cn0NCm1ldHJpY3MuZGYgPC0gb25vbi5kZiAlPiUgDQogIHNlbGVjdCh1bmlxdWVfaWQpICU+JSANCiAgZGlzdGluY3QoKSAlPiUgDQogIG11dGF0ZShyaWNoID0gdGF4YV9yaWNoKG9ub24uZGYsIHVuaXF1ZV9pZCwgb3JkZXIsIGdlbnVzLCB0YXhvbiA9IE5VTEwpLA0KICAgICAgICAgcmljaF9lcGhlbSA9IHRheGFfcmljaChvbm9uLmRmLCB1bmlxdWVfaWQsIG9yZGVyLCBnZW51cywgdGF4b24gPSAiZXBoZW1lcm9wdGVyYSIpLA0KICAgICAgICAgcGN0X2VwaGVtID0gdGF4YV9wY3Qob25vbi5kZiwgdW5pcXVlX2lkLCBjb3VudCwgb3JkZXIsICJlcGhlbWVyb3B0ZXJhIikpDQpgYGANCg0K</div>
 
 
 
