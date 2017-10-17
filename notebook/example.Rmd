@@ -1,0 +1,38 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse) %>% 
+  invisible()
+library(mmir)
+library(Benthos)
+```
+
+
+```{r}
+data("master")
+master <- master %>% 
+  select(FINAL_ID:SPECIES, BECK_CLASS, ASPT, BIBI_TV, BIBI_FFG, BIBI_HABIT) %>% 
+  rename_all(tolower) %>% 
+  mutate_if(is.character, tolower)
+```
+
+```{r}
+data("onondaga")
+onondaga <- onondaga %>% 
+  select(-phylum:-species)
+```
+
+```{r}
+onon.df <- left_join(onondaga, master, by = "final_id")
+```
+
+```{r}
+metrics.df <- onon.df %>% 
+  select(unique_id) %>% 
+  distinct() %>% 
+  mutate(rich = taxa_rich(onon.df, unique_id, order, genus, taxon = "ephemeroptera"))
+```
+

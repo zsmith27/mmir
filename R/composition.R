@@ -29,10 +29,11 @@ taxa_pct <- function(long.df, unique.id.col, count.col, taxon.col, taxon,
   # Calculate the percentage of the specified taxon.
   final.vec <- long.df %>%
     group_by(rlang::UQ(unique.id.col)) %>%
-    summarise(TOTAL = sum(rlang::UQ(count.col)),
+    summarise(TOTAL = sum(rlang::UQ(count.col))),
               INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon]),
               PCT = INDV / TOTAL * 100) %>%
-    dplyr::right_join(distinct.df, by = rlang::sym(rlang::UQ(unique.id.col))) %>%
+    original_order(!!unique.id.col)
+    #dplyr::right_join(distinct.df, by = rlang::sym(rlang::UQ(unique.id.col))) %>%
     pull(PCT)
   #----------------------------------------------------------------------------
   return(final.vec)
