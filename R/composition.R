@@ -25,21 +25,21 @@ taxa_pct <- function(long.df, unique.id.col, count.col, taxon.col, taxon,
   #----------------------------------------------------------------------------
   if (rlang::quo_is_null(exclusion.col)) {
     # Aggregate taxonomic counts at the specified taxonomic levels.
-    taxa.counts <- join.df %>%
+    taxa.counts <- long.df %>%
       dplyr::select(!!unique.id.col, !!taxon.col, !!count.col)
   } else {
-    taxa.counts <- join.df %>%
+    taxa.counts <- long.df %>%
       dplyr::select(!!unique.id.col, !!taxon.col,
                     !!count.col, !!exclusion.col) %>%
       dplyr::filter(!rlang::UQ(exclusion.col) %in% exclusion.vec)
   }
   #----------------------------------------------------------------------------
   # Calculate the percentage of the specified taxon.
-  final.vec <- join.df %>%
+  final.vec <- taxa.counts%>%
     group_by(rlang::UQ(unique.id.col)) %>%
     summarise(TOTAL = sum(rlang::UQ(count.col))) %>%
     original_order(long.df, !!unique.id.col) %>%
-    mutate(INDV = taxa_abund(join.df, !!unique.id.col, !!count.col,
+    mutate(INDV = taxa_abund(taxa.counts, !!unique.id.col, !!count.col,
                              !!taxon.col, taxon,
                              !!exclusion.col, exclusion.vec),
            #INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon]),

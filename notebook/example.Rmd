@@ -35,4 +35,3 @@ metrics.df <- onon.df %>%
          rich_ephem = taxa_rich(onon.df, unique_id, order, genus, taxon = "ephemeroptera"),
          pct_ephem = taxa_pct(onon.df, unique_id, count, order, "ephemeroptera"))
 ```
-

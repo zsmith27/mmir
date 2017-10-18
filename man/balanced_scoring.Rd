@@ -10,7 +10,7 @@ balanced_scoring(metrics.df, sensitivity.df, first.metric, method)
 \item{metrics.df}{= data frame of metric values for each station with site
 a column of site classes defined by environmental variables.}
 
-\item{sensitivity.df}{= the data frame output from the metric_sensitivity 
+\item{sensitivity.df}{= the data frame output from the metric_sensitivity
 function where method was set to "BDE" or "ALL."}
 
 \item{first.metric}{= the first metric column that appears in your wide
@@ -21,7 +21,7 @@ it were a metric.}
 
 \item{method}{= two method options exist. The first option is "UNEVEN", which
 uses the reference and degraded distributions 5th and 95th percentiles to
-define scoring thresholds.  "EVEN" uses the median of the reference 
+define scoring thresholds.  "EVEN" uses the median of the reference
 distribution and...}
 }
 \value{

@@ -15,43 +15,22 @@
 #'@return A numeric vector of percentages.
 #'@export
 
-taxa_tol_index <- function(long.df, unique.id.col, count.col, taxon.col, tol.col) {
-  # Prep.
-  unique.id.col <- enquo(unique.id.col)
-  count.col <- enquo(count.col)
-  taxon.col <- enquo(taxon.col)
-  tol.col <- enquo(tol.col)
-  #----------------------------------------------------------------------------
-  taxa.count <- long.df %>%
-    dplyr::select(!!unique.id.col, !!count.col, !!taxon.col) %>%
-    dplyr::group_by(!!unique.id.col, !!taxon.col) %>%
-    dplyr::summarize(counts = sum(!!count.col))
+taxa_tol_index <- function(long.df, unique.id.col, count.col, tol.col) {
+  unique.id.col <- rlang::enquo(unique.id.col)
+  tol.col <- rlang::enquo(tol.col )
+  count.col <- rlang::enquo(count.col )
 
-  tol.df <- long.df %>%
-    dplyr::select(!!taxon.col, !!tol.col) %>%
-    dplyr::distinct()
-
-  join.df <- dplyr::left_join(taxa.count, tol.df,
-                              by = c(rlang::quo_name(taxon.col)))
-
-
-
-
-
-
-  # Calculate the percentage of the specified taxon.
-  final.vec <- join.df %>%
-    group_by(rlang::UQ(unique.id.col)) %>%
-    summarise(TOTAL = sum(rlang::UQ(count.col))) %>%
+  score.vec <- long.df %>%
+    filter(!is.na(!!!tol.col),
+           !rlang::UQ(tol.col) %in% c("")) %>%
+    select(!!unique.id.col, !!tol.col, !!count.col) %>%
+    mutate(score = rlang::UQ(count.col) * rlang::UQ(tol.col)) %>%
+    group_by(!!unique.id.col) %>%
+    summarize(score = sum(score),
+              taxa = sum(!!count.col),
+              score = score / taxa) %>%
     original_order(long.df, !!unique.id.col) %>%
-    mutate(INDV = taxa_abund(join.df, !!unique.id.col, !!count.col,
-                             !!taxon.col, taxon,
-                             !!exclusion.col, exclusion.vec),
-           #INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon]),
-           PCT = INDV / TOTAL * 100) %>%
-    original_order(long.df, !!unique.id.col) %>%
-    dplyr::mutate(PCT = dplyr::if_else(!is.na(PCT), PCT, as.double(0))) %>%
-    pull(PCT)
-  #----------------------------------------------------------------------------
-  return(final.vec)
+    pull(score)
+
+  return(score.vec)
 }

@@ -174,8 +174,8 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW52aXNpYmxlKGxpYnJhcnkodGlkeXZlcnNlKSlcbiAgXG5saWJyYXJ5KG1taXIpXG5gYGAifQ== -->
-<pre class="r"><code>invisible(library(tidyverse))
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG4gIFxubGlicmFyeShtbWlyKVxuYGBgIn0= -->
+<pre class="r"><code>library(tidyverse)
   
 library(mmir)</code></pre>
 <!-- rnb-source-end -->
@@ -209,24 +209,9 @@ onondaga &lt;- onondaga %&gt;%
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWV0cmljcy5kZiA8LSBvbm9uLmRmICU+JSBcbiAgc2VsZWN0KHVuaXF1ZV9pZCkgJT4lIFxuICBkaXN0aW5jdCgpICU+JSBcbiAgbXV0YXRlKHJpY2ggPSB0YXhhX3JpY2gob25vbi5kZiwgdW5pcXVlX2lkLCBvcmRlciwgZ2VudXMsIHRheG9uID0gTlVMTCksXG4gICAgICAgICByaWNoX2VwaGVtID0gdGF4YV9yaWNoKG9ub24uZGYsIHVuaXF1ZV9pZCwgb3JkZXIsIGdlbnVzLCB0YXhvbiA9IFwiZXBoZW1lcm9wdGVyYVwiKSxcbiAgICAgICAgIHBjdF9lcGhlbSA9IHRheGFfcGN0KG9ub24uZGYsIHVuaXF1ZV9pZCwgY291bnQsIG9yZGVyLCBcImVwaGVtZXJvcHRlcmFcIikpXG5cbmBgYCJ9 -->
-<pre class="r"><code>metrics.df &lt;- onon.df %&gt;% 
-  select(unique_id) %&gt;% 
-  distinct() %&gt;% 
-  mutate(rich = taxa_rich(onon.df, unique_id, order, genus, taxon = NULL),
-         rich_ephem = taxa_rich(onon.df, unique_id, order, genus, taxon = &quot;ephemeroptera&quot;),
-         pct_ephem = taxa_pct(onon.df, unique_id, count, order, &quot;ephemeroptera&quot;))
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gbXV0YXRlX2ltcGwoLmRhdGEsIGRvdHMpIDogXG4gIEV2YWx1YXRpb24gZXJyb3I6IEV2YWx1YXRpb24gZXJyb3I6IGludmFsaWQgJ3R5cGUnIChjbG9zdXJlKSBvZiBhcmd1bWVudC4uXG4ifQ== -->
-<pre><code>Error in mutate_impl(.data, dots) : 
-  Evaluation error: Evaluation error: invalid 'type' (closure) of argument..</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7ciBtZXNzYWdlPUZBTFNFfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQogIA0KbGlicmFyeShtbWlyKQ0KYGBgDQoNCg0KYGBge3J9DQptYXN0ZXIgPC0gQmVudGhvczo6bWFzdGVyICU+JSANCiAgc2VsZWN0KEZJTkFMX0lEOlNQRUNJRVMsIEJFQ0tfQ0xBU1MsIEFTUFQsIEJJQklfVFYsIEJJQklfRkZHLCBCSUJJX0hBQklUKSAlPiUgDQogIHJlbmFtZV9hbGwodG9sb3dlcikgJT4lIA0KICBtdXRhdGVfaWYoaXMuY2hhcmFjdGVyLCB0b2xvd2VyKQ0KYGBgDQoNCmBgYHtyfQ0KZGF0YSgib25vbmRhZ2EiKQ0Kb25vbmRhZ2EgPC0gb25vbmRhZ2EgJT4lIA0KICBzZWxlY3QoLXBoeWx1bTotc3BlY2llcykNCmBgYA0KDQpgYGB7cn0NCm9ub24uZGYgPC0gbGVmdF9qb2luKG9ub25kYWdhLCBtYXN0ZXIsIGJ5ID0gImZpbmFsX2lkIikNCmBgYA0KDQpgYGB7cn0NCm1ldHJpY3MuZGYgPC0gb25vbi5kZiAlPiUgDQogIHNlbGVjdCh1bmlxdWVfaWQpICU+JSANCiAgZGlzdGluY3QoKSAlPiUgDQogIG11dGF0ZShyaWNoID0gdGF4YV9yaWNoKG9ub24uZGYsIHVuaXF1ZV9pZCwgb3JkZXIsIGdlbnVzLCB0YXhvbiA9IE5VTEwpLA0KICAgICAgICAgcmljaF9lcGhlbSA9IHRheGFfcmljaChvbm9uLmRmLCB1bmlxdWVfaWQsIG9yZGVyLCBnZW51cywgdGF4b24gPSAiZXBoZW1lcm9wdGVyYSIpLA0KICAgICAgICAgcGN0X2VwaGVtID0gdGF4YV9wY3Qob25vbi5kZiwgdW5pcXVlX2lkLCBjb3VudCwgb3JkZXIsICJlcGhlbWVyb3B0ZXJhIikpDQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpgYGB7ciBtZXNzYWdlPUZBTFNFfQ0KbGlicmFyeSh0aWR5dmVyc2UpDQogIA0KbGlicmFyeShtbWlyKQ0KYGBgDQoNCg0KYGBge3J9DQptYXN0ZXIgPC0gQmVudGhvczo6bWFzdGVyICU+JSANCiAgc2VsZWN0KEZJTkFMX0lEOlNQRUNJRVMsIEJFQ0tfQ0xBU1MsIEFTUFQsIEJJQklfVFYsIEJJQklfRkZHLCBCSUJJX0hBQklUKSAlPiUgDQogIHJlbmFtZV9hbGwodG9sb3dlcikgJT4lIA0KICBtdXRhdGVfaWYoaXMuY2hhcmFjdGVyLCB0b2xvd2VyKQ0KYGBgDQoNCmBgYHtyfQ0KZGF0YSgib25vbmRhZ2EiKQ0Kb25vbmRhZ2EgPC0gb25vbmRhZ2EgJT4lIA0KICBzZWxlY3QoLXBoeWx1bTotc3BlY2llcykNCmBgYA0KDQpgYGB7cn0NCm9ub24uZGYgPC0gbGVmdF9qb2luKG9ub25kYWdhLCBtYXN0ZXIsIGJ5ID0gImZpbmFsX2lkIikNCmBgYA0KDQpgYGB7cn0NCm1ldHJpY3MuZGYgPC0gb25vbi5kZiAlPiUgDQogIHNlbGVjdCh1bmlxdWVfaWQpICU+JSANCiAgZGlzdGluY3QoKSAlPiUgDQogIG11dGF0ZShyaWNoID0gdGF4YV9yaWNoKG9ub24uZGYsIHVuaXF1ZV9pZCwgb3JkZXIsIGdlbnVzLCB0YXhvbiA9IE5VTEwpLA0KICAgICAgICAgcmljaF9lcGhlbSA9IHRheGFfcmljaChvbm9uLmRmLCB1bmlxdWVfaWQsIG9yZGVyLCBnZW51cywgdGF4b24gPSAiZXBoZW1lcm9wdGVyYSIpLA0KICAgICAgICAgcGN0X2VwaGVtID0gdGF4YV9wY3Qob25vbi5kZiwgdW5pcXVlX2lkLCBjb3VudCwgb3JkZXIsICJlcGhlbWVyb3B0ZXJhIikpDQpgYGANCg==</div>
 
 
 

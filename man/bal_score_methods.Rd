@@ -11,7 +11,7 @@ bal_score_methods(merged.df, method)
 
 \item{method}{= two method options exist. The first option is "UNEVEN", which
 uses the reference and degraded distributions 5th and 95th percentiles to
-define scoring thresholds.  "EVEN" uses the median of the reference 
+define scoring thresholds.  "EVEN" uses the median of the reference
 distribution and...}
 }
 \value{
