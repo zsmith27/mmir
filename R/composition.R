@@ -23,6 +23,9 @@ taxa_pct <- function(long.df, unique.id.col, count.col, taxon.col, taxon,
   count.col <- enquo(count.col)
   exclusion.col <- enquo(exclusion.col)
   #----------------------------------------------------------------------------
+  #long.df <- long.df %>%
+  #  dplyr::filter((!!count.col) > 0)
+  #----------------------------------------------------------------------------
   if (rlang::quo_is_null(exclusion.col)) {
     # Aggregate taxonomic counts at the specified taxonomic levels.
     taxa.counts <- long.df %>%
@@ -72,6 +75,9 @@ taxa_abund <- function(long.df, unique.id.col, count.col, taxon.col, taxon = NUL
   taxon.col <- enquo(taxon.col)
   count.col <- enquo(count.col)
   exclusion.col <- enquo(exclusion.col)
+  #----------------------------------------------------------------------------
+  #long.df <- long.df %>%
+  #  dplyr::filter((!!count.col) > 0)
   #----------------------------------------------------------------------------
   if (rlang::quo_is_null(exclusion.col)) {
     # Aggregate taxonomic counts at the specified taxonomic levels.
