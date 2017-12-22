@@ -19,7 +19,10 @@ taxa_tol_index <- function(long.df, unique.id.col, count.col, tol.col) {
   unique.id.col <- rlang::enquo(unique.id.col)
   tol.col <- rlang::enquo(tol.col )
   count.col <- rlang::enquo(count.col )
-
+  #----------------------------------------------------------------------------
+  long.df <- long.df %>%
+    dplyr::filter((!!count.col) > 0)
+  #----------------------------------------------------------------------------
   score.vec <- long.df %>%
     filter(!is.na(!!!tol.col),
            !rlang::UQ(tol.col) %in% c("")) %>%

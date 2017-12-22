@@ -31,6 +31,9 @@ pct_dom <- function(long.df, unique.id.col, count.col, taxa.col, dom.level){
   count.col = rlang::enquo(count.col)
   taxa.col = rlang::enquo(taxa.col)
   #----------------------------------------------------------------------------
+  long.df <- long.df %>%
+    dplyr::filter((!!count.col) > 0)
+  #----------------------------------------------------------------------------
   final.vec <- long.df %>%
     dplyr::group_by(!!unique.id.col, !!taxa.col) %>%
     dplyr::summarise(COUNT = sum(rlang::UQ(count.col))) %>%

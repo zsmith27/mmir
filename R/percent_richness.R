@@ -8,7 +8,7 @@
 #'@param unique.id.col The name of the column that contains a unique sampling
 #'event ID.
 #'@param count.col The name of the column that contains taxanomic counts.
-#'@param taxon.col The name of the column that contains the taxon or taxa
+#'@param high.res.taxa.col The name of the column that contains the taxon or taxa
 #'of interest.
 #'@param taxon The taxon or taxa of interest. To specify more than one taxa
 #'use: c("TAXA1", "TAXA2", "TAXA3").
@@ -16,14 +16,19 @@
 #'@export
 
 
-taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
-                          high.taxa.col, taxon = NULL,
+taxa_pct_rich <- function(long.df, unique.id.col, count.col,
+                          taxon.col, taxon = NULL,
+                          high.res.taxa.col,
                           exclusion.col = NULL, exclusion.vec = NULL) {
   unique.id.col <- rlang::enquo(unique.id.col)
-  low.taxa.col <- rlang::enquo(low.taxa.col)
-  high.taxa.col <- rlang::enquo(high.taxa.col)
+  taxon.col <- rlang::enquo(taxon.col)
+  count.col <- rlang::enquo(count.col)
+  high.res.taxa.col <- rlang::enquo(high.res.taxa.col)
   exclusion.col <- rlang::enquo(exclusion.col)
-
+  #----------------------------------------------------------------------------
+  long.df <- long.df %>%
+    dplyr::filter((!!count.col) > 0)
+  #----------------------------------------------------------------------------
   if (is.null(taxon)) stop("Must specify 'taxon'.")
   if (!rlang::quo_is_null(exclusion.col) && is.null(exclusion.vec)) {
     stop("Specifying an exclusion.col also requires that you specify the
@@ -34,17 +39,16 @@ taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
          column (i.e. exclusion.col) from which to exclude the objects.")
   }
   #----------------------------------------------------------------------------
-
-  #----------------------------------------------------------------------------
   if (rlang::quo_is_null(exclusion.col)) {
     # Aggregate taxonomic counts at the specified taxonomic levels.
     taxa.counts <- long.df %>%
-      dplyr::select(!!unique.id.col, !!low.taxa.col, !!high.taxa.col) %>%
+      dplyr::select(!!unique.id.col, !!taxon.col,
+                    !!count.col, !!high.res.taxa.col) %>%
       dplyr::distinct()
   } else {
     taxa.counts <- long.df %>%
-      dplyr::select(!!unique.id.col, !!low.taxa.col,
-                    !!high.taxa.col, !!exclusion.col) %>%
+      dplyr::select(!!unique.id.col, !!taxon.col, !!count.col,
+                    !!high.res.taxa.col, !!exclusion.col) %>%
       dplyr::distinct()
   }
   #----------------------------------------------------------------------------
@@ -55,18 +59,20 @@ taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
   final.vec <- distinct.df %>%
     dplyr::mutate(rich = taxa_rich(taxa.counts,
                                    !!unique.id.col,
-                                   !!low.taxa.col,
-                                   !!high.taxa.col),
+                                   !!count.col,
+                                   !!high.res.taxa.col),
                   taxa_rich = taxa_rich(taxa.counts,
                                         !!unique.id.col,
-                                        !!low.taxa.col,
-                                        !!high.taxa.col,
+                                        !!count.col,
+                                        !!taxon.col,
                                         taxon,
+                                        !!high.res.taxa.col,
                                         exclusion.col = !!exclusion.col,
                                         exclusion.vec = exclusion.vec),
-                  pct_rich = if_else(taxa_rich == 0, 0, taxa_rich / rich * 100)) %>%
+                  pct_rich = dplyr::if_else(taxa_rich == 0, 0,
+                                            taxa_rich / rich * 100)) %>%
     original_order(long.df, !!unique.id.col) %>%
-    pull(pct_rich)
+    dplyr::pull(pct_rich)
   #----------------------------------------------------------------------------
   return(final.vec)
   }

@@ -34,7 +34,10 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col = NULL,
   unique.id.col <- rlang::enquo(unique.id.col)
   high.taxa.col <- rlang::enquo(high.taxa.col)
   count.col <- rlang::enquo(count.col)
-  #------------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
+  long.df <- long.df %>%
+    dplyr::filter((!!count.col) > 0)
+  #----------------------------------------------------------------------------
   if (!is.null(taxon) && !is.null(low.taxa.col)) {
     long.df <- long.df %>%
       dplyr::filter(rlang::UQ(low.taxa.col) %in% taxon)
@@ -87,7 +90,7 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col = NULL,
     if(job == "pielou") final.vec <- log10(rich.vec)
     if(job %in% c("margalef", "menhinick")) {
       abund.vec <- taxa_abund(agg.df, !!unique.id.col, !!count.col, !!high.taxa.col)
-      if(job == "margalef") final.vec <- (rich.vec - 1) / log10(abund.vec)
+      if(job == "margalef") final.vec <- (rich.vec - 1) / log(abund.vec)
       if(job == "menhinick") final.vec <- rich.vec / sqrt(abund.vec)
     }
   }
