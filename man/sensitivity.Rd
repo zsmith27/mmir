@@ -4,12 +4,10 @@
 \alias{sensitivity}
 \title{Metric Sensitivity}
 \usage{
-sensitivity(metrics.df, first.metric, condition.colname, ref.cond = "REF",
+sensitivity(metrics.long, first.metric, condition.colname, ref.cond = "REF",
   deg.cond = "DEG", method = "BDE")
 }
 \arguments{
-\item{metrics.df}{= data frame of metric values for each station}
-
 \item{ref.cond}{= The site classification that represents better
 environmental conditions.}
 
@@ -17,6 +15,8 @@ environmental conditions.}
 environmental conditions.}
 
 \item{method}{= the sensitivity function to be used during the assessment.}
+
+\item{metrics.df}{= data frame of metric values for each station}
 }
 \value{
 Determines the threshold at which a metric best categorizes

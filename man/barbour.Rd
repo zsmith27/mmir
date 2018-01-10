@@ -4,7 +4,7 @@
 \alias{barbour}
 \title{Barbour et al. 1996 method for testing metric sensitivity}
 \usage{
-barbour(metrics.df, first.metric, ref.df, deg.df)
+barbour()
 }
 \arguments{
 \item{metrics.df}{= data frame of metric values for each station}

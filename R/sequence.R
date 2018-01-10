@@ -35,8 +35,7 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
                           unique.id.col = rlang::UQ(u.col),
                           count.col = rlang::UQ(c.col),
                           taxon.col = rlang::UQ(rlang::sym(col.i)),
-                          taxon = taxa.i,
-                          keep.na = kn)
+                          taxon = taxa.i)
       }
       #------------------------------------------------------------------------
       if (job == "rich") {
