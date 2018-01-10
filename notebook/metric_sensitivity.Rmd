@@ -1,0 +1,68 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+# Overview
+
+This document was created to provide an example of how to calculate metric sensitivity when developing an MMI or IBI using the __mmir__ R-package.
+
+# Preparation
+
+Install the __tidyverse__ packages developed by RStudio. This is a collection of packages that make it easier to import, manipulate, and plot data.
+```{r, messages=FALSE}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+Install the Multi-Metric Index (MMI) package, __mmir__, that I am developing from GitHub. The package, __devtools__, must be installed to use the `install_github()` function.
+```{r, messages=FALSE, eval=FALSE}
+devtools::install_github("zsmith27/mmir", force = TRUE)
+```
+
+Once __mmir__ is intalled, load the packages with `library()`.
+```{r}
+library(mmir)
+```
+
+__mmir__ contains my thesis data, _onondaga_, as an example data set.
+```{r}
+data("onondaga")
+```
+
+Calculate example metrics.
+```{r}
+metrics.wide <- onondaga %>% 
+  select(unique_id, lake) %>% 
+  distinct() %>% 
+  bind_cols(taxa_seq(onondaga, unique_id, reporting_value, c("order", "family"), "final_id",  job = "rich"),
+            taxa_seq(onondaga, unique_id, reporting_value, c("order", "family"),  job = "pct"))
+
+knitr::kable(metrics.wide)
+```
+
+
+
+# Calculate Metric Sensitivity
+
+Metric sensitivity is a 
+
+Most likely your metrics are stored in a wide data format (see `metrics.wide`); however, to simplify the metric sensitivity calculations the data needs to be transformed to a long data format. This can be easily done with the __tidyr__ (installed and loaded with __tidyverse__) function, `gather()`.
+```{r}
+metrics.long <- gather(metrics.df, metric, value, 3:ncol(metrics.df))
+
+knitr::kable(metrics.long)
+```
+
+
+```{r}
+sensitivity.df <- sensitivity(metrics.long,
+                              metric.col = ,
+                              condition.col = ,
+                              ref.cond = ,
+                              deg.cond = ,
+                              method = "all")
+```
+
+
