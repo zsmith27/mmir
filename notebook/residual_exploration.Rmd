@@ -1,0 +1,182 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+# Overview
+
+This document was created to provide an example of how to calculate metric sensitivity when developing an MMI or IBI using the __mmir__ R-package.
+
+# Preparation
+
+Install the __tidyverse__ packages developed by RStudio. This is a collection of packages that make it easier to import, manipulate, and plot data.
+```{r, messages=FALSE, warning=FALSE}
+#install.packages("tidyverse")
+library(tidyverse)
+```
+
+Install the Multi-Metric Index (MMI) package, __mmir__, that I am developing from GitHub. The package, __devtools__, must be installed to use the `install_github()` function.
+```{r, eval=FALSE}
+devtools::install_github("zsmith27/mmir", force = TRUE, quiet = TRUE)
+```
+
+Once __mmir__ is intalled, load the packages with `library()`.
+```{r}
+library(mmir)
+```
+
+__mmir__ contains my thesis data, _onondaga_, as an example data set.
+```{r}
+data("onondaga")
+```
+
+```{r}
+taxon.col <- quo(final_id)
+
+onondaga.wide <- onondaga %>% 
+  select(unique_id, sample_number, lake, !!taxon.col, reporting_value) %>% 
+  group_by(unique_id, sample_number, lake, !!taxon.col) %>% 
+  summarize(reporting_value = sum(reporting_value)) %>% 
+  ungroup() %>% 
+  spread(!!taxon.col, reporting_value, fill = 0)
+
+```
+
+```{r}
+train.df <- onondaga.wide %>% 
+  mutate(site = str_extract(unique_id, "_[0-9]*_"),
+         site = parse_number(site)) %>% 
+  filter(site <= 10)
+
+test.df <- onondaga.wide %>% 
+  mutate(site = str_extract(unique_id, "_[0-9]*_"),
+         site = parse_number(site)) %>% 
+  filter(site > 10)
+```
+
+
+```{r}
+train.df <- onondaga.wide %>% 
+  filter(sample_number == 1)
+
+test.df <- onondaga.wide %>% 
+  filter(sample_number == 2)
+```
+
+
+```{r}
+mean.df <- train.df %>% 
+  group_by(lake, sample_number) %>% 
+  summarize_at(vars(-unique_id), mean) %>% 
+  gather(taxon, mean, -lake, -sample_number) %>% 
+  rename(mean_lake = lake)
+```
+
+```{r}
+medain.df <- train.df %>% 
+  group_by(lake, sample_number) %>% 
+  summarize_at(vars(-unique_id), median) %>% 
+  gather(taxon, median, -lake, -sample_number) %>% 
+  rename(mean_lake = lake)
+```
+
+
+```{r}
+mean.resid <- test.df %>% 
+  gather(taxon, value, -lake, -unique_id, -sample_number) %>% 
+  left_join(mean.df, by = "taxon") %>% 
+  mutate(residual = abs(value - mean)) %>% 
+  group_by(mean_lake, unique_id) %>% 
+  summarize(sum_resid = sum(residual)) %>% 
+  group_by(unique_id) %>% 
+  filter(sum_resid == min(sum_resid)) %>% 
+  rename(prediction = mean_lake) %>% 
+  ungroup()
+```
+
+```{r}
+mean.summary <- mean.resid %>% 
+  select(unique_id, prediction) %>% 
+  separate(unique_id, c("lake", "site", "sample_number"), remove = FALSE) %>% 
+  group_by(lake, prediction) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count / 16 * 100)
+```
+
+```{r}
+median.resid <- test.df %>% 
+  gather(taxon, value, -lake, -unique_id, -sample_number) %>% 
+  left_join(medain.df, by = "taxon") %>% 
+  mutate(residual = abs(value - median)) %>% 
+  group_by(mean_lake, unique_id) %>% 
+  summarize(sum_resid = sum(residual)) %>% 
+  group_by(unique_id) %>% 
+  filter(sum_resid == min(sum_resid)) %>% 
+  rename(prediction = mean_lake) %>% 
+  ungroup()
+```
+
+```{r}
+median.summary <- median.resid %>% 
+  select(unique_id, prediction) %>% 
+  separate(unique_id, c("lake", "site", "sample_number"), remove = FALSE) %>% 
+  group_by(lake, prediction) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count / 16 * 100)
+```
+
+```{r}
+all.df <- train.df %>% 
+  select(-sample_number) %>% 
+  gather(taxon, all_value, -unique_id,  -lake) %>% 
+  rename(mean_lake = lake,
+         id = unique_id)
+```
+
+```{r}
+all.resid <- test.df %>% 
+  slice(1) %>% 
+  gather(taxon, value, -lake, -unique_id, -sample_number) %>% 
+  left_join(all.df, by = "taxon") %>% 
+  mutate(residual = abs(value - all_value)) %>% 
+  group_by(mean_lake, id, unique_id) %>% 
+  summarize(sum_resid = sum(residual)) %>% 
+  group_by(unique_id) %>% 
+  filter(sum_resid == min(sum_resid)) %>% 
+  rename(prediction = mean_lake) %>% 
+  ungroup()
+```
+
+```{r}
+all.summary <- all.resid %>% 
+  select(unique_id, prediction) %>% 
+  separate(unique_id, c("lake", "site", "sample_number"), remove = FALSE) %>% 
+  group_by(lake, prediction) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count / 16 * 100)
+```
+
+```{r}
+test <-  test.df %>% 
+  gather(taxon, value, -lake, -unique_id, -sample_number) %>% 
+  left_join(all.df, by = "taxon") %>% 
+  mutate(residual = abs(value - all_value)) %>% 
+  group_by(mean_lake, id, unique_id) %>% 
+  summarize(sum_resid = sum(residual)) %>% 
+  group_by(mean_lake, unique_id) %>% 
+  summarize(mean_resid = median(sum_resid)) %>% 
+  group_by(unique_id) %>% 
+  filter(mean_resid == min(mean_resid)) %>% 
+  rename(prediction = mean_lake) %>% 
+  ungroup()
+```
+
+```{r}
+test.summary <- test %>% 
+  select(unique_id, prediction) %>% 
+  separate(unique_id, c("lake", "site", "sample_number"), remove = FALSE) %>% 
+  group_by(lake, prediction) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count / 16 * 100)
+```
