@@ -11,14 +11,14 @@ This document was created to provide an example of how to calculate metric sensi
 # Preparation
 
 Install the __tidyverse__ packages developed by RStudio. This is a collection of packages that make it easier to import, manipulate, and plot data.
-```{r, messages=FALSE}
-install.packages("tidyverse")
+```{r, messages=FALSE, warning=FALSE}
+#install.packages("tidyverse")
 library(tidyverse)
 ```
 
 Install the Multi-Metric Index (MMI) package, __mmir__, that I am developing from GitHub. The package, __devtools__, must be installed to use the `install_github()` function.
-```{r, messages=FALSE, eval=FALSE}
-devtools::install_github("zsmith27/mmir", force = TRUE)
+```{r, eval=FALSE}
+devtools::install_github("zsmith27/mmir", ref = "dev", force = TRUE, quiet = TRUE)
 ```
 
 Once __mmir__ is intalled, load the packages with `library()`.
@@ -39,30 +39,100 @@ metrics.wide <- onondaga %>%
   bind_cols(taxa_seq(onondaga, unique_id, reporting_value, c("order", "family"), "final_id",  job = "rich"),
             taxa_seq(onondaga, unique_id, reporting_value, c("order", "family"),  job = "pct"))
 
-knitr::kable(metrics.wide)
+DT::datatable(metrics.wide, options = list(scrollX = TRUE))
 ```
-
-
 
 # Calculate Metric Sensitivity
 
 Metric sensitivity is a 
 
+## Long Data Transformation
+
 Most likely your metrics are stored in a wide data format (see `metrics.wide`); however, to simplify the metric sensitivity calculations the data needs to be transformed to a long data format. This can be easily done with the __tidyr__ (installed and loaded with __tidyverse__) function, `gather()`.
 ```{r}
-metrics.long <- gather(metrics.df, metric, value, 3:ncol(metrics.df))
+metrics.long <- gather(metrics.wide, metric, value, 3:ncol(metrics.wide))
 
-knitr::kable(metrics.long)
+DT::datatable(metrics.long)
 ```
 
+## Calculate Metric Sensitivity
 
+
+
+Barbour et al. (1996) created a visual method for evaluating metric response to a defined disturbance gradient.
+
+* 0 = The medians of both the refrence and degraded conditions overlap the interquartile range of one another.
+* 1 = One median (either the reference or degraded) overlaps the interquartile range of the other.
+* 2 = The interquartile ranges of the reference and degraded conditions overlap but neither conditions median overlaps with the interquartile range of the other category.
+* 3 = The interquartile ranges of the reference and degraded conditions do not overlap.
+
+Discrimination Efficiency (DE) is a measure of the percentage of degraded samples correctly identified below the reference distributions 25th percentile for metrics that decrease with degredation or the percentage of degraded samples correctly identified above the reference distributions 75th percentile for metrics that increase with disturbance.
+
+Balanced Discrimination Efficiency (BDE) attempts to update the DE method by throwing more computation power at the problem. BDE tests multiple thresholds for seperating the reference and degraded distributions in an attempt to find the best seperation point.
+
+Use the `sensitivity()` function to calculate three types of metric senstivity measures: 1) Barbour et al. (1996) method, 2) Descrimination Efficiency (DE), and 3) Balanced Descrimination Efficiency (BDE). 
 ```{r}
 sensitivity.df <- sensitivity(metrics.long,
-                              metric.col = ,
-                              condition.col = ,
-                              ref.cond = ,
-                              deg.cond = ,
-                              method = "all")
+                              metric.col = metric,
+                              value.col = value,
+                              condition.col = lake,
+                              ref.cond = "onon",
+                              deg.cond = "caz")
+
+DT::datatable(sensitivity.df, options = list(scrollX = TRUE))
+```
+# Plotting
+
+Plot Barbour et al. (1996) values greater than or equal to 2.
+```{r}
+sensitivity.df %>% 
+  filter(barbour >= 2) %>% 
+  inner_join(metrics.long, by = "metric") %>% 
+  mutate(metric = factor(metric, levels = unique(metric))) %>% 
+  filter(lake != "ot") %>% 
+  ggplot(aes(lake, value)) +
+  geom_boxplot() +
+  facet_wrap(~metric, ncol = 4)
+```
+
+Plot the top 10 metrics with the best DE values.
+```{r, fig.width=10}
+sensitivity.df %>% 
+  arrange(desc(de)) %>% 
+  slice(1:10) %>% 
+  inner_join(metrics.long, by = "metric") %>% 
+  mutate(metric = factor(metric, levels = unique(metric))) %>% 
+  filter(lake != "ot") %>% 
+  ggplot(aes(lake, value)) +
+  geom_boxplot() +
+  facet_wrap(~metric, ncol = 5, scale = "free")
+```
+
+Plot the top 10 metrics with the best BDE values.
+```{r, fig.width= 10}
+sensitivity.df %>% 
+  arrange(desc(bde)) %>% 
+  slice(1:10) %>% 
+  inner_join(metrics.long, by = "metric") %>% 
+  mutate(metric = factor(metric, levels = unique(metric))) %>% 
+  filter(lake != "ot") %>% 
+  arrange(desc(bde)) %>% 
+  ggplot(aes(lake, value)) +
+  geom_boxplot() +
+  geom_hline(aes(yintercept = bde_thresh)) +
+  facet_wrap(~metric, ncol = 5, scale = "free")
+```
+
+Plot an individual metric.
+```{r}
+sensitivity.df %>% 
+  filter(metric == "rich_ephemeroptera") %>% 
+  inner_join(metrics.long, by = "metric") %>% 
+  filter(lake != "ot") %>% 
+  arrange(desc(bde)) %>% 
+  ggplot(aes(lake, value)) +
+  geom_boxplot() +
+  geom_hline(aes(yintercept = bde_thresh)) 
 ```
 
 
