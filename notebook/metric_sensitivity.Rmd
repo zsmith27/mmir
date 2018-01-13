@@ -1,8 +1,13 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Metric Sensitivity with mmir"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 5
+author: Zachary M. Smith
 ---
-
+`r format(Sys.Date(), "%m-%d-%Y")`
 
 # Overview
 
@@ -10,18 +15,20 @@ This document was created to provide an example of how to calculate metric sensi
 
 # Preparation
 
-Install the __tidyverse__ packages developed by RStudio. This is a collection of packages that make it easier to import, manipulate, and plot data.
+Install the __tidyverse__ packages developed by R Studio. This is a collection of packages that make it easier to import, manipulate, and plot data. You will also need to install the __DT__ package if you want to create the interactive tables found below.
 ```{r, messages=FALSE, warning=FALSE}
 #install.packages("tidyverse")
-library(tidyverse)
+suppressPackageStartupMessages(
+  library(tidyverse)
+  )
 ```
 
-Install the Multi-Metric Index (MMI) package, __mmir__, that I am developing from GitHub. The package, __devtools__, must be installed to use the `install_github()` function.
+Install the Multi-Metric Index (MMI) package, __mmir__, that I am developing from Git Hub. The package, __devtools__, must be installed to use the `install_github()` function. Make sure you install the development version (`ref = "dev"`).
 ```{r, eval=FALSE}
 devtools::install_github("zsmith27/mmir", ref = "dev", force = TRUE, quiet = TRUE)
 ```
 
-Once __mmir__ is intalled, load the packages with `library()`.
+Once __mmir__ is installed, load the packages with `library()`.
 ```{r}
 library(mmir)
 ```
@@ -44,7 +51,6 @@ DT::datatable(metrics.wide, options = list(scrollX = TRUE))
 
 # Calculate Metric Sensitivity
 
-Metric sensitivity is a 
 
 ## Long Data Transformation
 
@@ -61,16 +67,16 @@ DT::datatable(metrics.long)
 
 Barbour et al. (1996) created a visual method for evaluating metric response to a defined disturbance gradient.
 
-* 0 = The medians of both the refrence and degraded conditions overlap the interquartile range of one another.
+* 0 = The medians of both the reference and degraded conditions overlap the interquartile range of one another.
 * 1 = One median (either the reference or degraded) overlaps the interquartile range of the other.
 * 2 = The interquartile ranges of the reference and degraded conditions overlap but neither conditions median overlaps with the interquartile range of the other category.
 * 3 = The interquartile ranges of the reference and degraded conditions do not overlap.
 
-Discrimination Efficiency (DE) is a measure of the percentage of degraded samples correctly identified below the reference distributions 25th percentile for metrics that decrease with degredation or the percentage of degraded samples correctly identified above the reference distributions 75th percentile for metrics that increase with disturbance.
+Discrimination Efficiency (DE) is a measure of the percentage of degraded samples correctly identified below the reference distributions 25th percentile for metrics that decrease with degradation or the percentage of degraded samples correctly identified above the reference distributions 75th percentile for metrics that increase with disturbance.
 
-Balanced Discrimination Efficiency (BDE) attempts to update the DE method by throwing more computation power at the problem. BDE tests multiple thresholds for seperating the reference and degraded distributions in an attempt to find the best seperation point.
+Balanced Discrimination Efficiency (BDE) attempts to update the DE method by throwing more computation power at the problem. BDE tests multiple thresholds for separating the reference and degraded distributions in an attempt to find the best separation point.
 
-Use the `sensitivity()` function to calculate three types of metric senstivity measures: 1) Barbour et al. (1996) method, 2) Descrimination Efficiency (DE), and 3) Balanced Descrimination Efficiency (BDE). 
+Use the `sensitivity()` function to calculate three types of metric sensitivity measures: 1) Barbour et al. (1996) method, 2) Discrimination Efficiency (DE), and 3) Balanced Discrimination Efficiency (BDE). 
 ```{r}
 sensitivity.df <- sensitivity(metrics.long,
                               metric.col = metric,
@@ -81,6 +87,7 @@ sensitivity.df <- sensitivity(metrics.long,
 
 DT::datatable(sensitivity.df, options = list(scrollX = TRUE))
 ```
+
 # Plotting
 
 Plot Barbour et al. (1996) values greater than or equal to 2.
