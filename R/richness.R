@@ -11,7 +11,7 @@
 #'@export
 
 taxa_rich <- function(long.df, unique.id.col, low.taxa.col,
-                      high.taxa.col, taxon = NULL,
+                      high.taxa.col = NULL, taxon = NULL,
                       exclusion.col = NULL, exclusion.vec = NULL) {
   if (nrow(long.df) < 1) return(0)
   # Prep.
@@ -35,7 +35,10 @@ taxa_rich <- function(long.df, unique.id.col, low.taxa.col,
   #----------------------------------------------------------------------------
   if (is.null(taxon)) {
     final.vec <- taxa.counts %>%
-      dplyr::count(!!unique.id.col) %>%
+      group_by(!!unique.id.col) %>%
+      summarize(n = n()) %>%
+      ungroup() %>%
+      # dplyr::count(!!unique.id.col) %>%
       original_order(long.df, !!unique.id.col) %>%
       dplyr::pull(n)
   } else {

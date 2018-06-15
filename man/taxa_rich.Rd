@@ -4,8 +4,8 @@
 \alias{taxa_rich}
 \title{Taxon Richness}
 \usage{
-taxa_rich(long.df, unique.id.col, low.taxa.col, high.taxa.col, taxon = NULL,
-  exclusion.col = NULL, exclusion.vec = NULL)
+taxa_rich(long.df, unique.id.col, low.taxa.col, high.taxa.col = NULL,
+  taxon = NULL, exclusion.col = NULL, exclusion.vec = NULL)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}
