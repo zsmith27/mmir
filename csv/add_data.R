@@ -1,6 +1,6 @@
 library(tidyverse)
 master.fwmi <- data.table::fread("csv/master_2_08_2017.csv", data.table = FALSE) %>%
-  clean_df()
+  toolbox::prep_df()
 #------------------------------------------------------------------------------
 hier.fwmi <- master.fwmi %>%
   select(final_id, phylum:species) %>%
