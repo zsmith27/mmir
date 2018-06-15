@@ -59,7 +59,6 @@ spread_condition  <- function(x, metric.col, condition.col, value.col, ref.cond,
 #'  \code{\link[rlang]{enquo}},\code{\link[rlang]{quo_name}}
 #' @rdname prep_sensitivity
 #' @export
-#' @importFrom rlang enquo quo_name
 
 prep_sensitivity <- function(metrics.long, metric.col, value.col, condition.col, ref.cond, deg.cond) {
   metric.col <- rlang::enquo(metric.col)
