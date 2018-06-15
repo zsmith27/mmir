@@ -15,12 +15,15 @@
 #'@return A numeric vector of percentages.
 #'@export
 
-taxa_pct <- function(long.df, unique.id.col, count.col, taxon.col, taxon,
+taxa_pct <- function(long.df, unique.id.col, count.col,
+                     rank.col, rank,
+                     taxon.col, taxon,
                      exclusion.col = NULL, exclusion.vec = NULL) {
   # Prep.
   unique.id.col <- enquo(unique.id.col)
   taxon.col <- enquo(taxon.col)
   count.col <- enquo(count.col)
+  rank.col <- enquo(rank.col)
   exclusion.col <- enquo(exclusion.col)
   #----------------------------------------------------------------------------
   if (rlang::quo_is_null(exclusion.col)) {
