@@ -23,7 +23,9 @@ prob_rarefaction <- function(long.df, unique.id.col, count.col, taxon.col, sampl
   wide.df <- long.df %>%
     dplyr::select(!!unique.id.col, !!taxon.col, !!count.col) %>%
     tidyr::complete(!!taxon.col, !!unique.id.col) %>%
-    dplyr::mutate(!!quo_name(count.col) := if_else(is.na(!!count.col), as.integer(0), !!count.col)) %>%
+    dplyr::mutate(!!quo_name(count.col) := if_else(is.na(!!count.col),
+                                                   as.integer(0),
+                                                   as.integer(!!count.col))) %>%
     dplyr::group_by(!!unique.id.col) %>%
     dplyr::mutate(total = sum(!!count.col)) %>%
     dplyr::ungroup() %>%

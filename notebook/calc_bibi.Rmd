@@ -9,26 +9,32 @@ library(mmir)
 ```
 
 ```{r}
-rsc_200.df <- readxl::read_excel("D:/ZSmith/Projects/Chessie_BIBI/greg_pond/rsc_taxa_10_16_17.xlsx",
-                                 sheet = "200_count") %>% 
+rsc_200.df <-
+  readxl::read_excel("D:/ZSmith/Projects/Chessie_BIBI/greg_pond/rsc_taxa_10_16_17.xlsx",
+  sheet = "200_count") %>%
   mutate(type = "200")
-
-rsc_120.df <- readxl::read_excel("D:/ZSmith/Projects/Chessie_BIBI/greg_pond/rsc_taxa_10_16_17.xlsx",
-                                 sheet = "120_count") %>% 
+  
+  rsc_120.df <-
+  readxl::read_excel("D:/ZSmith/Projects/Chessie_BIBI/greg_pond/rsc_taxa_10_16_17.xlsx",
+  sheet = "120_count") %>%
   mutate(type = "120")
-
-rsc.df <- bind_rows(rsc_200.df, rsc_120.df) %>% 
-  rename(sample_id = "Sample ID",
-         final_id = "Final ID",
-         count = "Count",
-         tsn = "Taxonomic Serial Number") %>% 
-  select(sample_id, type, final_id, count, tsn) %>% 
-  mutate(tsn = as.character(tsn),
-         bioregion = "sep", 
-         unique_id = paste(sample_id, type, sep = "_")) %>% 
-  select(unique_id, everything(), - tsn) %>% 
+  
+  rsc.df <- bind_rows(rsc_200.df, rsc_120.df) %>%
+  rename(
+  sample_id = "Sample ID",
+  final_id = "Final ID",
+  count = "Count",
+  tsn = "Taxonomic Serial Number"
+  ) %>%
+  select(sample_id, type, final_id, count, tsn) %>%
+  mutate(
+  tsn = as.character(tsn),
+  bioregion = "sep",
+  unique_id = paste(sample_id, type, sep = "_")
+  ) %>%
+  select(unique_id, everything(),-tsn) %>%
   clean_df()
-rm(rsc_200.df, rsc_120.df)
+  rm(rsc_200.df, rsc_120.df)
 ```
 
 ```{r}
