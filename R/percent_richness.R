@@ -47,6 +47,8 @@ taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
                     !!high.taxa.col, !!exclusion.col) %>%
       dplyr::distinct()
   }
+
+  taxa.counts <- taxa.counts[complete.cases(taxa.counts),]
   #----------------------------------------------------------------------------
   distinct.df <- taxa.counts %>%
     dplyr::select(!!unique.id.col) %>%
