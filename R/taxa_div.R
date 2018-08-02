@@ -137,10 +137,10 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
   return(final.vec)
 }
 
-test <- taxa_div(onondaga,
-         unique.id.col = unique_id,
-         count.col = reporting_value,
-         low.taxa.col = order,
-         high.taxa.col = genus,
-         taxon = c("ephemeroptera", "plecoptera", "trichoptera"),
-         job = "shannon", base.log = 2)
+# test <- taxa_div(onondaga,
+#          unique.id.col = unique_id,
+#          count.col = reporting_value,
+#          low.taxa.col = order,
+#          high.taxa.col = genus,
+#          taxon = c("ephemeroptera", "plecoptera", "trichoptera"),
+#          job = "shannon", base.log = 2)

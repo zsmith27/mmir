@@ -26,7 +26,7 @@
 #' with degradation.
 #'@export
 
-pct_dom <- function(long.df, unique.id.col, count.col, taxa.col, dom.level){
+taxa_dom <- function(long.df, unique.id.col, count.col, taxa.col, dom.level){
   unique.id.col = rlang::enquo(unique.id.col)
   count.col = rlang::enquo(count.col)
   taxa.col = rlang::enquo(taxa.col)
