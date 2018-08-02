@@ -26,6 +26,8 @@ prob_rarefaction <- function(long.df, unique.id.col, count.col, taxon.col, sampl
     dplyr::mutate(!!quo_name(count.col) := if_else(is.na(!!count.col),
                                                    as.integer(0),
                                                    as.integer(!!count.col))) %>%
+    dplyr::group_by(!!unique.id.col, !!taxon.col) %>%
+    dplyr::summarize(!!quo_name(count.col) := sum(!!count.col)) %>%
     dplyr::group_by(!!unique.id.col) %>%
     dplyr::mutate(total = sum(!!count.col)) %>%
     dplyr::ungroup() %>%
@@ -54,7 +56,8 @@ prob_rarefaction <- function(long.df, unique.id.col, count.col, taxon.col, sampl
   last.value <- rare.df %>%
     dplyr::select(!!unique.id.col, !!count.col, rare, rare_count) %>%
     dplyr::group_by(!!unique.id.col) %>%
-    dplyr::filter(dplyr::desc(!!count.col) %>%  dplyr::row_number() == rare) %>%
+    # dplyr::mutate(row_num = dplyr::row_number(dplyr::desc(!!count.col)))
+    dplyr::filter(dplyr::row_number(dplyr::desc(!!count.col)) == rare) %>%
     dplyr::select(!!unique.id.col, rare_count) %>%
     dplyr::rename(last_value = rare_count) %>%
     dplyr::distinct() %>%
