@@ -56,7 +56,7 @@ fill_taxa <- function(long.df, final.id.col, ...) {
   final.id.col <- rlang::enquo(final.id.col)
 
   rank.vec <- long.df %>%
-    select(!!!rank.quos) %>%
+    dplyr::select(!!!rank.quos) %>%
     names()
 
   final.df <- long.df %>%
