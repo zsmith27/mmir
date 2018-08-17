@@ -224,7 +224,9 @@ sensitivity <- function(metrics.long, first.metric, condition.colname,
     names(barb.df)[names(barb.df) %in% "SENSITIVITY"] <- "BARBOUR_SENSITIVITY"
     names(de.df)[names(de.df) %in% "SENSITIVITY"] <- "DE_SENSITIVITY"
     names(bde.df)[names(bde.df) %in% "SENSITIVITY"] <- "BDE_SENSITIVITY"
-    final.df <- plyr::join_all(list(barb.df, de.df, bde.df), c("METRICS", "DISTURBANCE"))
+    # final.df <- plyr::join_all(list(barb.df, de.df, bde.df), c("METRICS", "DISTURBANCE"))
+    final.df <- dplyr::full_join(barb.df, de.df, by = c("METRICS", "DISTURBANCE")) %>%
+      dplyr::full_join(bde.df, by = c("METRICS", "DISTURBANCE"))
   } else {
     if(exists("barb.df")) final.df <- barb.df
     if(exists("de.df")) final.df <- de.df
