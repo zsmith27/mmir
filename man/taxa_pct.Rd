@@ -4,7 +4,7 @@
 \alias{taxa_pct}
 \title{Percentage of a Specified Taxon}
 \usage{
-taxa_pct(long.df, unique.id.col, count.col, rank.col, rank, taxon.col, taxon,
+taxa_pct(long.df, unique.id.col, count.col, taxon.col, taxon,
   exclusion.col = NULL, exclusion.vec = NULL)
 }
 \arguments{
