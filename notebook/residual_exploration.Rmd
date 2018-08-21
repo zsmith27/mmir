@@ -180,3 +180,80 @@ test.summary <- test %>%
   summarize(count = n()) %>% 
   mutate(pct = count / 16 * 100)
 ```
+
+
+
+```{r}
+mean10.df <- train.df %>% 
+  group_by(lake, sample_number) %>% 
+  summarize_at(vars(-unique_id), mean) %>% 
+  gather(taxon, mean, -lake, -sample_number) %>% 
+  rename(mean_lake = lake) %>% 
+  group_by(mean_lake) %>% 
+  arrange(mean_lake, desc(mean)) %>% 
+  slice(1:10) %>% 
+  ungroup()
+```
+
+```{r}
+mean10.resid <- test.df %>% 
+  gather(taxon, value, -lake, -unique_id, -sample_number) %>% 
+  inner_join(mean10.df, by = "taxon") %>% 
+  mutate(residual = abs(value - mean)) %>% 
+  group_by(mean_lake, unique_id) %>% 
+  summarize(sum_resid = sum(residual)) %>% 
+  group_by(unique_id) %>% 
+  filter(sum_resid == min(sum_resid)) %>% 
+  rename(prediction = mean_lake) %>% 
+  ungroup()
+```
+
+```{r}
+mean10.summary <- mean10.resid %>% 
+  select(unique_id, prediction) %>% 
+  separate(unique_id, c("lake", "site", "sample_number"), remove = FALSE) %>% 
+  group_by(lake, prediction) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count / 16 * 100)
+```
+
+```{r}
+mean30.df <- train.df %>% 
+  group_by(lake, sample_number) %>% 
+  summarize_at(vars(-unique_id), mean) %>% 
+  gather(taxon, mean, -lake, -sample_number) %>% 
+  rename(mean_lake = lake) %>% 
+  group_by(mean_lake) %>% 
+  arrange(mean_lake, desc(mean)) %>% 
+  slice(1:10) %>% 
+  ungroup()
+
+mean30.df <- train.df %>% 
+  group_by(lake, sample_number) %>% 
+  summarize_at(vars(-unique_id), mean) %>% 
+  gather(taxon, mean, -lake, -sample_number) %>% 
+  rename(mean_lake = lake) %>% 
+  filter(taxon %in% mean30.df$taxon)
+```
+
+```{r}
+mean30.resid <- test.df %>% 
+  gather(taxon, value, -lake, -unique_id, -sample_number) %>% 
+  inner_join(mean30.df, by = "taxon") %>% 
+  mutate(residual = abs(value - mean)) %>% 
+  group_by(mean_lake, unique_id) %>% 
+  summarize(sum_resid = sum(residual)) %>% 
+  group_by(unique_id) %>% 
+  filter(sum_resid == min(sum_resid)) %>% 
+  rename(prediction = mean_lake) %>% 
+  ungroup()
+```
+
+```{r}
+mean30.summary <- mean30.resid %>% 
+  select(unique_id, prediction) %>% 
+  separate(unique_id, c("lake", "site", "sample_number"), remove = FALSE) %>% 
+  group_by(lake, prediction) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count / 16 * 100)
+```
