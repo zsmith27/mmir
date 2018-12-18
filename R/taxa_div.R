@@ -15,30 +15,31 @@
 #'@return A numeric vector of percentages.
 #'@export
 
-taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
+taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col = NULL,
                      high.taxa.col, taxon = NULL,
                      job, base.log, q) {
   #------------------------------------------------------------------------------
   # Prep.
   unique.id.col <- rlang::enquo(unique.id.col)
   high.taxa.col <- rlang::enquo(high.taxa.col)
-  low.taxa.col <- rlang::enquo(low.taxa.col)
+  if (!is.null(low.taxa.col)) low.taxa.col <- rlang::enquo(low.taxa.col)
   count.col <- rlang::enquo(count.col)
   count.col.name <- rlang::sym(rlang::quo_name(count.col))
   #------------------------------------------------------------------------------
-  if (!rlang::quo_is_missing(low.taxa.col) && is.null(taxon)) {
+  if (!is.null(low.taxa.col) && is.null(taxon)) {
     paste("Specifying a 'low.taxa.col' is only useful if you",
           "also specify a 'taxon' found in 'low.taxa.col'.") %>%
-    stop()
+      stop()
   }
-  if (!is.null(taxon) && rlang::quo_is_missing(low.taxa.col)) {
+  if (!is.null(taxon) && is.nulll(low.taxa.col)) {
     paste("Specifying a 'taxon' is only useful if you",
           "also specify the 'low.taxa.col' that contains the 'taxon'.") %>%
       stop()
   }
 
   #------------------------------------------------------------------------------
-  if (!is.null(taxon) && !rlang::quo_is_missing(low.taxa.col)) {
+  if (!is.null(taxon) && !rlang::quo_is_null(low.taxa.col)) {
+    print("Test")
     prep_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
                          high.taxa.col, taxon = NULL) {
       unique.id.col <- rlang::enquo(unique.id.col)
@@ -52,7 +53,7 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
       long.sub <- tidyr::complete(long.df, !!!syms(quo_name(unique.id.col)), !!!syms(quo_name(low.taxa.col)))
       long.sub <- long.sub %>%
         dplyr::mutate(!!count.col.name := dplyr::if_else(is.na(!!count.col), 0, as.double(!!count.col))) %>%
-        dplyr::filter(rlang::UQ(low.taxa.col) %in% taxon)# %>%
+        dplyr::filter((!!low.taxa.col) %in% taxon)# %>%
       # dplyr::rename(quo_name(count.col) = count)
 
       agg.df <- long.sub %>%
@@ -66,9 +67,9 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
       return(agg.df)
     }
     agg.df <- prep_div(long.df, !!unique.id.col, !!count.col,
-             !!low.taxa.col,
-             !!high.taxa.col,
-             taxon)
+                       !!low.taxa.col,
+                       !!high.taxa.col,
+                       taxon)
   } else {
     agg.df <- long.df %>%
       dplyr::select(!!unique.id.col, !!high.taxa.col, !!count.col) %>%
@@ -80,7 +81,7 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
   if(job %in% c("shannon", "effective_shannon")) {
     final.vec <- agg.df %>%
       dplyr::group_by(!!unique.id.col, !!high.taxa.col, total) %>%
-      dplyr::summarize(count = sum(rlang::UQ(count.col))) %>%
+      dplyr::summarize(count = sum(!!count.col)) %>%
       dplyr::mutate(p = count / total) %>%
       dplyr::mutate(log_p = -p * log(p, base.log)) %>%
       dplyr::group_by(!!unique.id.col) %>%
@@ -94,7 +95,7 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
   if(job %in% c("simpson", "invsimpson", "gini_simpson", "effective_simpson")) {
     final.vec <- agg.df %>%
       dplyr::group_by(!!unique.id.col, !!high.taxa.col, total) %>%
-      dplyr::summarize(count = sum(rlang::UQ(count.col))) %>%
+      dplyr::summarize(count = sum(!!count.col)) %>%
       dplyr::mutate(p = count / total,
                     p = p ^ 2) %>%
       dplyr::group_by(!!unique.id.col) %>%
@@ -123,7 +124,7 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
   if(job %in% c("hill", "renyi")) {
     final.vec <- agg.df %>%
       dplyr::group_by(!!unique.id.col, !!high.taxa.col, total) %>%
-      dplyr::summarize(count.col = sum(rlang::UQ(count.col))) %>%
+      dplyr::summarize(count.col = sum(!!count.col)) %>%
       dplyr::mutate(p = count.col / total,
                     p = p ^ q) %>%
       dplyr::group_by(!!unique.id.col) %>%
@@ -136,6 +137,7 @@ taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col,
   #------------------------------------------------------------------------------
   return(final.vec)
 }
+
 
 # test <- taxa_div(onondaga,
 #          unique.id.col = unique_id,
