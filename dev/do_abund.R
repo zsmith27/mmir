@@ -1,24 +1,20 @@
-#'Abundance of a Specified Taxon
-#'@description Calculate the abundance of each sample represented by the
-#'specified taxon or taxa.
-#'@param long.df Taxonomic counts arranged in a long data format.
-#'@param count.col The name of the column that contains taxanomic counts.
-#'@param taxon.col The name of the column that contains the taxon or taxa
-#'of interest.
-#'@param taxon The taxon or taxa of interest. To specify more than one taxa
-#'use: c("TAXA1", "TAXA2", "TAXA3").
-#'@return A numeric vector of percentages.
-#'@export
+long.df <- onondaga
+count.col <- rlang::quo(reporting_value)
+taxon.col <- rlang::quo(order)
+taxon <- "ephemeroptera"
+exclusion.col = NULL
+exclusion.vec = NULL
 
-taxa_abund <- function(long.df, count.col, taxon.col, taxon = NULL,
-                        exclusion.col = NULL, exclusion.vec = NULL) {
+taxa_abund2 <- function(long.df, count.col, taxon.col, taxon = NULL,
+                       exclusion.col = NULL, exclusion.vec = NULL) {
 
-  # prep --------------------------------------------------------------------
+# prep --------------------------------------------------------------------
   taxon.col <- rlang::enquo(taxon.col)
   count.col <- rlang::enquo(count.col)
   exclusion.col <- rlang::enquo(exclusion.col)
   #----------------------------------------------------------------------------
   if (rlang::quo_is_null(exclusion.col)) {
+    # Aggregate taxonomic counts at the specified taxonomic levels.
     taxa.counts <- long.df %>%
       dplyr::select(!!taxon.col, !!count.col)
   } else {
@@ -44,4 +40,18 @@ taxa_abund <- function(long.df, count.col, taxon.col, taxon = NULL,
   #----------------------------------------------------------------------------
   return(final.vec)
 }
-#==============================================================================
+
+
+abund.df2 <- onondaga %>%
+  group_by(unique_id) %>%
+  do(abund_ephemeroptera = taxa_abund2(.,
+                                       # unique.id.col = unique_id,
+                                       count.col = reporting_value,
+                                       taxon.col = order,
+                                       taxon = "ephemeroptera"),
+     abund_ept = taxa_abund2(.,
+                             # unique.id.col = unique_id,
+                             count.col = reporting_value,
+                             taxon.col = order,
+                             taxon = c("ephemeroptera", "plecoptera", "trichoptera"))
+  )

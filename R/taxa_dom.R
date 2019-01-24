@@ -2,8 +2,6 @@
 #'Percentage of the Most Dominant Taxon (Taxa)
 #'
 #'@param long.df Taxonomic counts arranged in a long data format.
-#'@param unique.id.col The name of the column that contains a unique sampling
-#'event ID.
 #'@param count.col The name of the column that contains taxanomic counts.
 #'@param taxon.cols The name of the column(s) that contains the taxa
 #'of interest.
@@ -26,19 +24,16 @@
 #' with degradation.
 #'@export
 
-taxa_dom <- function(long.df, unique.id.col, count.col, taxa.col, dom.level){
-  unique.id.col = rlang::enquo(unique.id.col)
+taxa_dom <- function(long.df, count.col, taxa.col, dom.level) {
   count.col = rlang::enquo(count.col)
   taxa.col = rlang::enquo(taxa.col)
   #----------------------------------------------------------------------------
   final.vec <- long.df %>%
-    dplyr::group_by(!!unique.id.col, !!taxa.col) %>%
-    dplyr::summarise(COUNT = sum(rlang::UQ(count.col))) %>%
-    dplyr::group_by(!!unique.id.col) %>%
-    dplyr::mutate(TOTAL = sum(COUNT)) %>%
-    dplyr::filter(row_number(desc(COUNT)) <= dom.level) %>%
-    dplyr::summarise(percent = sum(COUNT) / unique(TOTAL) * 100) %>%
-    original_order(long.df, !!unique.id.col) %>%
+    dplyr::group_by(!!taxa.col) %>%
+    dplyr::summarise(count = sum(!!count.col)) %>%
+    dplyr::mutate(total = sum(count)) %>%
+    dplyr::filter(dplyr::row_number(dplyr::desc(count)) <= dom.level) %>%
+    dplyr::summarize(percent = sum(count) / unique(total) * 100) %>%
     dplyr::pull(percent)
   #----------------------------------------------------------------------------
   return(final.vec)

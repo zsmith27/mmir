@@ -31,11 +31,15 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
       pull(!!col.i)
     taxa.df <- sapply(taxa.vec, function(taxa.i) {
       if (job == "pct") {
-        vec.i <- taxa_pct(long.df,
-                          unique.id.col = rlang::UQ(u.col),
-                          count.col = rlang::UQ(c.col),
-                          taxon.col = rlang::UQ(rlang::sym(col.i)),
-                          taxon = taxa.i)
+        vec.i <- long.df %>%
+          dplyr::group_by(!!unique.id.col) %>%
+          dplyr::summarize(
+            final_col = taxa_pct(long.df = .,
+                                 count.col = !!c.col,
+                                 taxon.col = !!rlang::sym(col.i),
+                                 taxon = taxa.i)
+          )
+
       }
       #------------------------------------------------------------------------
       if (job == "rich") {

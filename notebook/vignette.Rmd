@@ -50,12 +50,6 @@ This data is not ideal for this example because it was not collected with the in
 data("onondaga", package = "mmir")
 ```
 
-Create a data frame that will store the calculated metrics. This should include a unique site ID and possibly a few other important columns, such as stream gradient classification column (e.g., Reference and Degraded). I recommend not carrying all of the site information through the metric calculation process because it can easily be appended at the end of the calculation process or at another later step. This will reduce clutter, allowing you to focus on the metric values, and will help you manage memory allocation. Additionally, do __NOT__ alter the order of the unique identifier. The output from each metric function is a vector in the order of the supplied data frame of taxonomic counts (in this case `onondaga`). If the unique identifier is rearranged, no error will appear but the metric values will be associated with incorrect unique identifier.
-```{r}
-metrics.key <- onondaga %>% 
-  select(unique_id, lake) %>% 
-  distinct()
-```
 
 ## Input Variable Definitions
 
@@ -76,10 +70,13 @@ Richness refers to the number of unique taxa. Typically, richness is used to ref
 
 `taxa_rich()` is used to calculate richness. A long format data frame containing taxonomic counts is specified as the `long.df` variable (`onondaga`). The name of a unique ID column is specified for the `unique.id.col` variable (`unique_id`). Note that this is done with NSE syntax (i.e., no quotes). The `low.taxa.col` and `high.taxa.col` refer to low resolution and high resolution taxonomic rank columns of interest. `high.taxa.col` is required but `low.taxa.col` is only necessary when calculating subgroup richness. Furthermore, the `taxon` variable is only necessary for specifying which taxon or taxa will be used to calculate subgroup richness; therefore, when calculating community richness, `taxon` should be set to `NULL`. In this example family-level and genus-level community richness are calculated and appended to `metrics.key`. `DT::datatable()` is only used to present interactive tables in this document.
 ```{r}
-rich.df <- metrics.key %>% 
-  dplyr::mutate(
-    rich_family = taxa_rich(onondaga, unique_id, order, family, taxon = NULL),
-    rich_genus = taxa_rich(onondaga, unique_id, order, genus, taxon = NULL)
+rich.df <- onondaga %>% 
+  group_by(unique_id) %>% 
+  dplyr::do(
+    rich_family = taxa_rich(., order, family, taxon = NULL,
+                            fa),
+    rich_genus = taxa_rich(., 
+                           order, genus, taxon = NULL)
   )
 
 DT::datatable(rich.df, options = list(scrollX = TRUE))  
@@ -158,19 +155,35 @@ DT::datatable(subdiv.df, options = list(scrollX = TRUE))
 
 ## Community Metrics
 
+### Dominance
+
+```{r}
+dom.df <- onondaga %>% 
+  group_by(unique_id) %>% 
+  dplyr::do(
+   dom_1 = taxa_dom(long.df = .,
+                    count.col = reporting_value,
+                    taxa.col = genus, 
+                    dom.level = 1),
+   dom_2 = taxa_dom(long.df = .,
+                    count.col = reporting_value,
+                    taxa.col = genus, 
+                    dom.level = 2)
+  )
+```
+
 ### Percentages
 
 `taxa_pct()` calculates the percentage of the sample represented by a taxon or taxa. The example below shows how to calculate the percentage of a single taxon, Ephemeroptera (`pct_ephemeroptera`), and multiple taxa, EPT (`pct_ept`). Remember that `taxon.col` refers to the name of the column that contains the taxon or taxa of interest. The `taxon` variable is then used to specify these taxon or taxa.
 ```{r}
-pct.df <- metrics.key %>% 
-  dplyr::mutate(
-    pct_ephemeroptera = taxa_pct(long.df = onondaga,
-                                  unique.id.col = unique_id,
+pct.df <- onondaga %>% 
+  group_by(unique_id) %>% 
+  dplyr::do(
+    pct_ephemeroptera = taxa_pct(long.df = .,
                                   count.col = reporting_value,
                                   taxon.col = order,
                                   taxon = "ephemeroptera"),
-    pct_ept = taxa_pct(onondaga,
-                        unique.id.col = unique_id,
+    pct_ept = taxa_pct(long.df = .,
                         count.col = reporting_value,
                         taxon.col = order,
                         taxon = c("ephemeroptera", "plecoptera", "trichoptera"))
@@ -183,15 +196,14 @@ DT::datatable(pct.df, options = list(scrollX = TRUE))
 
 Abundance refers to reported taxonomic count but may represent counts aggregated at a lower resolution taxonomic rank. For example, taxa may be reported at the genus-level but abundance could be calculated at the order-level. Generally, I have not found abundance metrics used in macorinvertebrate indices but they are common in fish indices. `taxa_abund()` has the same input as `taxa_pct()` (See [Percentages]).
 ```{r}
-abund.df <- metrics.key %>% 
-  dplyr::mutate(
-    abund_ephemeroptera = taxa_abund(onondaga,
-                                  unique.id.col = unique_id,
+abund.df <- onondaga %>% 
+  group_by(unique_id) %>% 
+  dplyr::do(
+    abund_ephemeroptera = taxa_abund(long.df = .,
                                   count.col = reporting_value,
                                   taxon.col = order,
                                   taxon = "ephemeroptera"),
-    abund_ept = taxa_abund(onondaga,
-                        unique.id.col = unique_id,
+    abund_ept = taxa_abund(long.df = .,
                         count.col = reporting_value,
                         taxon.col = order,
                         taxon = c("ephemeroptera", "plecoptera", "trichoptera"))
