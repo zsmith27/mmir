@@ -1,0 +1,67 @@
+---
+title: "Rarefaction Example"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+---
+
+# Preparation
+
+Install and load the __tidyverse__ packages developed by R Studio. This is a collection of packages that make it easier to import, manipulate, and plot data. Also, load in __vegan__.
+```{r, messages=FALSE, warning=FALSE}
+#install.packages("tidyverse")
+suppressPackageStartupMessages(
+  library(tidyverse)
+  )
+suppressPackageStartupMessages(
+library(vegan)
+)
+```
+
+Install the Multi-Metric Index (MMI) package, __mmir__, that I am developing from Git Hub. The package, __devtools__, must be installed to use the `install_github()` function. Make sure you install the development version (`ref = "dev"`).
+```{r, eval=FALSE}
+devtools::install_github("zsmith27/mmir", ref = "dev", force = TRUE, quiet = TRUE)
+```
+
+Once __mmir__ is installed, load the packages with `library()`.
+```{r}
+library(mmir)
+```
+
+__mmir__ contains my thesis data, _onondaga_, as an example data set.
+```{r}
+data("onondaga")
+```
+
+The data is loaded in a long data format and must be converted to a wide data format for __vegan__. This means that each row represents a unique site and each column represents a unique taxon.
+```{r}
+onon.wide <- onondaga %>% 
+  select(unique_id, final_id, reporting_value) %>% 
+  group_by(unique_id, final_id) %>% 
+  summarize(reporting_value = sum(reporting_value)) %>% 
+  ungroup() %>% 
+  spread(final_id, reporting_value, fill = 0)
+```
+
+# Rarefaction
+
+To obtain a rarefied sample you want to use __vegan's__ function, `rrarefy()`. `rrarefy()` will provide you with sampled taxonomic counts, while `rarefy()` will simply provide you with species richness for sampled taxonomic counts. Typically, when rarefying counts the user wants to sample each site by a single specified count (e.g., 100 or 200). To vary this count as 200 ± 20, or as in this example 100 ± 20, you need to use a loop.  I'm using the __purrr__ package function `map_df()` to loop through each row of my wide data frame, where each row represents a site. During each iteration of the loop one site (one row) is rarefied and a random number between 80 and 120 is selected as the sample size (you will want to change these numbers to 180:220 but leave the ", 1", which means that 1 integer will be randomly selected between 180 and 220). Warning messages are suppressed because `rrarefy()` will return "Some row sums < 'sample' and are not rarefied" when the when the site has fewer taxonomic counts than the specified rarefaction sample size; this is not necessary but I found the messages annoying. The output is then appended with my unique identifier column from my wide data frame (`onon.wide[, 1]`), to provide identify which site each row represents. Finally, the columns are re-ordered using `dplyr::select()` to make the unique identifier (`unique_id`) the first column of the data frame.
+```{r}
+rarefied.df <- purrr::map_df(1:nrow(onon.wide), function(row.i) {
+  suppressWarnings(
+  data.frame(vegan::rrarefy(onon.wide[row.i, 2:ncol(onon.wide)], sample(80:120, 1)))
+  )
+}) %>% 
+  bind_cols(onon.wide[, 1]) %>% 
+  select(unique_id, everything())
+```
+
+# Check
+
+This will provide a simple check that everything is working as expected. The total count for each site is found using `rowSums()`. `summary()` is used to identify the min and max of the total count. Min may be lower than your specified lower bound (i.e., 180), if the sample contained fewer than 180 taxa. However, Max should never be greater than your specified upper bound (i.e., 220).
+```{r}
+rowSums(rarefied.df[, 2:ncol(rarefied.df)]) %>% 
+  summary()
+```
+
