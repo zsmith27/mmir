@@ -18,8 +18,8 @@
 taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
                      high.taxa.col = NULL, keep.na = FALSE, job,
                      base.log = NULL, q = NULL){
-  u.col <- rlang::enquo(unique.id.col)
-  c.col <- rlang::enquo(count.col)
+  unique.id.col <- rlang::enquo(unique.id.col)
+  count.col <- rlang::enquo(count.col)
   #if (!is.null(high.taxa.col)) high.taxa.col <- rlang::enquo(rlang::sym(high.taxa.col))
   kn <- keep.na
   #----------------------------------------------------------------------------
@@ -29,13 +29,13 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
       dplyr::distinct() %>%
       dplyr::filter(!is.na(.)) %>%
       pull(!!col.i)
-    taxa.df <- sapply(taxa.vec, function(taxa.i) {
+    taxa.df <- lapply(taxa.vec, function(taxa.i) {
       if (job == "pct") {
         vec.i <- long.df %>%
           dplyr::group_by(!!unique.id.col) %>%
-          dplyr::summarize(
-            final_col = taxa_pct(long.df = .,
-                                 count.col = !!c.col,
+          dplyr::do(
+            !!rlang::sym(taxa.i) := taxa_pct(long.df = .,
+                                 count.col = !!count.col,
                                  taxon.col = !!rlang::sym(col.i),
                                  taxon = taxa.i)
           )
@@ -85,7 +85,9 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
       #------------------------------------------------------------------------
       return(vec.i)
     }) %>%
+      purrr::reduce(left_join)
       as.data.frame() %>%
+
       rename_all(tolower)
 
     names(taxa.df) <- paste(job, names(taxa.df), sep = "_")
