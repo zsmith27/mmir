@@ -33,8 +33,9 @@ taxa_abund <- function(long.df, unique.id.col, count.col, taxon.col, taxon = NUL
       pull(abund)
   } else {
     final.vec <- long.df %>%
+      dplyr::filter((!!taxon.col) %in% taxon) %>%
       group_by(!!unique.id.col) %>%
-      dplyr::summarize(abund = sum((!!count.col)[(!!taxon.col) %in% taxon]))  %>%
+      dplyr::summarize(abund = sum(!!count.col)) %>%
       original_order(long.df, !!unique.id.col) %>%
       dplyr::mutate(abund = as.numeric(abund),
                     abund = dplyr::if_else(!is.na(abund), abund, as.double(0))) %>%
