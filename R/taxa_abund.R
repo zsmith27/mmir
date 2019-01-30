@@ -20,32 +20,25 @@ taxa_abund <- function(long.df, unique.id.col, count.col, taxon.col, taxon = NUL
   count.col <- enquo(count.col)
   exclusion.col <- enquo(exclusion.col)
   #----------------------------------------------------------------------------
-  if (rlang::quo_is_null(exclusion.col)) {
-    # Aggregate taxonomic counts at the specified taxonomic levels.
-    taxa.counts <- long.df %>%
-      dplyr::select(!!unique.id.col, !!taxon.col, !!count.col)
-  } else {
-    taxa.counts <- long.df %>%
-      dplyr::select(!!unique.id.col, !!taxon.col,
-                    !!count.col, !!exclusion.col) %>%
-      dplyr::filter(!rlang::UQ(exclusion.col) %in% exclusion.vec)
+  if (!rlang::quo_is_null(exclusion.col)) {
+    long.df <- dplyr::filter(long.df, !(!!exclusion.col) %in% exclusion.vec)
   }
   #----------------------------------------------------------------------------
   # Calculate the percentage of the specified taxon.
   if (is.null(taxon)) {
-    final.vec <- taxa.counts %>%
+    final.vec <- long.df %>%
       group_by(!!unique.id.col) %>%
-      summarise(INDV = sum(UQ(count.col))) %>%
+      summarise(abund = sum(!!count.col)) %>%
       original_order(long.df, !!unique.id.col) %>%
-      pull(INDV)
+      pull(abund)
   } else {
-    final.vec <- taxa.counts %>%
+    final.vec <- long.df %>%
       group_by(!!unique.id.col) %>%
-      summarise(INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon])) %>%
+      dplyr::summarize(abund = sum((!!count.col)[(!!taxon.col) %in% taxon]))  %>%
       original_order(long.df, !!unique.id.col) %>%
-      dplyr::mutate(INDV = as.numeric(INDV),
-                    INDV = dplyr::if_else(!is.na(INDV), INDV, as.double(0))) %>%
-      pull(INDV)
+      dplyr::mutate(abund = as.numeric(abund),
+                    abund = dplyr::if_else(!is.na(abund), abund, as.double(0))) %>%
+      dplyr::pull(abund)
   }
   #----------------------------------------------------------------------------
   return(final.vec)

@@ -22,9 +22,9 @@ taxa_tol_index <- function(long.df, unique.id.col, count.col, tol.col) {
 
   score.vec <- long.df %>%
     filter(!is.na(!!!tol.col),
-           !rlang::UQ(tol.col) %in% c("")) %>%
+           !(!!tol.col) %in% c("")) %>%
     select(!!unique.id.col, !!tol.col, !!count.col) %>%
-    mutate(score = rlang::UQ(count.col) * rlang::UQ(tol.col)) %>%
+    mutate(score = (!!count.col) * (!!tol.col)) %>%
     group_by(!!unique.id.col) %>%
     summarize(score = sum(score),
               taxa = sum(!!count.col),

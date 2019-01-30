@@ -26,30 +26,25 @@ taxa_pct <- function(long.df, unique.id.col, count.col,
   # rank.col <- enquo(rank.col)
   exclusion.col <- enquo(exclusion.col)
   #----------------------------------------------------------------------------
-  if (rlang::quo_is_null(exclusion.col)) {
-    # Aggregate taxonomic counts at the specified taxonomic levels.
-    taxa.counts <- long.df %>%
-      dplyr::select(!!unique.id.col, !!taxon.col, !!count.col)
-  } else {
-    taxa.counts <- long.df %>%
-      dplyr::select(!!unique.id.col, !!taxon.col,
-                    !!count.col, !!exclusion.col) %>%
-      dplyr::filter(!rlang::UQ(exclusion.col) %in% exclusion.vec)
+  if (!rlang::quo_is_null(exclusion.col)) {
+    long.df <- dplyr::filter(long.df, !(!!exclusion.col) %in% exclusion.vec)
   }
   #----------------------------------------------------------------------------
   # Calculate the percentage of the specified taxon.
-  final.vec <- taxa.counts%>%
-    group_by(rlang::UQ(unique.id.col)) %>%
-    summarise(TOTAL = sum(rlang::UQ(count.col))) %>%
+  final.vec <- taxa.counts %>%
+    dplyr::group_by(!!unique.id.col) %>%
+    dplyr::summarize(total = sum(!!count.col)) %>%
     original_order(long.df, !!unique.id.col) %>%
-    mutate(INDV = taxa_abund(taxa.counts, !!unique.id.col, !!count.col,
-                             !!taxon.col, taxon,
-                             !!exclusion.col, exclusion.vec),
-           #INDV = sum(UQ(count.col)[UQ(taxon.col) %in% taxon]),
-           PCT = INDV / TOTAL * 100) %>%
+    dplyr::mutate(abund = taxa_abund(long.df = long.df,
+                                     count.col = !!count.col,
+                                     taxon.col = !!taxon.col,
+                                     taxon = taxon,
+                                     exclusion.col = !!exclusion.col,
+                                     exclusion.vec = exclusion.vec),
+                  pct = abund / total * 100) %>%
     original_order(long.df, !!unique.id.col) %>%
-    dplyr::mutate(PCT = dplyr::if_else(!is.na(PCT), PCT, as.double(0))) %>%
-    pull(PCT)
+    dplyr::mutate(pct = dplyr::if_else(!is.na(pct), pct, as.double(0))) %>%
+    dplyr::pull(pct)
   #----------------------------------------------------------------------------
   return(final.vec)
 }
