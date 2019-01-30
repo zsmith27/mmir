@@ -24,17 +24,28 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
   kn <- keep.na
   #----------------------------------------------------------------------------
   list.metrics <- lapply(taxa.cols, function(col.i) {
+    # print(col.i)
+    col.i <- rlang::sym(col.i)
     taxa.vec <- long.df %>%
       dplyr::select(!!col.i) %>%
       dplyr::distinct() %>%
       dplyr::filter(!is.na(.)) %>%
-      pull(!!col.i)
+      pull(!!col.i) %>%
+      stringr::str_trim()
+
+    taxa.vec <- taxa.vec[stringr::str_length(taxa.vec) > 0]
+
+    if (length(taxa.vec) == 0) return(data.frame())
+
+    length(taxa.vec)
+    str_length(taxa.vec)
+    grepl("", taxa.vec)
     taxa.df <- sapply(taxa.vec, function(taxa.i) {
       if (job == "pct") {
         vec.i <- taxa_pct(long.df,
-                          unique.id.col = rlang::UQ(u.col),
-                          count.col = rlang::UQ(c.col),
-                          taxon.col = rlang::UQ(rlang::sym(col.i)),
+                          unique.id.col = !!u.col,
+                          count.col = !!c.col,
+                          taxon.col = !!rlang::sym(col.i),
                           taxon = taxa.i)
       }
       #------------------------------------------------------------------------
@@ -42,9 +53,9 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
         if (is.null(high.taxa.col)) stop("high.taxa.col must be speciefied to calculate richness values.")
 
         vec.i <- taxa_rich(long.df,
-                           unique.id.col = rlang::UQ(u.col),
-                           low.taxa.col = rlang::UQ(rlang::sym(col.i)),
-                           high.taxa.col = rlang::UQ(rlang::sym(high.taxa.col)),
+                           unique.id.col = !!u.col,
+                           low.taxa.col = !!rlang::sym(col.i),
+                           high.taxa.col = !!rlang::sym(high.taxa.col),
                            taxon = taxa.i)
       }
       #------------------------------------------------------------------------
@@ -52,17 +63,17 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
         if (is.null(high.taxa.col)) stop("high.taxa.col must be speciefied to calculate percent richness values.")
 
         vec.i <- taxa_pct_rich(long.df,
-                           unique.id.col = rlang::UQ(u.col),
-                           low.taxa.col = rlang::UQ(rlang::sym(col.i)),
-                           high.taxa.col = rlang::UQ(rlang::sym(high.taxa.col)),
+                           unique.id.col = !!u.col,
+                           low.taxa.col = !!rlang::sym(col.i),
+                           high.taxa.col = !!rlang::sym(high.taxa.col),
                            taxon = taxa.i)
       }
       #------------------------------------------------------------------------
       if (job == "abund") {
         vec.i <- taxa_abund(long.df,
-                            unique.id.col = rlang::UQ(u.col),
-                            count.col = rlang::UQ(c.col),
-                            taxon.col = rlang::UQ(rlang::sym(col.i)),
+                            unique.id.col = !!u.col,
+                            count.col = !!c.col,
+                            taxon.col = !!rlang::sym(col.i),
                             taxon = taxa.i)
       }
       #------------------------------------------------------------------------
@@ -70,9 +81,9 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
                      "gini_simpson", "effective_simpson", "pielou",
                      "margalef", "menhinick", "hill", "renyi")) {
         vec.i <- taxa_div(long.df,
-                          unique.id.col = rlang::UQ(u.col),
-                          count.col = rlang::UQ(c.col),
-                          taxon.col = rlang::UQ(rlang::sym(col.i)),
+                          unique.id.col = !!u.col,
+                          count.col = !!c.col,
+                          taxon.col = !!rlang::sym(col.i),
                           taxon = taxa.i,
                           job,
                           base.log,

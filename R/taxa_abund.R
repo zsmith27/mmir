@@ -27,14 +27,14 @@ taxa_abund <- function(long.df, unique.id.col, count.col, taxon.col, taxon = NUL
   # Calculate the percentage of the specified taxon.
   if (is.null(taxon)) {
     final.vec <- long.df %>%
-      group_by(!!unique.id.col) %>%
-      summarise(abund = sum(!!count.col)) %>%
+      dplyr::group_by(!!unique.id.col) %>%
+      dplyr::summarise(abund = sum(!!count.col)) %>%
       original_order(long.df, !!unique.id.col) %>%
-      pull(abund)
+      dplyr::pull(abund)
   } else {
     final.vec <- long.df %>%
       dplyr::filter((!!taxon.col) %in% taxon) %>%
-      group_by(!!unique.id.col) %>%
+      dplyr::group_by(!!unique.id.col) %>%
       dplyr::summarize(abund = sum(!!count.col)) %>%
       original_order(long.df, !!unique.id.col) %>%
       dplyr::mutate(abund = as.numeric(abund),

@@ -26,13 +26,13 @@
 #' with degradation.
 #'@export
 
-taxa_dom <- function(long.df, unique.id.col, count.col, taxa.col, dom.level){
+taxa_dom <- function(long.df, unique.id.col, count.col, taxon.col, dom.level){
   unique.id.col = rlang::enquo(unique.id.col)
   count.col = rlang::enquo(count.col)
-  taxa.col = rlang::enquo(taxa.col)
+  taxon.col = rlang::enquo(taxon.col)
   #----------------------------------------------------------------------------
   final.vec <- long.df %>%
-    dplyr::group_by(!!unique.id.col, !!taxa.col) %>%
+    dplyr::group_by(!!unique.id.col, !!taxon.col) %>%
     dplyr::summarize(count = sum(!!count.col)) %>%
     dplyr::group_by(!!unique.id.col) %>%
     dplyr::mutate(total = sum(count)) %>%

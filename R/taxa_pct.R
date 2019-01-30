@@ -36,6 +36,7 @@ taxa_pct <- function(long.df, unique.id.col, count.col,
     dplyr::summarize(total = sum(!!count.col)) %>%
     original_order(long.df, !!unique.id.col) %>%
     dplyr::mutate(abund = taxa_abund(long.df = long.df,
+                                     unique.id.col = !!unique.id.col,
                                      count.col = !!count.col,
                                      taxon.col = !!taxon.col,
                                      taxon = taxon,
