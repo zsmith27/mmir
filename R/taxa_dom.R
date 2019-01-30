@@ -33,11 +33,11 @@ taxa_dom <- function(long.df, unique.id.col, count.col, taxa.col, dom.level){
   #----------------------------------------------------------------------------
   final.vec <- long.df %>%
     dplyr::group_by(!!unique.id.col, !!taxa.col) %>%
-    dplyr::summarise(COUNT = sum(rlang::UQ(count.col))) %>%
+    dplyr::summarize(count = sum(!!count.col)) %>%
     dplyr::group_by(!!unique.id.col) %>%
-    dplyr::mutate(TOTAL = sum(COUNT)) %>%
-    dplyr::filter(row_number(desc(COUNT)) <= dom.level) %>%
-    dplyr::summarise(percent = sum(COUNT) / unique(TOTAL) * 100) %>%
+    dplyr::mutate(total = sum(count)) %>%
+    dplyr::filter(dplyr::row_number(dplyr::desc(count)) <= dom.level) %>%
+    dplyr::summarize(percent = sum(count) / unique(total) * 100) %>%
     original_order(long.df, !!unique.id.col) %>%
     dplyr::pull(percent)
   #----------------------------------------------------------------------------
