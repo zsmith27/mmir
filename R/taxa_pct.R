@@ -31,7 +31,7 @@ taxa_pct <- function(long.df, unique.id.col, count.col,
   }
   #----------------------------------------------------------------------------
   # Calculate the percentage of the specified taxon.
-  final.vec <- taxa.counts %>%
+  final.vec <- long.df %>%
     dplyr::group_by(!!unique.id.col) %>%
     dplyr::summarize(total = sum(!!count.col)) %>%
     original_order(long.df, !!unique.id.col) %>%
