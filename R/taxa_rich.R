@@ -20,34 +20,29 @@ taxa_rich <- function(long.df, unique.id.col, low.taxa.col,
   high.taxa.col <- rlang::enquo(high.taxa.col)
   exclusion.col <- rlang::enquo(exclusion.col)
   #----------------------------------------------------------------------------
-  if (rlang::quo_is_null(exclusion.col)) {
-    # Aggregate taxonomic counts at the specified taxonomic levels.
-    taxa.counts <- long.df %>%
-      dplyr::select(!!unique.id.col, !!low.taxa.col, !!high.taxa.col) %>%
-      dplyr::distinct()
-  } else {
-    taxa.counts <- long.df %>%
-      dplyr::select(!!unique.id.col, !!low.taxa.col,
-                    !!high.taxa.col, !!exclusion.col) %>%
-      dplyr::distinct() %>%
-      dplyr::filter(!rlang::UQ(exclusion.col) %in% exclusion.vec)
+  if (!is.null(taxon) &&
+      nrow(dplyr::filter(long.df, (!!low.taxa.col) %in% taxon)) < 1) return(0)
+  #----------------------------------------------------------------------------
+  if (!rlang::quo_is_null(exclusion.col)) {
+    long.df <- dplyr::filter(long.df, !(!!exclusion.col) %in% exclusion.vec)
   }
   #----------------------------------------------------------------------------
   if (is.null(taxon)) {
-    final.vec <- taxa.counts %>%
-      group_by(!!unique.id.col) %>%
-      summarize(n = n()) %>%
-      ungroup() %>%
-      # dplyr::count(!!unique.id.col) %>%
+    final.vec <- long.df %>%
+      dplyr::select(!!unique.id.col, !!low.taxa.col) %>%
+      dplyr::distinct() %>%
+      dplyr::count(!!unique.id.col) %>%
       original_order(long.df, !!unique.id.col) %>%
       dplyr::pull(n)
   } else {
-    final.vec <- taxa.counts %>%
-      dplyr::group_by(!!unique.id.col, !!low.taxa.col) %>%
-      dplyr::count(rlang::UQ(high.taxa.col)) %>%
-      dplyr::filter(rlang::UQ(low.taxa.col) %in% taxon) %>%
+    final.vec <- long.df %>%
+      dplyr::select(!!unique.id.col,
+                    !!low.taxa.col,
+                    !!high.taxa.col) %>%
+      dplyr::distinct() %>%
+      dplyr::filter((!!low.taxa.col) %in% taxon) %>%
       dplyr::group_by(!!unique.id.col) %>%
-      dplyr::summarise(n = sum(n)) %>%
+      dplyr::count(!!unique.id.col) %>%
       original_order(long.df, !!unique.id.col) %>%
       dplyr::mutate(n = dplyr::if_else(!is.na(n), n, as.integer(0))) %>%
       dplyr::pull(n)
