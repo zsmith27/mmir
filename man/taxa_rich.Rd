@@ -4,14 +4,11 @@
 \alias{taxa_rich}
 \title{Taxon Richness}
 \usage{
-taxa_rich(long.df, unique.id.col, low.taxa.col, high.taxa.col = NULL,
-  taxon = NULL, exclusion.col = NULL, exclusion.vec = NULL)
+taxa_rich(long.df, low.taxa.col, high.taxa.col = NULL, taxon = NULL,
+  exclusion.col = NULL, exclusion.vec = NULL, na.rm = TRUE)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}
-
-\item{unique.id.col}{The name of the column that contains a unique sampling
-event ID.}
 
 \item{taxon}{The taxon or taxa of interest. To specify more than one taxa
 use: c("TAXA1", "TAXA2", "TAXA3").}

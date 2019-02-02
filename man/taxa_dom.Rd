@@ -4,13 +4,10 @@
 \alias{taxa_dom}
 \title{Percentage of the Most Dominant Taxon (Taxa)}
 \usage{
-taxa_dom(long.df, unique.id.col, count.col, taxa.col, dom.level)
+taxa_dom(long.df, count.col, taxa.col, dom.level)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}
-
-\item{unique.id.col}{The name of the column that contains a unique sampling
-event ID.}
 
 \item{count.col}{The name of the column that contains taxanomic counts.}
 

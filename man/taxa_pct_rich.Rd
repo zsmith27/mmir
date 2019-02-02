@@ -4,17 +4,17 @@
 \alias{taxa_pct_rich}
 \title{Percentage of a Specified Taxon}
 \usage{
-taxa_pct_rich(long.df, unique.id.col, low.taxa.col, high.taxa.col,
-  taxon = NULL, exclusion.col = NULL, exclusion.vec = NULL)
+taxa_pct_rich(long.df, low.taxa.col, high.taxa.col, taxon = NULL,
+  exclusion.col = NULL, exclusion.vec = NULL)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}
 
-\item{unique.id.col}{The name of the column that contains a unique sampling
-event ID.}
-
 \item{taxon}{The taxon or taxa of interest. To specify more than one taxa
 use: c("TAXA1", "TAXA2", "TAXA3").}
+
+\item{unique.id.col}{The name of the column that contains a unique sampling
+event ID.}
 
 \item{count.col}{The name of the column that contains taxanomic counts.}
 

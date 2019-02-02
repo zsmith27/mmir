@@ -29,32 +29,38 @@ taxa_seq <- function(long.df, unique.id.col, count.col, taxa.cols,
       dplyr::distinct() %>%
       dplyr::filter(!is.na(.)) %>%
       pull(!!col.i)
+
+    group.df <- long.df %>%
+      dplyr::group_by(!!unique.id.col)
+
     taxa.df <- lapply(taxa.vec, function(taxa.i) {
       if (job == "pct") {
-        vec.i <- long.df %>%
-          dplyr::group_by(!!unique.id.col) %>%
-          dplyr::do(
-            !!rlang::sym(taxa.i) := taxa_pct(long.df = .,
-                                 count.col = !!count.col,
-                                 taxon.col = !!rlang::sym(col.i),
-                                 taxon = taxa.i)
+        vec.i <- dplyr::do(group.df,
+                           !!rlang::sym(taxa.i) := taxa_pct(long.df = .,
+                                                            count.col = !!count.col,
+                                                            taxon.col = !!rlang::sym(col.i),
+                                                            taxon = taxa.i)
           )
-
       }
       #------------------------------------------------------------------------
       if (job == "rich") {
         if (is.null(high.taxa.col)) stop("high.taxa.col must be speciefied to calculate richness values.")
 
-        vec.i <- taxa_rich(long.df,
-                           unique.id.col = rlang::UQ(u.col),
-                           low.taxa.col = rlang::UQ(rlang::sym(col.i)),
-                           high.taxa.col = rlang::UQ(rlang::sym(high.taxa.col)),
-                           taxon = taxa.i)
+        vec.i <- dplyr::do(group.df,
+                           !!rlang::sym(taxa.i) := taxa_rich(long.df = .,
+                                                            low.taxa.col = !!rlang::sym(col.i),
+                                                            high.taxa.col = !!high.taxa.col,
+                                                            taxon = taxa.i))
       }
       #------------------------------------------------------------------------
       if (job == "pct_rich") {
         if (is.null(high.taxa.col)) stop("high.taxa.col must be speciefied to calculate percent richness values.")
 
+        vec.i <- dplyr::do(group.df,
+                           !!rlang::sym(taxa.i) := taxa_pct_rich(long.df = .,
+                                                             low.taxa.col = !!rlang::sym(col.i),
+                                                             high.taxa.col = !!high.taxa.col,
+                                                             taxon = taxa.i))
         vec.i <- taxa_pct_rich(long.df,
                            unique.id.col = rlang::UQ(u.col),
                            low.taxa.col = rlang::UQ(rlang::sym(col.i)),

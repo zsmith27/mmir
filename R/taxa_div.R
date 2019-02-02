@@ -28,7 +28,7 @@ taxa_div <- function(long.df, count.col, low.taxa.col = NULL,
           "also specify a 'taxon' found in 'low.taxa.col'.") %>%
       stop()
   }
-  if (!is.null(taxon) && is.nulll(low.taxa.col)) {
+  if (!is.null(taxon) && is.null(low.taxa.col)) {
     paste("Specifying a 'taxon' is only useful if you",
           "also specify the 'low.taxa.col' that contains the 'taxon'.") %>%
       stop()
