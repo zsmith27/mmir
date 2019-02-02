@@ -49,8 +49,7 @@ taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
       rich = taxa_rich(
         long.df = long.df,
         unique.id.col = !!unique.id.col,
-        low.taxa.col = !!low.taxa.col,
-        high.taxa.col = !!high.taxa.col
+        low.taxa.col = !!high.taxa.col
       ),
       taxa_rich = taxa_rich(
         long.df = long.df,
