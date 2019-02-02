@@ -4,7 +4,8 @@
 \alias{taxa_tol_index}
 \title{Percentage of a Specified Taxon}
 \usage{
-taxa_tol_index(long.df, unique.id.col, count.col, tol.col)
+taxa_tol_index(long.df, unique.id.col, count.col, taxon.col, tol.col,
+  na.rm = TRUE)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}

@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/356650/061fcb2bfbb144e886fa92ffdb05894a
+bundleId: https://api.rpubs.com/api/v1/document/356650/061fcb2bfbb144e886fa92ffdb05894a
+url: http://rpubs.com/zsmith27/356650
+when: 1517860662.83986

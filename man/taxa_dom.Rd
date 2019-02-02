@@ -4,7 +4,7 @@
 \alias{taxa_dom}
 \title{Percentage of the Most Dominant Taxon (Taxa)}
 \usage{
-taxa_dom(long.df, unique.id.col, count.col, taxa.col, dom.level)
+taxa_dom(long.df, unique.id.col, count.col, taxon.col, dom.level)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}
