@@ -4,8 +4,8 @@
 \alias{ref_categorical}
 \title{Scoring Method: Reference Categorical}
 \usage{
-ref_categorical(metrics.df, sensitivity.df, first.metric, condition.colname,
-  ref.cond)
+ref_categorical(metrics.df, sensitivity.df, first.metric,
+  condition.colname, ref.cond)
 }
 \arguments{
 \item{long.df}{<- a data frame of samples to be scored.}
