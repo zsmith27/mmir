@@ -24,15 +24,15 @@
 
 wilcox_tbl <- function(wide.df, first.metric, group.by){
   metric_col.1 <- which(names(wide.df) %in% first.metric)
-  
+
   nt <- lapply(wide.df[, metric_col.1:ncol(wide.df)], function(x) wilcox.test(x ~ wide.df[, group.by]))
   df <- data.frame(matrix(unlist(nt), nrow =  length(nt), byrow = TRUE), stringsAsFactors = FALSE)
-  
+
   new.df <- data.frame(df[, 1:2])
   colnames(new.df) <- c("Wilcox_Statistic", "Wilcox_p_value")
   new.df$Wilcox_Statistic <- round(as.numeric(new.df$Wilcox_Statistic), digits = 6)
   new.df$Wilcox_p_value <- round(as.numeric(new.df$Wilcox_p_value), digits = 6)
-  
+
   metrics_names.df <- data.frame(names(wide.df[, metric_col.1:ncol(wide.df)]))
   colnames(metrics_names.df) <- "METRIC"
   final.df <- cbind(metrics_names.df, new.df)
@@ -54,16 +54,16 @@ wilcox_tbl <- function(wide.df, first.metric, group.by){
 #'@export
 
 kruskal_tbl <- function(wide.df, first.metric, group.by){
-  metric_col.1 <- which(names(metrics.df) %in% first.metric)
-  
+  metric_col.1 <- which(names(wide.df) %in% first.metric)
+
   nt <- lapply(wide.df[, metric_col.1:ncol(wide.df)], function(x) kruskal.test(x ~ wide.df[, group.by]))
   df <- data.frame(matrix(unlist(nt), nrow =  length(nt), byrow = TRUE),stringsAsFactors = FALSE)
   colnames(df) <- c("kw_Statistic", "df", "kw_p_value", "Test", "Description")
-  
+
   new.df <- df[, 1:3]
   new.df$kw_Statistic <- round(as.numeric(new.df$kw_Statistic), digits = 6)
   new.df$kw_p_value <- round(as.numeric(new.df$kw_p_value), digits = 6)
-  
+
   metric_names.df <- data.frame(colnames(wide.df[, metric_col.1:ncol(wide.df)]))
   colnames(metric_names.df) <- "METRIC"
   final.df <- cbind(metric_names.df, new.df)
@@ -85,8 +85,8 @@ kruskal_tbl <- function(wide.df, first.metric, group.by){
 #'@export
 
 dunn_tbl <- function(wide.df, first.metric, group.by){
-  metric_col.1 <- which(names(metrics.df) %in% first.metric)
-  
+  metric_col.1 <- which(names(wide.df) %in% first.metric)
+
   #nt <- lapply(names(wide.df[, metric_col.1:ncol(wide.df)]), function(x){
   dunn.list <- list()
   for (x in names(wide.df[, metric_col.1:ncol(wide.df)])){
@@ -98,9 +98,9 @@ dunn_tbl <- function(wide.df, first.metric, group.by){
       group.max <- max(group.wide, na.rm = TRUE)
       group.max - group.min
     })
-    
+
     test.min.max <- data.frame(TEST = test.min.max)
-    
+
     if (any(test.min.max[1, ] == 0)){
       next
     } else {
@@ -108,16 +108,16 @@ dunn_tbl <- function(wide.df, first.metric, group.by){
     }
   }
   nt <- dunn.list
-  
+
   #})
   df <- data.frame(names(nt), matrix(unlist(nt),
                                      ncol = 1 + 4 * length(unique(nt[[first.metric]]$comparisons)),
                                      byrow = T), stringsAsFactors = FALSE)
-  
+
   colnames(df) <- c("Metric", "Dunn_Chi2", paste("Z", nt[[first.metric]]$comparisons, sep="_"),
                     paste("Dunn_P_Value", nt[[first.metric]]$comparisons, sep="_"),
                     paste("P_Adjust", nt[[first.metric]]$comparisons, sep = "_"))
-  
+
   grepped <- grep("Dunn_P_Value", colnames(df))
   dunn_pvalue <- df[, c(1, grepped)]
   if(length(grepped) > 1){
@@ -128,13 +128,13 @@ dunn_tbl <- function(wide.df, first.metric, group.by){
       next
     }else{
       dunn_pvalue[, 2:ncol(dunn_pvalue)] <- as.numeric(dunn_pvalue[, 2:ncol(dunn_pvalue)])
-      
+
     }
   }
-  
-  
+
+
   dunn_pvalue[,2:ncol(dunn_pvalue)] <- round(dunn_pvalue[,2:ncol(dunn_pvalue)], digits = 4)
-  
+
   names(dunn_pvalue) <- toupper(names(dunn_pvalue))
   return(dunn_pvalue)
 }
@@ -171,7 +171,7 @@ nonpar_tbl <- function(wide.df, first.metric, group.by){
       stop("The specified group.by column must contain at least two groups.")
     }
   }
-  
+
   return(final.df)
 }
 
