@@ -13,7 +13,9 @@
 #'@export
 
 taxa_abund <- function(long.df, unique.id.col, count.col, taxon.col, taxon = NULL,
-                       exclusion.col = NULL, exclusion.vec = NULL) {
+                       exclusion.col = NULL, exclusion.vec = NULL,
+                       unnest.cols = data) {
+  long.df <- tidyr::unnest(long.df, cols = !!rlang::enquo(unnest.cols))
   # Prep.
   unique.id.col <- enquo(unique.id.col)
   taxon.col <- enquo(taxon.col)
