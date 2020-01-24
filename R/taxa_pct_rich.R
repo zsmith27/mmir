@@ -18,7 +18,11 @@
 
 taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
                           high.taxa.col, taxon = NULL,
-                          exclusion.col = NULL, exclusion.vec = NULL) {
+                          exclusion.col = NULL, exclusion.vec = NULL,
+                          unnest.cols = data) {
+
+  long.df <- tidyr::unnest(long.df, cols = !!rlang::enquo(unnest.cols))
+
   unique.id.col <- rlang::enquo(unique.id.col)
   low.taxa.col <- rlang::enquo(low.taxa.col)
   high.taxa.col <- rlang::enquo(high.taxa.col)

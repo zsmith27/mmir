@@ -17,9 +17,11 @@
 
 taxa_div <- function(long.df, unique.id.col, count.col, low.taxa.col = NULL,
                      high.taxa.col, taxon = NULL,
-                     job, base.log, q) {
+                     job, base.log, q,
+                     unnest.cols = data) {
   #------------------------------------------------------------------------------
   # Prep.
+  long.df <- tidyr::unnest(long.df, cols = !!rlang::enquo(unnest.cols))
   unique.id.col <- rlang::enquo(unique.id.col)
   high.taxa.col <- rlang::enquo(high.taxa.col)
   if (!is.null(low.taxa.col)) low.taxa.col <- rlang::enquo(low.taxa.col)
