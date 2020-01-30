@@ -4,31 +4,31 @@
 #'Percentage of a Specified Taxon
 #'@description Calculate the percentage of each sample represented by the
 #'specified taxon or taxa.
-#'@param long.df Taxonomic counts arranged in a long data format.
-#'@param unique.id.col The name of the column that contains a unique sampling
+#'@param .data Taxonomic counts arranged in a long data format.
+#'@param .key_col The name of the column that contains a unique sampling
 #'event ID.
 #'@param count.col The name of the column that contains taxanomic counts.
 #'@param taxon.col The name of the column that contains the taxon or taxa
 #'of interest.
-#'@param taxon The taxon or taxa of interest. To specify more than one taxa
+#'@param .filter_vec The taxon or taxa of interest. To specify more than one taxa
 #'use: c("TAXA1", "TAXA2", "TAXA3").
 #'@return A numeric vector of percentages.
 #'@export
 
 
-taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
-                          high.taxa.col, taxon = NULL,
+taxa_pct_rich <- function(.data, .key_col, .group_col,
+                          .filter_col, .filter_vec = NULL,
                           exclusion.col = NULL, exclusion.vec = NULL,
                           unnest.cols = data) {
 
-  long.df <- tidyr::unnest(long.df, cols = !!rlang::enquo(unnest.cols))
+  .data <- tidyr::unnest(.data, cols = !!rlang::enquo(unnest.cols))
 
-  unique.id.col <- rlang::enquo(unique.id.col)
-  low.taxa.col <- rlang::enquo(low.taxa.col)
-  high.taxa.col <- rlang::enquo(high.taxa.col)
+  .key_col <- rlang::enquo(.key_col)
+  .group_col <- rlang::enquo(.group_col)
+  .filter_col <- rlang::enquo(.filter_col)
   exclusion.col <- rlang::enquo(exclusion.col)
 
-  if (is.null(taxon)) stop("Must specify 'taxon'.")
+  if (is.null(.filter_vec)) stop("Must specify '.filter_vec'.")
   if (!rlang::quo_is_null(exclusion.col) && is.null(exclusion.vec)) {
     stop("Specifying an exclusion.col also requires that you specify the
          objects you want to exclude (i.e. exclusion.vec) from that column.")
@@ -39,34 +39,34 @@ taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
   }
   #----------------------------------------------------------------------------
   if (!rlang::quo_is_null(exclusion.col)) {
-    long.df <- dplyr::filter(long.df, !(!!exclusion.col) %in% exclusion.vec)
+    .data <- dplyr::filter(.data, !(!!exclusion.col) %in% exclusion.vec)
   }
   #----------------------------------------------------------------------------
   # taxa.counts <- taxa.counts[complete.cases(taxa.counts),]
   #----------------------------------------------------------------------------
-  distinct.df <- long.df %>%
-    dplyr::select(!!unique.id.col) %>%
+  distinct.df <- .data %>%
+    dplyr::select(!!.key_col) %>%
     dplyr::distinct()
 
   final.vec <- distinct.df %>%
     dplyr::mutate(
       rich = taxa_rich(
-        long.df = long.df,
-        unique.id.col = !!unique.id.col,
-        low.taxa.col = !!high.taxa.col
+        .data = .data,
+        .key_col = !!.key_col,
+        .group_col = !!.filter_col
       ),
       taxa_rich = taxa_rich(
-        long.df = long.df,
-        unique.id.col = !!unique.id.col,
-        low.taxa.col = !!low.taxa.col,
-        high.taxa.col = !!high.taxa.col,
-        taxon = taxon,
+        .data = .data,
+        .key_col = !!.key_col,
+        .group_col = !!.group_col,
+        .filter_col = !!.filter_col,
+        .filter_vec = .filter_vec,
         exclusion.col = !!exclusion.col,
         exclusion.vec = exclusion.vec
       ),
       pct_rich = if_else(taxa_rich == 0, 0, taxa_rich / rich * 100)
     ) %>%
-    original_order(long.df,!!unique.id.col) %>%
+    original_order(.data,!!.key_col) %>%
     pull(pct_rich)
   #----------------------------------------------------------------------------
   return(final.vec)
