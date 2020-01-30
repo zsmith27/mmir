@@ -12,11 +12,13 @@
 #'@return A numeric vector of percentages.
 #'@export
 
+
 taxa_abund <- function(.data, .key_col, .counts_col,
                        .filter_col = NULL, .filter_vec= NULL,
                        .remove_col = NULL, .remove_vec = NULL,
                        .unnest_col = data) {
   .data_unnest <- tidyr::unnest(.data, cols = !!rlang::enquo(.unnest_col))
+
   # Prep.
   .key_col <- enquo(.key_col)
   .filter_col <- enquo(.filter_col)

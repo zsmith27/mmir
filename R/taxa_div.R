@@ -15,6 +15,7 @@
 #'@return A numeric vector of percentages.
 #'@export
 
+
 taxa_div <- function(.data, .key_col, .counts_col,
                      .group_col,
                      .filter_col = NULL,
@@ -29,6 +30,7 @@ taxa_div <- function(.data, .key_col, .counts_col,
   if (!is.null(.filter_col)) .filter_col <- rlang::enquo(.filter_col)
   .counts_col <- rlang::enquo(.counts_col)
   .counts_col.name <- rlang::sym(rlang::quo_name(.counts_col))
+
   #------------------------------------------------------------------------------
   if (!is.null(.filter_col) && is.null(.filter_vec)) {
     paste("Specifying a '.filter_col' is only useful if you",

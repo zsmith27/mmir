@@ -26,12 +26,21 @@
 #' with degradation.
 #'@export
 
+<<<<<<< HEAD
 taxa_dom <- function(.data, .key_col, .count_col, .group_col, .dom_level,
                      .unnest_col = data){
   .data <- tidyr::unnest(.data, cols = !!rlang::enquo(.unnest_col))
   .key_col = rlang::enquo(.key_col)
   .count_col = rlang::enquo(.count_col)
   .group_col = rlang::enquo(.group_col)
+=======
+taxa_dom <- function(long.df, unique.id.col, count.col, taxon.col, dom.level,
+                     unnest.cols = data){
+  long.df <- tidyr::unnest(long.df, cols = !!rlang::enquo(unnest.cols))
+  unique.id.col = rlang::enquo(unique.id.col)
+  count.col = rlang::enquo(count.col)
+  taxon.col = rlang::enquo(taxon.col)
+>>>>>>> 639a17f21c077953610adaba81369fd2ce5557f1
   #----------------------------------------------------------------------------
   final.vec <- .data %>%
     dplyr::group_by(!!.key_col, !!.group_col) %>%

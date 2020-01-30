@@ -21,6 +21,7 @@ taxa_pct <- function(.data, .key_col, .counts_col,
                      .remove_col = NULL, .remove_vec = NULL,
                      .unnest_col = data) {
   .data_unnest <- tidyr::unnest(.data, cols = !!rlang::enquo(.unnest_col))
+
   # Prep.
   .key_col <- enquo(.key_col)
   .filter_col <- enquo(.filter_col)

@@ -10,6 +10,7 @@
 #'@return The number of taxa identified.
 #'@export
 
+
 taxa_rich <- function(.data, .key_col, .group_col,
                       .filter_col = NULL, .filter_vec = NULL,
                       .remove_col = NULL, .remove_vec = NULL,

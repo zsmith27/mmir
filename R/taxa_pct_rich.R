@@ -16,6 +16,7 @@
 #'@export
 
 
+<<<<<<< HEAD
 taxa_pct_rich <- function(.data, .key_col, .group_col,
                           .filter_col, .filter_vec = NULL,
                           exclusion.col = NULL, exclusion.vec = NULL,
@@ -26,6 +27,18 @@ taxa_pct_rich <- function(.data, .key_col, .group_col,
   .key_col <- rlang::enquo(.key_col)
   .group_col <- rlang::enquo(.group_col)
   .filter_col <- rlang::enquo(.filter_col)
+=======
+taxa_pct_rich <- function(long.df, unique.id.col, low.taxa.col,
+                          high.taxa.col, taxon = NULL,
+                          exclusion.col = NULL, exclusion.vec = NULL,
+                          unnest.cols = data) {
+
+  long.df <- tidyr::unnest(long.df, cols = !!rlang::enquo(unnest.cols))
+
+  unique.id.col <- rlang::enquo(unique.id.col)
+  low.taxa.col <- rlang::enquo(low.taxa.col)
+  high.taxa.col <- rlang::enquo(high.taxa.col)
+>>>>>>> 639a17f21c077953610adaba81369fd2ce5557f1
   exclusion.col <- rlang::enquo(exclusion.col)
 
   if (is.null(.filter_vec)) stop("Must specify '.filter_vec'.")
