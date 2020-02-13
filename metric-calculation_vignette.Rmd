@@ -94,6 +94,7 @@ nest.df <- nest.df %>%
                             .unnest_col = data)
   )
 
+
 DT::datatable(nest.df, options = list(scrollX = TRUE))  
 ```
 
@@ -106,20 +107,19 @@ nest.df <- nest.df %>%
     rich_ephemeroptera_fam = taxa_rich(.data = .,
                             .key_col = unique_id,
                             .group_col = family,
-                            .filter_col = order,
-                            .filter_vec = "ephemeroptera",
+                            .filter = order %in% "ephemeroptera",
                             .unnest_col = data),
     rich_ephemeroptera_gen = taxa_rich(.data = .,
                             .key_col = unique_id,
                             .group_col = genus,
-                            .filter_col = order,
-                            .filter_vec = "ephemeroptera",
+                            .filter = order %in% "ephemeroptera",
                             .unnest_col = data),
     rich_ept_gen = taxa_rich(.data = .,
                             .key_col = unique_id,
                             .group_col = genus,
-                            .filter_col = order,
-                            .filter_vec = c("ephemeroptera", "plecoptera", "trichoptera"),
+                            .filter = order %in% c("ephemeroptera",
+                                                       "plecoptera",
+                                                       "trichoptera"),
                             .unnest_col = data)
   )
 
@@ -155,7 +155,7 @@ nest.df <- nest.df %>%
                             .counts_col = reporting_value,
                             .group_col = genus,
                             .job = "margalef",
-                            .unnest_col = data)),
+                            .unnest_col = data),
     menhinick_genus = taxa_div(.data = .,
                             .key_col = unique_id,
                             .counts_col = reporting_value,
@@ -182,26 +182,29 @@ nest.df <- nest.df %>%
                             .key_col = unique_id,
                             .counts_col = reporting_value,
                             .group_col = order,
-                            .filter_col = genus,
-                            .filter_vec = c("ephemeroptera", "plecoptera", "trichoptera"),
-                            job = "gini_simpson",
+                            .filter = genus %in% c("ephemeroptera",
+                                                       "plecoptera",
+                                                       "trichoptera"),
+                            .job = "gini_simpson",
                             .unnest_col = data),
     simpson_ept = taxa_div(.data = .,
                             .key_col = unique_id,
                             .counts_col = reporting_value,
                             .group_col = order,
-                            .filter_col = genus,
-                            .filter_vec = c("ephemeroptera", "plecoptera", "trichoptera"),
-                            job = "simpson",
+                            .filter = genus %in% c("ephemeroptera",
+                                                       "plecoptera",
+                                                       "trichoptera"),
+                            .job = "simpson",
                             .unnest_col = data),
     shannon_ept = taxa_div(.data = .,
                             .key_col = unique_id,
                             .counts_col = reporting_value,
                             .group_col = order,
-                            .filter_col = genus,
-                            .filter_vec = c("ephemeroptera", "plecoptera", "trichoptera"),
-                            job = "shannon",
-                            base.log = 2,
+                            .filter = genus %in% c("ephemeroptera",
+                                                       "plecoptera",
+                                                       "trichoptera"),
+                            .job = "shannon",
+                            .base_log = 2,
                             .unnest_col = data)
   )
 
@@ -214,21 +217,21 @@ DT::datatable(subdiv.df, options = list(scrollX = TRUE))
 
 `taxa_pct()` calculates the percentage of the sample represented by a taxon or taxa. The example below shows how to calculate the percentage of a single taxon, Ephemeroptera (`pct_ephemeroptera`), and multiple taxa, EPT (`pct_ept`). Remember that `.filter_col` refers to the name of the column that contains the taxon or taxa of interest. The `.filter_vec` variable is then used to specify these taxon or taxa.
 ```{r}
-pct.df <- nest.df %>% 
+nest.df <- nest.df %>% 
   dplyr::mutate(
     pct_ephemeroptera = taxa_pct(.data = .,
                                   .key_col = unique_id,
                                   .counts_col = reporting_value,
-                                  .filter_col = order,
-                                  .filter_vec = "ephemeroptera"),
+                                  .filter = order %in% "ephemeroptera"),
     pct_ept = taxa_pct(.data = .,
                         .key_col = unique_id,
                         .counts_col = reporting_value,
-                        .filter_col = order,
-                        .filter_vec = c("ephemeroptera", "plecoptera", "trichoptera"))
+                        .filter = order %in% c("ephemeroptera",
+                                                   "plecoptera",
+                                                   "trichoptera"))
   )
 
-DT::datatable(pct.df, options = list(scrollX = TRUE))  
+DT::datatable(nest.df, options = list(scrollX = TRUE))  
 ```
 
 ### Abundances
@@ -240,13 +243,13 @@ nest.df <- nest.df %>%
     abund_ephemeroptera = taxa_abund(.,
                                   .key_col = unique_id,
                                   .counts_col = reporting_value,
-                                  .filter_col = order,
-                                  .filter_vec = "ephemeroptera"),
+                                  .filter = order %in% "ephemeroptera"),
     abund_ept = taxa_abund(.,
                         .key_col = unique_id,
                         .counts_col = reporting_value,
-                        .filter_col = order,
-                        .filter_vec = c("ephemeroptera", "plecoptera", "trichoptera"))
+                        .filter = order %in% c("ephemeroptera",
+                                                   "plecoptera",
+                                                   "trichoptera"))
   )
 
 DT::datatable(nest.df, options = list(scrollX = TRUE))  
@@ -264,24 +267,29 @@ seq.df <- nest.df %>%
   bind_cols(
     taxa_seq(.data = .,
              .key_col = unique_id,
-             .group_col = family,
-             .filter_col = 
-             .unnest_col = data))
-    taxa_seq(onondaga,
-             unique_id,
-             reporting_value,
-             c("order", "family"),
-             "genus",
-             job = "rich"),
-    taxa_seq(onondaga,
-             unique_id,
-             reporting_value,
-             c("order", "family"),
-             "genus",
-             job = "pct_rich"),
-    taxa_seq(onondaga, unique_id, reporting_value, c("order", "family"),  job = "pct"),
-    taxa_seq(onondaga, unique_id, reporting_value, c("order", "family"),  job = "abund")
-  )
+             .counts_col = reporting_value,
+             .filter_cols_vec = c("class", "order", "family"),
+             .group_col = genus,
+             .job = "rich"),
+    taxa_seq(.data = .,
+             .key_col = unique_id,
+             .counts_col = reporting_value,
+             .filter_cols_vec = c("class", "order", "family"),
+             .group_col = genus,
+             .job = "pct_rich"),
+    taxa_seq(.data = .,
+             .key_col = unique_id,
+             .counts_col = reporting_value,
+             .filter_cols_vec = c("class", "order", "family"),
+             .group_col = genus,
+             .job = "pct"),
+    taxa_seq(.data = .,
+             .key_col = unique_id,
+             .counts_col = reporting_value,
+             .filter_cols_vec = c("class", "order", "family"),
+             .group_col = genus,
+             .base_log = 2,
+             .job = "shannon"))
 
 DT::datatable(seq.df, options = list(scrollX = TRUE))  
 ```
@@ -300,3 +308,7 @@ metrics.wide <-  list(rich.df,
                       seq.df) %>% 
   plyr::join_all(by = c("unique_id", "lake"))
 ```
+
+
+
+
