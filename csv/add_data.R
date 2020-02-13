@@ -3,7 +3,7 @@ master.fwmi <- data.table::fread("csv/master_3_24_2017.csv", data.table = FALSE)
   toolbox::prep_df()
 #------------------------------------------------------------------------------
 hier.fwmi <- master.fwmi %>%
-  select(final_id, phylum:species) %>%
+  select(tsn_final, final_id, phylum:species) %>%
   distinct()
 check_dups(hier.fwmi, final_id) %>%
   filter(count > 1) %>%

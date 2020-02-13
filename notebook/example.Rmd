@@ -11,8 +11,9 @@ library(mmir)
 
 
 ```{r}
-hier.df <- Benthos::master %>% 
-  select(FINAL_ID, PHYLUM:SPECIES) %>% 
+
+master <- mmir::attributes.fwmi %>% 
+  select(final_id, beck_class, aspt, bibi_tv, bibi_ffg, bibi_habit) %>% 
   rename_all(tolower) %>% 
   mutate_if(is.character, tolower) %>% 
   distinct()
@@ -51,7 +52,7 @@ test <- fam.df %>%
 metrics.df <- onon.df %>% 
   select(unique_id) %>% 
   distinct() %>% 
-  mutate(rich = taxa_rich(onon.df, unique_id, order, genus, taxon = NULL),
+  mutate(rich = taxa_rich(onon.df, unique_id, order, genus, taxon = NULL)),
          rich_ephem = taxa_rich(onon.df, unique_id, order, genus, taxon = "ephemeroptera"),
          pct_ephem = taxa_pct(onon.df, unique_id, count, order, "ephemeroptera"))
 ```

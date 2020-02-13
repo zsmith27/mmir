@@ -1,0 +1,339 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r message=FALSE}
+library(tidyverse)
+library(mmir)
+```
+
+```{r}
+rsc_200.df <-
+  readxl::read_excel("D:/ZSmith/Projects/Chessie_BIBI/greg_pond/rsc_taxa_10_16_17.xlsx",
+  sheet = "200_count") %>%
+  mutate(type = "200")
+  
+  rsc_120.df <-
+  readxl::read_excel("D:/ZSmith/Projects/Chessie_BIBI/greg_pond/rsc_taxa_10_16_17.xlsx",
+  sheet = "120_count") %>%
+  mutate(type = "120")
+  
+  rsc.df <- bind_rows(rsc_200.df, rsc_120.df) %>%
+  rename(
+  sample_id = "Sample ID",
+  final_id = "Final ID",
+  count = "Count",
+  tsn = "Taxonomic Serial Number"
+  ) %>%
+  select(sample_id, type, final_id, count, tsn) %>%
+  mutate(
+  tsn = as.character(tsn),
+  bioregion = "sep",
+  unique_id = paste(sample_id, type, sep = "_")
+  ) %>%
+  select(unique_id, everything(),-tsn) %>%
+  clean_df()
+  rm(rsc_200.df, rsc_120.df)
+```
+
+```{r}
+data("hier.fwmi")
+data("attributes.fwmi")
+```
+
+```{r}
+rsc.df <- left_join(rsc.df, hier.fwmi, by = "final_id")
+```
+
+```{r}
+rsc.df <- rsc.df %>% 
+#  replace_na(list(
+#    "phylum" = "unidentified",
+#    "subphylum" = "unidentified",
+#    "class" = "unidentified",
+#    "subclass" = "unidentified",
+#    "order" = "unidentified",
+#    "suborder" = "unidentified",
+#    "family" = "unidentified",
+#    "subfamily" = "unidentified",
+#    "tribe" = "unidentified",
+#    "genus" = "unidentified",
+#    "species" = "unidentified"
+#    )) %>% 
+  filter(
+    phylum %in% c("annelida", "arthropoda", "mollusca", "platyhelminthes"),
+    subphylum %in% c("clitellata", "crustacea", "hexapoda", "rhabditophora") | is.na(subphylum),
+    !class %in% c("branchiopoda", "maxillopoda", "ostracoda"),
+    !order %in% c("hymenoptera"),
+    !family %in% c("gerridae", "hebridae", "veliidae", "hydrometridae",
+                   "saldidae"),
+    !genus %in% c("stenus")
+  )
+
+class.spp <- c("class", "subclass", "order", "suborder",
+               "family", "subfamily", "tribe", "genus", "species")
+rsc.df[rsc.df$class %in% "bivalvia", class.spp] <- "bivalvia"
+rsc.df[rsc.df$class %in% "gastropoda", class.spp] <- "gastropoda"
+rsc.df[rsc.df$class %in% "oligochaeta", class.spp] <- "oligochaeta"
+rsc.df[rsc.df$class %in% "trepaxonemata", class.spp] <- "trepaxonemata"
+#============================================================================
+# These taxa were not consitently identified to the same taxonomic rank
+# by the agencies that contributed data. Therefore, the samples were rolled
+# up to the lowest common denominator.
+# These columns will be influenced by the common denominator taxa.
+order.spp <- c("order", "suborder", "family", "subfamily",
+               "tribe", "genus", "species")
+rsc.df[rsc.df$order %in% "collembola", order.spp] <- "collembola"
+rsc.df[rsc.df$order %in% "lepidoptera", order.spp] <- "lepidoptera"
+rsc.df[rsc.df$order %in% "neuroptera", order.spp] <- "neuroptera"
+rsc.df[rsc.df$order %in% "neoophora", order.spp] <- "neoophora"
+
+rsc.df <- fill_taxa(rsc.df, final_id, phylum:species)
+```
+
+```{r}
+fam.df <- rsc.df %>% 
+  select(-subfamily:-species) %>%
+  mutate(final_id = family) %>% 
+  group_by_at(vars(-count)) %>% 
+  summarize(count = sum(count)) %>% 
+  left_join(attributes.fwmi, by = "final_id") %>% 
+  ungroup() %>% 
+  prob_rarefaction(unique_id, count, family, 100)
+```
+
+```{r}
+gen.df <- rsc.df %>% 
+  select(-species) %>%
+  mutate(final_id = genus) %>% 
+  group_by_at(vars(-count)) %>% 
+  summarize(count = sum(count)) %>% 
+  left_join(attributes.fwmi, by = "final_id") %>% 
+  ungroup() %>% 
+  prob_rarefaction(unique_id, count, genus, 100)
+```
+
+
+```{r}
+check.gen.pct <- gen.df %>% 
+  group_by(unique_id) %>% 
+  mutate(total = sum(count)) %>% 
+  ungroup() %>% 
+  group_by(unique_id, genus, total) %>% 
+  summarize(count = sum(count)) %>% 
+  mutate(percent = count / total * 100) %>% 
+  filter(genus == "unidentified",
+         percent > 10)
+```
+
+
+```{r}
+long.df <- fam.df
+taxa.rank <- rlang::quo(family)
+run_metrics <- function(long.df, taxa.rank) {
+  taxa.rank <- enquo(taxa.rank)
+  
+  final.df <- long.df %>% 
+  select(unique_id) %>% 
+  distinct() %>% 
+  mutate(GOLD = taxa_pct(long.df, unique_id, count, class, c("gastropoda", "oligochaeta")) +
+           taxa_pct(long.df, unique_id, count, order, "diptera"),
+         MARGALEFS = taxa_div(long.df, unique_id, rare_count, NULL, !!taxa.rank, job = "margalef"),
+         PCT_EPT_RICH = taxa_pct_rich(long.df, unique_id, count, order, 
+                                      taxon = c("ephemeroptera", "plecoptera", "trichoptera"),
+                                      !!taxa.rank),
+         RICH_EPHEMEROPTERA = taxa_rich(long.df, unique_id,  count, order, "ephemeroptera", !!taxa.rank),
+         PCT_COLLECT = taxa_pct(long.df, unique_id, count, bibi_ffg, c("cg", "cf")),
+         PCT_PREDATOR = taxa_pct(long.df, unique_id, count, bibi_ffg, "pr"),
+         RICH_FILTER = taxa_rich(long.df, unique_id, count, bibi_ffg, "cf", !!taxa.rank),
+         RICH_CLIMB = taxa_rich(long.df, unique_id, count, bibi_habit, "cb", !!taxa.rank),
+         ASPT_MOD = taxa_tol_index(long.df, unique_id, count, aspt),
+         HBI = taxa_tol_index(long.df, unique_id, count, bibi_tv),
+         PCT_EPT_NO_HYDRO = taxa_pct(long.df, unique_id, count, order,
+                                     c("ephemeroptera", "plecoptera", "trichoptera")) - 
+           taxa_pct(long.df, unique_id, count, family, "hydropsychidae"),
+         PCT_DIPTERA = taxa_pct(long.df, unique_id, count, order, "diptera"),
+         HURLBERTS_PIE = taxa_div(long.df, unique_id, rare_count, NULL, !!taxa.rank, job = "gini_simpson"),
+         PCT_GATHER = taxa_pct(long.df, unique_id, count, bibi_ffg, "cg"),
+         PCT_BURROW = taxa_pct(long.df, unique_id, count, bibi_habit, "bu"),
+         RICH_BURROW = taxa_rich(long.df, unique_id, count, bibi_habit, "bu", !!taxa.rank),
+         PCT_DOM1 = pct_dom(long.df, unique_id, count, !!taxa.rank, 1),
+         PCT_TOLERANT_5_10 = taxa_pct(long.df, unique_id, count, bibi_tv, 5:10),
+         PCT_TOLERANT_7_10 = taxa_pct(long.df, unique_id, count, bibi_tv, 7:10),
+         RICH_TOL = taxa_rich(long.df, unique_id, count, bibi_tv, 7:10, !!taxa.rank),
+         PCT_COTE = taxa_pct(long.df, unique_id, count, order, c("coleoptera", "odonata", 
+                                                                "trichoptera", "ephemeroptera")),
+         PCT_EPT_RICH_NO_TOL = taxa_pct_rich(long.df, unique_id, count, order, 
+                                             taxon = c("ephemeroptera", "plecoptera", "trichoptera"),
+                                             !!taxa.rank,
+                                             exclusion.col = bibi_tv, exclusion.vec = 7:10),
+         RICH_TRICHOPTERA = taxa_rich(long.df, unique_id, count, order, "trichoptera", !!taxa.rank),
+         RICH_COLLECT = taxa_rich(long.df, unique_id, count, bibi_ffg, c("cg", "cf"), !!taxa.rank),
+         PCT_CLING = taxa_pct(long.df, unique_id, count, bibi_habit, "cn"),
+         RICH_CLING = taxa_rich(long.df, unique_id, count, bibi_habit, "cn", !!taxa.rank),
+         PCT_OLIGO_CHIRO = taxa_pct(long.df, unique_id, count, class, "oligochaeta") +
+           taxa_pct(long.df, unique_id, count, family, "chironomidae"),
+         RICH_PREDATOR = taxa_rich(long.df, unique_id, count, bibi_ffg, "pr", !!taxa.rank),
+         PCT_MOD_TOL_4_6 = taxa_pct(long.df, unique_id, count, bibi_tv, 4:6)
+         )
+  if ("genus" %in% names(long.df)) {
+    final.df <- final.df %>% 
+      mutate(
+        PCT_CAECIDOTEA = taxa_pct(long.df, unique_id, count, genus, "caecidotea")
+      )
+  }
+  final.df <- final.df %>% 
+    clean_df()
+  return(final.df)
+}
+
+```
+
+```{r}
+metrics.fam <- run_metrics(fam.df, family) %>% 
+  gather(metric, value, gold:pct_mod_tol_4_6)
+metrics.gen <- run_metrics(gen.df, genus) %>% 
+  gather(metric, value, gold:pct_caecidotea)
+```
+
+```{r}
+score.thresh <- readxl::read_excel("H:/Projects/Chessie_BIBI/report/FINAL_May25_2017/2017_Data/Metric_Thresholds/metric_thresholds.xlsx", "thresholds") %>% 
+  clean_df() %>% 
+  rowwise() %>% 
+  mutate(upper = max(ref_median, bound),
+         lower = min(ref_median, bound)) %>% 
+  ungroup()
+```
+
+```{r}
+
+
+
+
+taxa.res <- "family"
+spatial.res <- "coast"
+metrics.df <- metrics.gen
+
+thresh.df <- score.thresh
+
+
+join_metric_thresh <- function(metrics.df, thresh.df, taxa.res, spatial.res) {
+  score.sub <- thresh.df %>% 
+  filter(taxonomic_resolution == taxa.res,
+         spatial_resolution == spatial.res)
+
+final.df <- inner_join(metrics.df, score.sub, by = "metric")
+
+scores.vec <- score.sub[!score.sub$metric %in% unique(final.df$metric), "metric"]
+if (nrow(scores.vec) > 0) warning(paste("warning: The following metrics are missing:", scores.vec$metric))
+return(final.df)
+}
+
+```
+
+```{r}
+fam.coast <- join_metric_thresh(metrics.fam, score.thresh, "family", "coast")
+gen.coast <- join_metric_thresh(metrics.gen, score.thresh, "genus", "coast")
+fam.sep <- join_metric_thresh(metrics.fam, score.thresh, "family", "sep")
+gen.sep <- join_metric_thresh(metrics.gen, score.thresh, "genus", "sep")
+metrics.df <- bind_rows(fam.coast, gen.coast, fam.sep, gen.sep)
+```
+
+
+
+```{r}
+dec_func <- function(upper, lower, value) {
+  dplyr::case_when(
+    value <= lower ~ 0,
+    value >= upper ~ 100,
+    value < upper &
+    value > lower ~ ((value - lower) / (upper - lower)) * 100,
+    TRUE ~ 100000
+  )
+}
+inc_func <- function(upper, lower, value) {
+  dplyr::case_when(
+    value <= lower ~ 100,
+    value >= upper ~ 0,
+    value < upper &
+      value > lower ~ ((upper - value) / (upper - lower)) * 100,
+    TRUE ~ 100000
+  )
+}
+
+score_func <- function(long.df, upper.thresh.col, lower.thresh.col, value.col) {
+  value.col <- rlang::enquo(value.col)
+  upper.thresh.col <- rlang::enquo(upper.thresh.col)
+  lower.thresh.col <- rlang::enquo(lower.thresh.col)
+  
+  final.df <- long.df %>% 
+    dplyr::mutate(score = case_when(
+      influence_of_disturbance == "decrease" ~ dec_func(rlang::UQ(upper.thresh.col),
+                                                        rlang::UQ(lower.thresh.col),
+                                                        rlang::UQ(value.col)),
+      influence_of_disturbance == "increase" ~ inc_func(rlang::UQ(upper.thresh.col),
+                                                        rlang::UQ(lower.thresh.col),
+                                                        rlang::UQ(value.col)),
+      TRUE ~ -100000))
+  
+  return(final.df)
+}
+```
+
+
+```{r}
+scores.df <- score_func(metrics.df, upper, lower, value)
+```
+
+
+```{r}
+ibi.df <- scores.df %>% 
+  group_by(unique_id, spatial_resolution, taxonomic_resolution) %>% 
+  summarize(score = mean(score)) %>% 
+  ungroup() 
+```
+
+```{r}
+rating.thresh <- data.table::fread("H:/Projects/Chessie_BIBI/report/FINAL_May25_2017/2017_Data/Rating_Thresholds/rating_threshold_06292017.csv", data.table = FALSE)
+```
+
+```{r}
+rating.df <- left_join(ibi.df, rating.thresh, by = c("spatial_resolution", "taxonomic_resolution")) %>% 
+  mutate(rating = case_when(
+    score < half_ref_10 ~ "very_poor",
+    score >= half_ref_10 & score < ref_10 ~ "poor",
+    score >= ref_10 & score < ref_25 ~ "fair",
+    score >= ref_25 & score < ref_50 ~ "good",
+    score >= ref_50 ~ "excellent",
+    TRUE ~ "ERROR"
+  )) %>% 
+  select(-half_ref_10:-ref_50) %>% 
+  mutate(resolution = paste(spatial_resolution, taxonomic_resolution, sep = "_")) %>% 
+  select(-spatial_resolution, -taxonomic_resolution)
+```
+
+```{r}
+test <- rating.df %>% 
+  group_by(resolution) %>% 
+  mutate(total = n()) %>% 
+  group_by(resolution, rating, total) %>% 
+  summarize(count = n()) %>% 
+  ungroup() %>% 
+  mutate(percent = count / total * 100,
+         rating = factor(rating, levels = c("excellent", "good", "fair", "poor", "very_poor"))) %>% 
+  arrange(resolution, rating)
+
+ggplot(test) + 
+  geom_bar(aes(y = percent, x = resolution, fill = rating), data = test,
+                           stat="identity") +
+  scale_fill_manual(name = "rating",
+                    labels = c("excellent", "good", "fair", "poor", "very_poor"),
+                    values = c("excellent" = "darkgreen",
+                               "good" = "green3",
+                               "fair" = "yellow2",
+                               "poor" = "orange2",
+                               "very_poor" = "red3"))
+
+```
+

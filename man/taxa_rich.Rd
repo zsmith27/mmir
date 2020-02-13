@@ -16,7 +16,7 @@ event ID.}
 \item{taxon}{The taxon or taxa of interest. To specify more than one taxa
 use: c("TAXA1", "TAXA2", "TAXA3").}
 
-\item{taxon.col}{The name of the column that contains the taxon or taxa
+\item{high.res.taxa.col}{The name of the column that contains the taxon or taxa
 of interest.}
 }
 \value{

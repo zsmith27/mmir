@@ -15,6 +15,7 @@
 #'@return A numeric vector of percentages.
 #'@export
 
+
 taxa_tol_index <- function(.data, .key_col,
                            .counts_col, .group_col,
                            .filter,
