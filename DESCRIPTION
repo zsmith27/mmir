@@ -14,3 +14,5 @@ Imports: dplyr,
     rlang,
     data.table,
     tidyverse
+Suggests: 
+    testthat (>= 2.1.0)
