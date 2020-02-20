@@ -26,7 +26,7 @@ taxa_pct_rich <- function(.data, .key_col, .group_col,
                              .filter = NULL)
   #----------------------------------------------------------------------------
   final.vec <- prep.df %>%
-    group_nest({{.key_col}}, .key = "data") %>%
+    dplyr::group_nest({{.key_col}}, .key = "data") %>%
     dplyr::mutate(
       rich = taxa_rich(
         .data = .,

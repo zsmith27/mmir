@@ -4,33 +4,41 @@
 \alias{taxa_dom}
 \title{Percentage of the Most Dominant Taxon (Taxa)}
 \usage{
-taxa_dom(long.df, unique.id.col, count.col, taxon.col, dom.level)
+taxa_dom(
+  .data,
+  .key_col,
+  .counts_col,
+  .group_col,
+  .dom_level,
+  .filter,
+  .unnest_col = data
+)
 }
 \arguments{
-\item{long.df}{Taxonomic counts arranged in a long data format.}
+\item{.data}{Taxonomic counts arranged in a long data format.}
 
-\item{unique.id.col}{The name of the column that contains a unique sampling
+\item{.key_col}{The name of the column that contains a unique sampling
 event ID.}
 
-\item{count.col}{The name of the column that contains taxanomic counts.}
+\item{.counts_col}{The name of the column that contains taxanomic counts.}
 
-\item{dom.level}{A numeric value, typically 1-5, the number of dominant
+\item{.dom_level}{A numeric value, typically 1-5, the number of dominant
 used during the calculation.}
 
-\item{taxon.cols}{The name of the column(s) that contains the taxa
+\item{.group_cols}{The name of the column(s) that contains the taxa
 of interest.}
 }
 \value{
 Percent of individuals that represent the most abundant taxon or taxa.
-dom.level can be used to specify 1st-5th most abundant taxa by specifying
+.dom_level can be used to specify 1st-5th most abundant taxa by specifying
 the corresponding numeric value (1-5).  Values >1 include all of the previous
-dominance levels. For example, dom.level = 3 is the percentage of the most
+dominance levels. For example, .dom_level = 3 is the percentage of the most
 dominant taxon, the second most dominant taxon, and the third most
 dominant taxon. During calculation the taxa are ranked in descending order.
-If there are two taxa with the same count at the specified dom.level, only
+If there are two taxa with the same count at the specified .dom_level, only
 one taxon is used. Consider the following vector as an example of
-taxonomic counts: c(10, 10, 5, 2, 2, 1). If dom.level == 1, only the first
-"10" is selected. If dom.level == 2, the first two "10"s are selected.
+taxonomic counts: c(10, 10, 5, 2, 2, 1). If .dom_level == 1, only the first
+"10" is selected. If .dom_level == 2, the first two "10"s are selected.
 
 This measure is related to taxa evenness. Typically
 degradation is associated with elevated levels of the

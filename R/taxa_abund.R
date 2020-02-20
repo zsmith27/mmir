@@ -5,10 +5,6 @@
 #'@param .key_col The name of the column that contains a unique sampling
 #'event ID.
 #'@param .counts_col The name of the column that contains taxanomic counts.
-#'@param .keep_col The name of the column that contains the taxon or taxa
-#'of interest.
-#'@param .keep_vecThe taxon or taxa of interest. To specify more than one taxa
-#'use: c("TAXA1", "TAXA2", "TAXA3").
 #'@return A numeric vector of percentages.
 #'@export
 

@@ -1,6 +1,7 @@
-#setwd("C:/Users/Owner/Desktop/MMI/MMI")
-#devtools::use_package("tidyr")
-#devtools::use_package("ggplot2")
-#devtools::use_package("dplyr")
-#devtools::use_package("plyr")
-#devtools::use_package("gridExtra")
+usethis::use_package("tidyr")
+usethis::use_package("rlang", min_version = "0.4.4")
+usethis::use_package("dplyr")
+usethis::use_build_ignore("csv")
+usethis::use_build_ignore("R/imports.R")
+
+

@@ -4,18 +4,25 @@
 \alias{taxa_tol_index}
 \title{Percentage of a Specified Taxon}
 \usage{
-taxa_tol_index(long.df, unique.id.col, count.col, taxon.col, tol.col,
-  na.rm = TRUE)
+taxa_tol_index(
+  .data,
+  .key_col,
+  .counts_col,
+  .group_col,
+  .filter,
+  .tol_col,
+  na.rm = TRUE
+)
 }
 \arguments{
-\item{long.df}{Taxonomic counts arranged in a long data format.}
+\item{.data}{Taxonomic counts arranged in a long data format.}
 
-\item{unique.id.col}{The name of the column that contains a unique sampling
+\item{.key_col}{The name of the column that contains a unique sampling
 event ID.}
 
-\item{count.col}{The name of the column that contains taxanomic counts.}
+\item{.counts_col}{The name of the column that contains taxanomic counts.}
 
-\item{taxon.col}{The name of the column that contains the taxon or taxa
+\item{.group_col}{The name of the column that contains the taxon or taxa
 of interest.}
 
 \item{taxon}{The taxon or taxa of interest. To specify more than one taxa

@@ -4,21 +4,30 @@
 \alias{taxa_div}
 \title{Percentage of a Specified Taxon}
 \usage{
-taxa_div(long.df, unique.id.col, count.col, low.taxa.col = NULL,
-  high.taxa.col, taxon = NULL, job, base.log, q)
+taxa_div(
+  .data,
+  .key_col,
+  .counts_col,
+  .group_col,
+  .filter = NULL,
+  .job,
+  .base_log,
+  .q,
+  .unnest_col = data
+)
 }
 \arguments{
-\item{long.df}{Taxonomic counts arranged in a long data format.}
+\item{.data}{Taxonomic counts arranged in a long data format.}
 
-\item{unique.id.col}{The name of the column that contains a unique sampling
+\item{.key_col}{The name of the column that contains a unique sampling
 event ID.}
 
-\item{count.col}{The name of the column that contains taxanomic counts.}
+\item{.counts_col}{The name of the column that contains taxanomic counts.}
 
-\item{high.taxa.col}{The name of the column that contains the taxon or taxa
+\item{.group_col}{The name of the column that contains the taxon or taxa
 of interest.}
 
-\item{taxon}{The taxon or taxa of interest. To specify more than one taxa
+\item{.keep_vec}{The taxon or taxa of interest. To specify more than one taxa
 use: c("TAXA1", "TAXA2", "TAXA3").}
 }
 \value{
