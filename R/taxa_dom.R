@@ -24,6 +24,7 @@
 #' degradation is associated with elevated levels of the
 #' most dominant taxon (taxa); therefore, this metric typically increases
 #' with degradation.
+#'@importFrom rlang .data
 #'@export
 
 taxa_dom <- function(.data, .key_col, .counts_col, .group_col, .dom_level, .filter,

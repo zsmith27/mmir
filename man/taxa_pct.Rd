@@ -2,23 +2,22 @@
 % Please edit documentation in R/taxa_pct.R
 \name{taxa_pct}
 \alias{taxa_pct}
-\title{Percentage of a Specified Taxon}
+\title{Percentage of a Specified .keep_vec}
 \usage{
-taxa_pct(long.df, unique.id.col, count.col, taxon.col, taxon,
-  exclusion.col = NULL, exclusion.vec = NULL)
+taxa_pct(.data, .key_col, .counts_col, .filter = NULL, .unnest_col = data)
 }
 \arguments{
-\item{long.df}{Taxonomic counts arranged in a long data format.}
+\item{.data}{.keep_vecomic counts arranged in a long data format.}
 
-\item{unique.id.col}{The name of the column that contains a unique sampling
+\item{.key_col}{The name of the column that contains a unique sampling
 event ID.}
 
-\item{count.col}{The name of the column that contains taxanomic counts.}
+\item{.counts_col}{The name of the column that contains taxanomic counts.}
 
-\item{taxon.col}{The name of the column that contains the taxon or taxa
+\item{.keep_col}{The name of the column that contains the taxon or taxa
 of interest.}
 
-\item{taxon}{The taxon or taxa of interest. To specify more than one taxa
+\item{.keep_vec}{The .keep_vec or taxa of interest. To specify more than one taxa
 use: c("TAXA1", "TAXA2", "TAXA3").}
 }
 \value{
@@ -26,5 +25,5 @@ A numeric vector of percentages.
 }
 \description{
 Calculate the percentage of each sample represented by the
-specified taxon or taxa.
+specified .keep_vec or taxa.
 }

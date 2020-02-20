@@ -1,13 +1,5 @@
 
 #------------------------------------------------------------------------------
-#'Return the Data Frame to the Order Orginally Provided
-#'@description Return the data frame to the order orginally provided.
-#'@param .data The data frame
-#'@param .unnest_col Name the nested column
-#'@param .filter supply a logical statement
-#'@param .key_col The name of the column that contains a unique sampling.
-#'@return A data frame.
-#'@export
 
 prep_taxa_df <- function(.data, .key_col, .unnest_col, .filter){
   if (!rlang::quo_is_null(rlang::enquo(.unnest_col))) {
@@ -30,14 +22,7 @@ prep_taxa_df <- function(.data, .key_col, .unnest_col, .filter){
 }
 
 #------------------------------------------------------------------------------
-#'Return the Data Frame to the Order Orginally Provided
-#'@description Return the data frame to the order orginally provided.
-#'@param mod.df The data frame altered during metric calculation.
-#'@param original.df The orginal data frame, and therefore the original order of the unique.id.col.
-#'@param unique.id.col The name of the column that contains a unique sampling.
-#'@return A data frame.
-#'@export
-
+# Return the Data Frame to the Order Orginally Provided
 original_order <- function(.mod_data, .org_data, .key_col) {
   final.df <- .org_data %>%
     dplyr::select({{.key_col}}) %>%

@@ -3,3 +3,10 @@
 ^packrat/
 ^\.Rprofile$
 ^\.travis\.yml$
+^csv$
+^README\.Rmd$
+^imports\.R$
+^LICENSE\.md$
+^codecov\.yml$
+^\.covrignore$
+^\.github$

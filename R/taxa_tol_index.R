@@ -13,6 +13,7 @@
 #'@param taxon The taxon or taxa of interest. To specify more than one taxa
 #'use: c("TAXA1", "TAXA2", "TAXA3").
 #'@return A numeric vector of percentages.
+#'@importFrom rlang .data
 #'@export
 
 

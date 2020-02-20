@@ -12,11 +12,13 @@
 #'@param .job To calculate the percent of each taxon specify "pct". To calculate
 #'the richness of each tax
 #'@return The percent of the sample represented by each taxa per taxon level.
+#'@importFrom rlang .data
 #'@export
 #==============================================================================
 
 taxa_seq <- function(.data, .key_col, .counts_col, .filter_cols_vec,
                      .group_col,
+                     .unnest_col = data,
                       .keep_na = FALSE, .job,
                      .base_log= NULL, .q = NULL){
   prep.df <- prep_taxa_df(.data = .data,
@@ -33,9 +35,9 @@ taxa_seq <- function(.data, .key_col, .counts_col, .filter_cols_vec,
       dplyr::distinct() %>%
       dplyr::filter(!is.na(.)) %>%
       pull({{col.i}}) %>%
-      stringr::str_trim()
+      trimws()
 
-    taxa.vec <- taxa.vec[stringr::str_length(taxa.vec) > 0]
+    taxa.vec <- taxa.vec[nchar(taxa.vec) > 0]
 
     if (length(taxa.vec) == 0) return(data.frame())
 

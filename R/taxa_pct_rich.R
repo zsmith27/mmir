@@ -13,6 +13,7 @@
 #'@param .keep_vec The taxon or taxa of interest. To specify more than one taxa
 #'use: c("TAXA1", "TAXA2", "TAXA3").
 #'@return A numeric vector of percentages.
+#'@importFrom rlang .data
 #'@export
 
 
@@ -26,7 +27,7 @@ taxa_pct_rich <- function(.data, .key_col, .group_col,
                              .filter = NULL)
   #----------------------------------------------------------------------------
   final.vec <- prep.df %>%
-    group_nest({{.key_col}}, .key = "data") %>%
+    dplyr::group_nest({{.key_col}}, .key = "data") %>%
     dplyr::mutate(
       rich = taxa_rich(
         .data = .,

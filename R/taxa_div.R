@@ -13,6 +13,7 @@
 #'@param .keep_vec The taxon or taxa of interest. To specify more than one taxa
 #'use: c("TAXA1", "TAXA2", "TAXA3").
 #'@return A numeric vector of percentages.
+#'@importFrom rlang .data
 #'@export
 
 
@@ -22,11 +23,12 @@ taxa_div <- function(.data, .key_col, .counts_col,
                      .job, .base_log, .q,
                      .unnest_col = data) {
   #------------------------------------------------------------------------------
-  prep.df <- prep_div(.data = .data,
+  prep.df <- .prep_div(.data = .data,
                       .key_col = {{.key_col}},
                       .counts_col = {{.counts_col}},
                       .group_col = {{.group_col}},
-                      .filter = {{.filter}})
+                      .filter = {{.filter}},
+                      .unnest_col = {{.unnest_col}})
   #------------------------------------------------------------------------------
   if(.job %in% c("shannon", "effective_shannon")) {
     final.vec <- prep.df %>%
@@ -113,8 +115,9 @@ taxa_div <- function(.data, .key_col, .counts_col,
 }
 
 
-prep_div <- function(.data, .key_col, .counts_col, .group_col,
-                     .filter = NULL) {
+.prep_div <- function(.data, .key_col, .counts_col, .group_col,
+                     .filter = NULL,
+                     .unnest_col = data) {
 
   prep.df <- prep_taxa_df(.data = .data,
                           .key_col = {{.key_col}},

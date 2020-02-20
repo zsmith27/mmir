@@ -4,22 +4,21 @@
 \alias{taxa_abund}
 \title{Abundance of a Specified Taxon}
 \usage{
-taxa_abund(long.df, unique.id.col, count.col, taxon.col, taxon = NULL,
-  exclusion.col = NULL, exclusion.vec = NULL)
+taxa_abund(
+  .dataframe,
+  .key_col,
+  .counts_col,
+  .filter = NULL,
+  .unnest_col = data
+)
 }
 \arguments{
-\item{long.df}{Taxonomic counts arranged in a long data format.}
-
-\item{unique.id.col}{The name of the column that contains a unique sampling
+\item{.key_col}{The name of the column that contains a unique sampling
 event ID.}
 
-\item{count.col}{The name of the column that contains taxanomic counts.}
+\item{.counts_col}{The name of the column that contains taxanomic counts.}
 
-\item{taxon.col}{The name of the column that contains the taxon or taxa
-of interest.}
-
-\item{taxon}{The taxon or taxa of interest. To specify more than one taxa
-use: c("TAXA1", "TAXA2", "TAXA3").}
+\item{.data}{Taxonomic counts arranged in a long data format.}
 }
 \value{
 A numeric vector of percentages.

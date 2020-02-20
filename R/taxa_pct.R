@@ -13,6 +13,7 @@
 #'@param .keep_vec The .keep_vec or taxa of interest. To specify more than one taxa
 #'use: c("TAXA1", "TAXA2", "TAXA3").
 #'@return A numeric vector of percentages.
+#'@importFrom rlang .data
 #'@export
 
 taxa_pct <- function(.data, .key_col, .counts_col,

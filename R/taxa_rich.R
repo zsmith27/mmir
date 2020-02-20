@@ -8,6 +8,7 @@
 #'@param .keep_vec The taxon or taxa of interest. To specify more than one taxa
 #'use: c("TAXA1", "TAXA2", "TAXA3").
 #'@return The number of taxa identified.
+#'@importFrom rlang .data
 #'@export
 
 
