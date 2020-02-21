@@ -2,15 +2,15 @@
 % Please edit documentation in R/taxa_seq.R
 \name{taxa_seq}
 \alias{taxa_seq}
-\title{The percentage each taxon makes up of a sample}
+\title{Sequence Through Taxonomic Metrics}
 \usage{
 taxa_seq(
-  .data,
+  .dataframe,
   .key_col,
   .counts_col,
   .filter_cols_vec,
   .group_col,
-  .unnest_col = data,
+  .unnest_col = NULL,
   .keep_na = FALSE,
   .job,
   .base_log = NULL,
@@ -18,22 +18,29 @@ taxa_seq(
 )
 }
 \arguments{
-\item{.data}{Taxonomic counts arranged in a long data format.}
+\item{.dataframe}{A data frame where each row should represent the number of
+individuals enumerated for a single taxon collected during a single sampling event.}
 
-\item{.key_col}{The name of the column that contains a unique sampling
-event ID.}
+\item{.key_col}{One unquoted column name that represents a key (i.e., unique ID)
+for a sampling event for which to group (i.e., aggregate) the data.}
 
-\item{.counts_col}{The name of the column that contains taxanomic counts.}
+\item{.counts_col}{One unquoted column name that represents taxonomic counts.}
+
+\item{.filter_cols_vec}{A quoted vector of column names for which
+the function will sequence through each unique value to perform the specified .job.}
+
+\item{.group_col}{One unquoted column name that represents a taxomic rank
+or group of interest.}
+
+\item{.unnest_col}{One unqouted column name that represents nested data.
+If this column is NULL (default), then the data will not be unnested.}
 
 \item{.job}{To calculate the percent of each taxon specify "pct". To calculate
 the richness of each tax}
-
-\item{.filter_cols_vecs}{The name of the column(s) that contains the taxa
-of interest.}
 }
 \value{
 The percent of the sample represented by each taxa per taxon level.
 }
 \description{
-The percentage each taxon makes up of a sample
+Sequence Through Taxonomic Metrics
 }

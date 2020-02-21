@@ -1,14 +1,16 @@
-# ==============================================================================
-# The percent of the sample represented by each taxa per taxon level
-# ==============================================================================
-#' The percentage each taxon makes up of a sample
-#'
-#' @param .data Taxonomic counts arranged in a long data format.
-#' @param .key_col The name of the column that contains a unique sampling
-#' event ID.
-#' @param .counts_col The name of the column that contains taxanomic counts.
-#' @param .filter_cols_vecs The name of the column(s) that contains the taxa
-#' of interest.
+#' Sequence Through Taxonomic Metrics
+#' @description
+#' @param .dataframe A data frame where each row should represent the number of
+#' individuals enumerated for a single taxon collected during a single sampling event.
+#' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
+#'  for a sampling event for which to group (i.e., aggregate) the data.
+#' @param .counts_col One unquoted column name that represents taxonomic counts.
+#' @param .unnest_col One unqouted column name that represents nested data.
+#'  If this column is NULL (default), then the data will not be unnested.
+#' @param .filter_cols_vec A quoted vector of column names for which
+#' the function will sequence through each unique value to perform the specified .job.
+#' @param .group_col One unquoted column name that represents a taxomic rank
+#'  or group of interest.
 #' @param .job To calculate the percent of each taxon specify "pct". To calculate
 #' the richness of each tax
 #' @return The percent of the sample represented by each taxa per taxon level.
@@ -16,13 +18,13 @@
 #' @export
 # ==============================================================================
 
-taxa_seq <- function(.data, .key_col, .counts_col, .filter_cols_vec,
+taxa_seq <- function(.dataframe, .key_col, .counts_col, .filter_cols_vec,
                      .group_col,
-                     .unnest_col = data,
+                     .unnest_col = NULL,
                      .keep_na = FALSE, .job,
                      .base_log = NULL, .q = NULL) {
   prep.df <- prep_taxa_df(
-    .data = .data,
+    .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .unnest_col = {{ .unnest_col }},
     .filter = NULL
@@ -35,8 +37,8 @@ taxa_seq <- function(.data, .key_col, .counts_col, .filter_cols_vec,
     taxa.vec <- prep.df %>%
       dplyr::select({{ col.i }}) %>%
       dplyr::distinct() %>%
-      dplyr::filter(!is.na(.)) %>%
-      pull({{ col.i }}) %>%
+      tidyr::drop_na() %>%
+      dplyr::pull({{ col.i }}) %>%
       trimws()
 
     taxa.vec <- taxa.vec[nchar(taxa.vec) > 0]
@@ -51,34 +53,38 @@ taxa_seq <- function(.data, .key_col, .counts_col, .filter_cols_vec,
     taxa.df <- sapply(taxa.vec, function(taxa.i) {
       #------------------------------------------------------------------------
       if (.job == "abund") {
-        vec.i <- taxa_abund(.data,
+        vec.i <- taxa_abund(.dataframe,
           .key_col = {{ .key_col }},
           .counts_col = {{ .counts_col }},
-          .filter = {{ col.i }} %in% taxa.i
+          .filter = {{ col.i }} %in% taxa.i,
+          .unnest_col = {{ .unnest_col }}
         )
       }
       #------------------------------------------------------------------------
       if (.job == "pct") {
-        vec.i <- taxa_pct(.data,
+        vec.i <- taxa_pct(.dataframe,
           .key_col = {{ .key_col }},
           .counts_col = {{ .counts_col }},
-          .filter = {{ col.i }} %in% taxa.i
+          .filter = {{ col.i }} %in% taxa.i,
+          .unnest_col = {{ .unnest_col }}
         )
       }
       #------------------------------------------------------------------------
       if (.job == "rich") {
-        vec.i <- taxa_rich(.data,
+        vec.i <- taxa_rich(.dataframe,
           .key_col = {{ .key_col }},
           .filter = {{ col.i }} %in% taxa.i,
-          .group_col = {{ .group_col }}
+          .group_col = {{ .group_col }},
+          .unnest_col = {{ .unnest_col }}
         )
       }
       #------------------------------------------------------------------------
       if (.job == "pct_rich") {
-        vec.i <- taxa_pct_rich(.data,
+        vec.i <- taxa_pct_rich(.dataframe,
           .key_col = {{ .key_col }},
           .filter = {{ col.i }} %in% taxa.i,
-          .group_col = {{ .group_col }}
+          .group_col = {{ .group_col }},
+          .unnest_col = {{ .unnest_col }}
         )
       }
       #------------------------------------------------------------------------
@@ -87,14 +93,15 @@ taxa_seq <- function(.data, .key_col, .counts_col, .filter_cols_vec,
         "gini_simpson", "effective_simpson", "pielou",
         "margalef", "menhinick", "hill", "renyi"
       )) {
-        vec.i <- taxa_div(.data,
+        vec.i <- taxa_div(.dataframe,
           .key_col = {{ .key_col }},
           .counts_col = {{ .counts_col }},
           .group_col = {{ .group_col }},
           .filter = {{ col.i }} %in% taxa.i,
           .job = .job,
           .base_log = .base_log,
-          .q = .q
+          .q = .q,
+          .unnest_col = {{ .unnest_col }}
         )
       }
       #------------------------------------------------------------------------
@@ -103,9 +110,12 @@ taxa_seq <- function(.data, .key_col, .counts_col, .filter_cols_vec,
       as.data.frame() %>%
       dplyr::rename_all(tolower)
 
-    names(taxa.df) <- paste(.job, rlang::quo_name(rlang::enquo(.group_col)), names(taxa.df), sep = "_")
+    names(taxa.df) <- paste(.job,
+                            rlang::quo_name(rlang::enquo(.group_col)),
+                            names(taxa.df),
+                            sep = "_")
     return(taxa.df)
   })
-  final.df <- bind_cols(list.metrics)
+  final.df <- dplyr::bind_cols(list.metrics)
   return(final.df)
 }

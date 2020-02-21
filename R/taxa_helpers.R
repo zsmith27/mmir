@@ -1,25 +1,25 @@
 
 #------------------------------------------------------------------------------
 
-prep_taxa_df <- function(.data, .key_col, .unnest_col, .filter) {
+prep_taxa_df <- function(.dataframe, .key_col, .unnest_col, .filter) {
   if (!rlang::quo_is_null(rlang::enquo(.unnest_col))) {
-    .data_unnest <- tidyr::unnest(.data,
+    .dataframe_unnest <- tidyr::unnest(.dataframe,
       cols = {{ .unnest_col }}
     )
   } else {
-    .data_unnest <- .data
+    .dataframe_unnest <- .dataframe
   }
   #----------------------------------------------------------------------------
   # Apply specified filter when not NULL
   if (!rlang::quo_is_null(rlang::enquo(.filter))) {
-    .data_final <- .data_unnest %>%
+    .dataframe_final <- .dataframe_unnest %>%
       dplyr::filter({{ .filter }}) %>%
-      original_order(.data_unnest, {{ .key_col }})
+      original_order(.dataframe_unnest, {{ .key_col }})
   } else {
-    .data_final <- .data_unnest
+    .dataframe_final <- .dataframe_unnest
   }
 
-  return(.data_final)
+  return(.dataframe_final)
 }
 
 #------------------------------------------------------------------------------

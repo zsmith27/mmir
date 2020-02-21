@@ -2,23 +2,30 @@
 % Please edit documentation in R/taxa_abund.R
 \name{taxa_abund}
 \alias{taxa_abund}
-\title{Abundance of a Specified Taxon}
+\title{Taxonomic Abundance}
 \usage{
 taxa_abund(
   .dataframe,
   .key_col,
   .counts_col,
   .filter = NULL,
-  .unnest_col = data
+  .unnest_col = NULL
 )
 }
 \arguments{
-\item{.key_col}{The name of the column that contains a unique sampling
-event ID.}
+\item{.dataframe}{A data frame where each row should represent the number of
+individuals enumerated for a single taxon collected during a single sampling event.}
 
-\item{.counts_col}{The name of the column that contains taxanomic counts.}
+\item{.key_col}{One unquoted column name that represents a key (i.e., unique ID)
+for a sampling event for which to group (i.e., aggregate) the data.}
 
-\item{.data}{Taxonomic counts arranged in a long data format.}
+\item{.counts_col}{One unquoted column name that represents taxonomic counts.}
+
+\item{.filter}{A logical statement to subset the data frame prior to calculating
+the metric of interest.}
+
+\item{.unnest_col}{One unqouted column name that represents nested data.
+If this column is NULL (default), then the data will not be unnested.}
 }
 \value{
 A numeric vector of percentages.

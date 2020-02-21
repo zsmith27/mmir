@@ -1,21 +1,23 @@
-#' Abundance of a Specified Taxon
+#' Taxonomic Abundance
 #' @description Calculate the abundance of each sample represented by the
 #' specified taxon or taxa.
-#' @param .data Taxonomic counts arranged in a long data format.
-#' @param .key_col The name of the column that contains a unique sampling
-#' event ID.
-#' @param .counts_col The name of the column that contains taxanomic counts.
+#' @param .dataframe A data frame where each row should represent the number of
+#' individuals enumerated for a single taxon collected during a single sampling event.
+#' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
+#'  for a sampling event for which to group (i.e., aggregate) the data.
+#' @param .counts_col One unquoted column name that represents taxonomic counts.
+#' @param .filter A logical statement to subset the data frame prior to calculating
+#' the metric of interest.
+#' @param .unnest_col One unqouted column name that represents nested data.
+#'  If this column is NULL (default), then the data will not be unnested.
 #' @return A numeric vector of percentages.
-#' @importFrom rlang .data
 #' @export
-
-
 
 taxa_abund <- function(.dataframe, .key_col, .counts_col,
                        .filter = NULL,
-                       .unnest_col = data) {
+                       .unnest_col = NULL) {
   prep.df <- prep_taxa_df(
-    .data = .data,
+    .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .unnest_col = {{ .unnest_col }},
     .filter = {{ .filter }}
@@ -25,16 +27,16 @@ taxa_abund <- function(.dataframe, .key_col, .counts_col,
   final.vec <- prep.df %>%
     dplyr::group_by({{ .key_col }}) %>%
     dplyr::summarise(abund = sum({{ .counts_col }})) %>%
-    original_order(.data, {{ .key_col }}) %>%
+    original_order(.dataframe, {{ .key_col }}) %>%
     dplyr::mutate(
-      abund = as.numeric(abund),
+      abund = as.numeric(.data$abund),
       abund = dplyr::if_else(
-        !is.na(abund),
-        as.numeric(abund),
+        !is.na(.data$abund),
+        as.numeric(.data$abund),
         as.numeric(0)
       )
     ) %>%
-    dplyr::pull(abund)
+    dplyr::pull(.data$abund)
   #----------------------------------------------------------------------------
   return(final.vec)
 }

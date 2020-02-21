@@ -1,29 +1,30 @@
 # ==============================================================================
 # Composition Metrics
 # ==============================================================================
-#' Percentage of a Specified .keep_vec
+#' Relative Abundance
 #' @description Calculate the percentage of each sample represented by the
 #' specified .keep_vec or taxa.
-#' @param .data .keep_vecomic counts arranged in a long data format.
-#' @param .key_col The name of the column that contains a unique sampling
-#' event ID.
-#' @param .counts_col The name of the column that contains taxanomic counts.
-#' @param .keep_col The name of the column that contains the taxon or taxa
-#' of interest.
-#' @param .keep_vec The .keep_vec or taxa of interest. To specify more than one taxa
-#' use: c("TAXA1", "TAXA2", "TAXA3").
+#' @param .dataframe A data frame where each row should represent the number of
+#' individuals enumerated for a single taxon collected during a single sampling event.
+#' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
+#'  for a sampling event for which to group (i.e., aggregate) the data.
+#' @param .counts_col One unquoted column name that represents taxonomic counts.
+#' @param .filter A logical statement to subset the data frame prior to calculating
+#' the metric of interest.
+#' @param .unnest_col One unqouted column name that represents nested data.
+#'  If this column is NULL (default), then the data will not be unnested.
 #' @return A numeric vector of percentages.
 #' @importFrom rlang .data
 #' @export
 
-taxa_pct <- function(.data, .key_col, .counts_col,
+taxa_pct <- function(.dataframe, .key_col, .counts_col,
                      .filter = NULL,
-                     .unnest_col = data) {
+                     .unnest_col = NULL) {
 
   #----------------------------------------------------------------------------
   # Calculate abundance
   abund.vec <- taxa_abund(
-    .data = .data,
+    .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .counts_col = {{ .counts_col }},
     .filter = {{ .filter }},
@@ -31,7 +32,7 @@ taxa_pct <- function(.data, .key_col, .counts_col,
   )
   #----------------------------------------------------------------------------
   prep.df <- prep_taxa_df(
-    .data = .data,
+    .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .unnest_col = {{ .unnest_col }},
     .filter = NULL
@@ -41,14 +42,16 @@ taxa_pct <- function(.data, .key_col, .counts_col,
   final.vec <- prep.df %>%
     dplyr::group_by({{ .key_col }}) %>%
     dplyr::summarize(total = sum({{ .counts_col }})) %>%
-    original_order(.data, {{ .key_col }}) %>%
+    original_order(.dataframe, {{ .key_col }}) %>%
     dplyr::mutate(
       abund = abund.vec,
-      pct = abund / total * 100
+      pct = .data$abund / .data$total * 100
     ) %>%
-    original_order(.data, {{ .key_col }}) %>%
-    dplyr::mutate(pct = dplyr::if_else(!is.na(pct), pct, as.double(0))) %>%
-    dplyr::pull(pct)
+    original_order(.dataframe, {{ .key_col }}) %>%
+    dplyr::mutate(pct = dplyr::if_else(!is.na(.data$pct),
+                                       as.double(.data$pct),
+                                       as.double(0))) %>%
+    dplyr::pull(.data$pct)
   #----------------------------------------------------------------------------
   return(final.vec)
 }

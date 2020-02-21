@@ -1,30 +1,33 @@
 # ==============================================================================
 # Diversity Metrics
 # ==============================================================================
-#' Percentage of a Specified Taxon
+#' Taxonomic Diversity
 #' @description Calculate the percentage of each sample represented by the
 #' specified taxon or taxa.
-#' @param .data Taxonomic counts arranged in a long data format.
-#' @param .key_col The name of the column that contains a unique sampling
-#' event ID.
-#' @param .counts_col The name of the column that contains taxanomic counts.
-#' @param .group_col The name of the column that contains the taxon or taxa
-#' of interest.
-#' @param .keep_vec The taxon or taxa of interest. To specify more than one taxa
-#' use: c("TAXA1", "TAXA2", "TAXA3").
+#' @param .dataframe A data frame where each row should represent the number of
+#' individuals enumerated for a single taxon collected during a single sampling event.
+#' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
+#'  for a sampling event for which to group (i.e., aggregate) the data.
+#' @param .counts_col One unquoted column name that represents taxonomic counts.
+#' @param .filter A logical statement to subset the data frame prior to calculating
+#' the metric of interest.
+#' @param .unnest_col One unqouted column name that represents nested data.
+#'  If this column is NULL (default), then the data will not be unnested.
+#' @param .group_col One unquoted column name that represents a taxomic rank
+#'  or group of interest.
 #' @return A numeric vector of percentages.
 #' @importFrom rlang .data
 #' @export
 
 
-taxa_div <- function(.data, .key_col, .counts_col,
+taxa_div <- function(.dataframe, .key_col, .counts_col,
                      .group_col,
                      .filter = NULL,
                      .job, .base_log, .q,
-                     .unnest_col = data) {
+                     .unnest_col = NULL) {
   #------------------------------------------------------------------------------
   prep.df <- .prep_div(
-    .data = .data,
+    .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .counts_col = {{ .counts_col }},
     .group_col = {{ .group_col }},
@@ -34,35 +37,37 @@ taxa_div <- function(.data, .key_col, .counts_col,
   #------------------------------------------------------------------------------
   if (.job %in% c("shannon", "effective_shannon")) {
     final.vec <- prep.df %>%
-      dplyr::group_by({{ .key_col }}, {{ .group_col }}, total) %>%
+      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$total) %>%
       dplyr::summarize(count = sum({{ .counts_col }})) %>%
-      dplyr::mutate(p = count / total) %>%
-      dplyr::mutate(log_p = -p * log(p, .base_log)) %>%
+      dplyr::mutate(p = .data$count / .data$total) %>%
+      dplyr::mutate(log_p = -.data$p * log(.data$p, .base_log)) %>%
       dplyr::group_by({{ .key_col }}) %>%
-      dplyr::summarize(final = sum(log_p, na.rm = TRUE)) %>%
-      original_order(.data, {{ .key_col }}) %>%
-      dplyr::mutate(final = dplyr::if_else(!is.na(final), final, as.double(0))) %>%
-      dplyr::pull(final)
+      dplyr::summarize(final = sum(.data$log_p, na.rm = TRUE)) %>%
+      original_order(.dataframe, {{ .key_col }}) %>%
+      dplyr::mutate(final = dplyr::if_else(!is.na(.data$final),
+                                           .data$final,
+                                           as.double(0))) %>%
+      dplyr::pull(.data$final)
     if (.job == "effective_shannon") final.vec <- exp(final.vec)
   }
   #------------------------------------------------------------------------------
   if (.job %in% c("simpson", "invsimpson", "gini_simpson", "effective_simpson")) {
     final.vec <- prep.df %>%
-      dplyr::group_by({{ .key_col }}, {{ .group_col }}, total) %>%
+      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$total) %>%
       dplyr::summarize(count = sum({{ .counts_col }})) %>%
       dplyr::mutate(
-        p = count / total,
-        p = p^2
+        p = .data$count / .data$total,
+        p = .data$p^2
       ) %>%
       dplyr::group_by({{ .key_col }}) %>%
-      dplyr::summarize(final = sum(p, na.rm = TRUE)) %>%
-      original_order(.data, {{ .key_col }}) %>%
+      dplyr::summarize(final = sum(.data$p, na.rm = TRUE)) %>%
+      original_order(.dataframe, {{ .key_col }}) %>%
       dplyr::mutate(final = dplyr::if_else(
-        !is.na(final),
-        as.double(final),
+        !is.na(.data$final),
+        as.double(.data$final),
         as.double(0)
       )) %>%
-      dplyr::pull(final)
+      dplyr::pull(.data$final)
     if (.job == "simpson") final.vec
     if (.job == "gini_simpson") {
       final.vec <- ifelse(final.vec > 0, 1 - final.vec, 0)
@@ -77,7 +82,7 @@ taxa_div <- function(.data, .key_col, .counts_col,
   #------------------------------------------------------------------------------
   if (.job %in% c("pielou", "margalef", "menhinick")) {
     rich.vec <- taxa_rich(
-      .data = .data,
+      .dataframe = .dataframe,
       .key_col = {{ .key_col }},
       .group_col = {{ .group_col }},
       .filter = {{ .filter }},
@@ -86,7 +91,7 @@ taxa_div <- function(.data, .key_col, .counts_col,
     if (.job == "pielou") final.vec <- log10(rich.vec)
     if (.job %in% c("margalef", "menhinick")) {
       abund.vec <- taxa_abund(
-        .data = .data,
+        .dataframe = .dataframe,
         .key_col = {{ .key_col }},
         .counts_col = {{ .counts_col }},
         .filter = {{ .filter }},
@@ -109,19 +114,19 @@ taxa_div <- function(.data, .key_col, .counts_col,
   #------------------------------------------------------------------------------
   if (.job %in% c("hill", "renyi")) {
     final.vec <- prep.df %>%
-      dplyr::group_by({{ .key_col }}, {{ .group_col }}, total) %>%
+      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$total) %>%
       dplyr::summarize(
         .counts_col = sum({{ .counts_col }}),
         na.rm = TRUE
       ) %>%
       dplyr::mutate(
-        p = .counts_col / total,
-        p = p^.q
+        p = {{ .counts_col }} / .data$total,
+        p = .data$p^.q
       ) %>%
       dplyr::group_by({{ .key_col }}) %>%
-      dplyr::summarize(final = sum(p, na.rm = TRUE)) %>%
-      original_order(.data, {{ .key_col }}) %>%
-      dplyr::pull(final)
+      dplyr::summarize(final = sum(.data$p, na.rm = TRUE)) %>%
+      original_order(.dataframe, {{ .key_col }}) %>%
+      dplyr::pull(.data$final)
     if (.job == "hill") final.vec <- final.vec^(1 / (1 - .q))
     if (.job == "renyi") final.vec <- (1 / (1 - .q)) * log(final.vec)
   }
@@ -130,11 +135,11 @@ taxa_div <- function(.data, .key_col, .counts_col,
 }
 
 
-.prep_div <- function(.data, .key_col, .counts_col, .group_col,
+.prep_div <- function(.dataframe, .key_col, .counts_col, .group_col,
                       .filter = NULL,
-                      .unnest_col = data) {
+                      .unnest_col = NULL) {
   prep.df <- prep_taxa_df(
-    .data = .data,
+    .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .unnest_col = {{ .unnest_col }},
     .filter = {{ .filter }}

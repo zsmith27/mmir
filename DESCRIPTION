@@ -19,7 +19,9 @@ Suggests:
     covr (>= 3.4.0),
     knitr (>= 1.28),
     testthat (>= 2.1.0),
-    roxygen2 (>= 7.0.2)
+    roxygen2 (>= 7.0.2),
+    DT,
+    webshot
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

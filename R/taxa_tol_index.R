@@ -1,34 +1,38 @@
 # ==============================================================================
 # Composition Metrics
 # ==============================================================================
-#' Percentage of a Specified Taxon
+#' Tolerance Index
 #' @description Calculate the percentage of each sample represented by the
 #' specified taxon or taxa.
-#' @param .data Taxonomic counts arranged in a long data format.
-#' @param .key_col The name of the column that contains a unique sampling
-#' event ID.
-#' @param .counts_col The name of the column that contains taxanomic counts.
-#' @param .group_col The name of the column that contains the taxon or taxa
-#' of interest.
-#' @param taxon The taxon or taxa of interest. To specify more than one taxa
-#' use: c("TAXA1", "TAXA2", "TAXA3").
+#' @param .dataframe A data frame where each row should represent the number of
+#' individuals enumerated for a single taxon collected during a single sampling event.
+#' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
+#'  for a sampling event for which to group (i.e., aggregate) the data.
+#' @param .counts_col One unquoted column name that represents taxonomic counts.
+#' @param .filter A logical statement to subset the data frame prior to calculating
+#' the metric of interest.
+#' @param .unnest_col One unqouted column name that represents nested data.
+#'  If this column is NULL (default), then the data will not be unnested.
+#' @param .group_col One unquoted column name that represents a taxomic rank
+#'  or group of interest.
 #' @return A numeric vector of percentages.
 #' @importFrom rlang .data
 #' @export
 
 
-taxa_tol_index <- function(.data, .key_col,
+taxa_tol_index <- function(.dataframe, .key_col,
                            .counts_col, .group_col,
                            .filter,
+                           .unnest_col = NULL,
                            .tol_col, na.rm = TRUE) {
   prep.df <- prep_taxa_df(
-    .data = .data,
+    .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .unnest_col = {{ .unnest_col }},
     .filter = {{ .filter }}
   )
 
-  # .data <- .data %>%
+  # .dataframe <- .dataframe %>%
   #   dplyr::mutate({{.group_col}} := trimws({{.group_col}}),
   #                 {{.group_col}} := ifelse({{.group_col}} == "", NA, {{.group_col}}))
 
@@ -44,16 +48,16 @@ taxa_tol_index <- function(.data, .key_col,
       !({{ .tol_col }}) %in% c("")
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select({{ .key_col }}, {{ .tol_col }}, count) %>%
-    dplyr::mutate(score = count * ({{ .tol_col }})) %>%
+    dplyr::select({{ .key_col }}, {{ .tol_col }}, .data$count) %>%
+    dplyr::mutate(score = .data$count * ({{ .tol_col }})) %>%
     dplyr::group_by({{ .key_col }}) %>%
     dplyr::summarize(
-      score = sum(score),
-      taxa = sum(count),
-      score = score / taxa
+      score = sum(.data$score),
+      taxa = sum(.data$count),
+      score = .data$score / .data$taxa
     ) %>%
-    original_order(.data, {{ .key_col }}) %>%
-    dplyr::pull(score)
+    original_order(.dataframe, {{ .key_col }}) %>%
+    dplyr::pull(.data$score)
 
   return(score.vec)
 }

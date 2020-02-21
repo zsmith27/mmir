@@ -1,12 +1,16 @@
 # ==============================================================================
-#' Percentage of the Most Dominant Taxon (Taxa)
-#'
-#' @param .data Taxonomic counts arranged in a long data format.
-#' @param .key_col The name of the column that contains a unique sampling
-#' event ID.
-#' @param .counts_col The name of the column that contains taxanomic counts.
-#' @param .group_cols The name of the column(s) that contains the taxa
-#' of interest.
+#' Taxonomic Dominance
+#' @param .dataframe A data frame where each row should represent the number of
+#' individuals enumerated for a single taxon collected during a single sampling event.
+#' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
+#'  for a sampling event for which to group (i.e., aggregate) the data.
+#' @param .counts_col One unquoted column name that represents taxonomic counts.
+#' @param .filter A logical statement to subset the data frame prior to calculating
+#' the metric of interest.
+#' @param .unnest_col One unqouted column name that represents nested data.
+#'  If this column is NULL (default), then the data will not be unnested.
+#' @param .group_col One unquoted column name that represents a taxomic rank
+#'  or group of interest.
 #' @param .dom_level A numeric value, typically 1-5, the number of dominant
 #' used during the calculation.
 #' @return Percent of individuals that represent the most abundant taxon or taxa.
@@ -27,10 +31,10 @@
 #' @importFrom rlang .data
 #' @export
 
-taxa_dom <- function(.data, .key_col, .counts_col, .group_col, .dom_level, .filter,
-                     .unnest_col = data) {
+taxa_dom <- function(.dataframe, .key_col, .counts_col, .group_col, .dom_level, .filter,
+                     .unnest_col = NULL) {
   prep.df <- prep_taxa_df(
-    .data = .data,
+    .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .unnest_col = {{ .unnest_col }},
     .filter = {{ .filter }}
@@ -40,11 +44,11 @@ taxa_dom <- function(.data, .key_col, .counts_col, .group_col, .dom_level, .filt
     dplyr::group_by({{ .key_col }}, {{ .group_col }}) %>%
     dplyr::summarize(count = sum({{ .counts_col }})) %>%
     dplyr::group_by({{ .key_col }}) %>%
-    dplyr::mutate(total = sum(count)) %>%
-    dplyr::filter(dplyr::row_number(dplyr::desc(count)) <= .dom_level) %>%
-    dplyr::summarize(percent = sum(count) / unique(total) * 100) %>%
-    original_order(.data, {{ .key_col }}) %>%
-    dplyr::pull(percent)
+    dplyr::mutate(total = sum(.data$count)) %>%
+    dplyr::filter(dplyr::row_number(dplyr::desc(.data$count)) <= .dom_level) %>%
+    dplyr::summarize(percent = sum(.data$count) / unique(.data$total) * 100) %>%
+    original_order(.dataframe, {{ .key_col }}) %>%
+    dplyr::pull(.data$percent)
   #----------------------------------------------------------------------------
   return(final.vec)
 }

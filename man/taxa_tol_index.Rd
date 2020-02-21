@@ -2,31 +2,36 @@
 % Please edit documentation in R/taxa_tol_index.R
 \name{taxa_tol_index}
 \alias{taxa_tol_index}
-\title{Percentage of a Specified Taxon}
+\title{Tolerance Index}
 \usage{
 taxa_tol_index(
-  .data,
+  .dataframe,
   .key_col,
   .counts_col,
   .group_col,
   .filter,
+  .unnest_col = NULL,
   .tol_col,
   na.rm = TRUE
 )
 }
 \arguments{
-\item{.data}{Taxonomic counts arranged in a long data format.}
+\item{.dataframe}{A data frame where each row should represent the number of
+individuals enumerated for a single taxon collected during a single sampling event.}
 
-\item{.key_col}{The name of the column that contains a unique sampling
-event ID.}
+\item{.key_col}{One unquoted column name that represents a key (i.e., unique ID)
+for a sampling event for which to group (i.e., aggregate) the data.}
 
-\item{.counts_col}{The name of the column that contains taxanomic counts.}
+\item{.counts_col}{One unquoted column name that represents taxonomic counts.}
 
-\item{.group_col}{The name of the column that contains the taxon or taxa
-of interest.}
+\item{.group_col}{One unquoted column name that represents a taxomic rank
+or group of interest.}
 
-\item{taxon}{The taxon or taxa of interest. To specify more than one taxa
-use: c("TAXA1", "TAXA2", "TAXA3").}
+\item{.filter}{A logical statement to subset the data frame prior to calculating
+the metric of interest.}
+
+\item{.unnest_col}{One unqouted column name that represents nested data.
+If this column is NULL (default), then the data will not be unnested.}
 }
 \value{
 A numeric vector of percentages.
