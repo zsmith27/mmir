@@ -149,6 +149,7 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
     .unnest_col = {{ .unnest_col }},
     .filter = {{ .filter }}
   )
+}
 
 .prep_div <- function(.data, .key_col, .counts_col, .group_col,
                      .filter = NULL,
