@@ -1,5 +1,5 @@
 # ==============================================================================
-# Diversity Metrics
+# Diversity Metric
 # ==============================================================================
 #' Taxonomic Diversity
 #' @description Calculate the percentage of each sample represented by the
@@ -18,7 +18,6 @@
 #' @return A numeric vector of percentages.
 #' @importFrom rlang .data
 #' @export
-
 
 taxa_div <- function(.dataframe, .key_col, .counts_col,
                      .group_col,
@@ -133,7 +132,6 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
   #------------------------------------------------------------------------------
   return(final.vec)
 }
-
 
 .prep_div <- function(.dataframe, .key_col, .counts_col, .group_col,
                       .filter = NULL,
