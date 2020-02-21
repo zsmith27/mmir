@@ -29,6 +29,7 @@ taxa_seq <- function(.dataframe, .key_col, .counts_col, .filter_cols_vec,
     .unnest_col = {{ .unnest_col }},
     .filter = NULL
   )
+
   kn <- .keep_na
   #----------------------------------------------------------------------------
   list.metrics <- lapply(.filter_cols_vec, function(col.i) {

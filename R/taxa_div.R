@@ -1,5 +1,5 @@
 # ==============================================================================
-# Diversity Metrics
+# Diversity Metric
 # ==============================================================================
 #' Taxonomic Diversity
 #' @description Calculate the percentage of each sample represented by the
@@ -19,13 +19,13 @@
 #' @importFrom rlang .data
 #' @export
 
-
 taxa_div <- function(.dataframe, .key_col, .counts_col,
                      .group_col,
                      .filter = NULL,
                      .job, .base_log, .q,
                      .unnest_col = NULL) {
   #------------------------------------------------------------------------------
+<<<<<<< HEAD
   prep.df <- .prep_div(
     .dataframe = .dataframe,
     .key_col = {{ .key_col }},
@@ -34,6 +34,14 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
     .filter = {{ .filter }},
     .unnest_col = {{ .unnest_col }}
   )
+=======
+  prep.df <- .prep_div(.data = .data,
+                      .key_col = {{.key_col}},
+                      .counts_col = {{.counts_col}},
+                      .group_col = {{.group_col}},
+                      .filter = {{.filter}},
+                      .unnest_col = {{.unnest_col}})
+>>>>>>> fd7321f6aa34434d7534cfadd1284a1ba824b09c
   #------------------------------------------------------------------------------
   if (.job %in% c("shannon", "effective_shannon")) {
     final.vec <- prep.df %>%
@@ -135,6 +143,7 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
 }
 
 
+<<<<<<< HEAD
 .prep_div <- function(.dataframe, .key_col, .counts_col, .group_col,
                       .filter = NULL,
                       .unnest_col = NULL) {
@@ -144,6 +153,11 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
     .unnest_col = {{ .unnest_col }},
     .filter = {{ .filter }}
   )
+=======
+.prep_div <- function(.data, .key_col, .counts_col, .group_col,
+                     .filter = NULL,
+                     .unnest_col = data) {
+>>>>>>> fd7321f6aa34434d7534cfadd1284a1ba824b09c
 
   final.df <- tidyr::complete(prep.df, {{ .key_col }}, {{ .group_col }}) %>%
     dplyr::mutate({{ .counts_col }} := dplyr::if_else(
