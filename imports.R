@@ -9,6 +9,7 @@ use_package("DT", type = "suggests")
 use_package("webshot", type = "suggests")
 use_build_ignore("csv")
 use_build_ignore("imports.R")
+use_build_ignore("icons")
 use_pipe(export = TRUE)
 use_gpl3_license()
 use_readme_rmd()
@@ -19,6 +20,8 @@ use_travis(browse = interactive(), ext = c("org", "com"))
 # use_tidy_release_test_e
 options(usethis.full_name = "Zachary M. Smith")
 edit_r_profile()
+
+use_logo("icons/mmir_hex-sticker.png")
 
 use_tidy_ci()
 use_tidy_description()
