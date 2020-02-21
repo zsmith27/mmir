@@ -33,6 +33,13 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
     .filter = {{ .filter }},
     .unnest_col = {{ .unnest_col }}
   )
+
+  prep.df <- .prep_div(.data = .data,
+                      .key_col = {{.key_col}},
+                      .counts_col = {{.counts_col}},
+                      .group_col = {{.group_col}},
+                      .filter = {{.filter}},
+                      .unnest_col = {{.unnest_col}})
   #------------------------------------------------------------------------------
   if (.job %in% c("shannon", "effective_shannon")) {
     final.vec <- prep.df %>%
@@ -142,6 +149,10 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
     .unnest_col = {{ .unnest_col }},
     .filter = {{ .filter }}
   )
+
+.prep_div <- function(.data, .key_col, .counts_col, .group_col,
+                     .filter = NULL,
+                     .unnest_col = data) {
 
   final.df <- tidyr::complete(prep.df, {{ .key_col }}, {{ .group_col }}) %>%
     dplyr::mutate({{ .counts_col }} := dplyr::if_else(
