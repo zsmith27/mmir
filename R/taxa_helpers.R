@@ -23,7 +23,8 @@ prep_taxa_df <- function(.dataframe, .key_col, .unnest_col, .filter) {
 }
 
 #------------------------------------------------------------------------------
-# Return the Data Frame to the Order Orginally Provided
+#' Return the Data Frame to the Order Orginally Provided
+
 original_order <- function(.mod_data, .org_data, .key_col) {
   final.df <- .org_data %>%
     dplyr::select({{ .key_col }}) %>%
