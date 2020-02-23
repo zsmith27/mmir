@@ -32,12 +32,62 @@ You can install the development version from [GitHub](https://github.com/) with:
 # install.packages("devtools")
 devtools::install_github("zsmith27/mmir")
 ```
-## Example
+## Metrics
 
-This is a basic example which shows you how to solve a common problem:
+Below is a list of functions provided by __mmir__ for calculating biological metrics:
+1. `taxa_rich()`calculates taxonomic richness.
+2. `taxa_pct_rich()` calculates relative taxonomic richness.
+3. `taxa_div()` calculates taxonomic diversity indices.
+4. `taxa_abund()` calculates taxonomic abundance.
+5. `taxa_pct()` calculates relative taxonomic abundance.
+6. `taxa_dom()` calculates relative taxonomic dominance.
+7. `taxa_tol()` calculates taxonomic tolerance indices.
+
+## Usage
+
+This is a basic example which shows you how to call each of biological metric functions. 
 
 ```{r example}
 library(mmir)
-## basic example code
+
+data("nrsa_nap_0809")
+
+taxa_rich(.dataframe = nrsa_nap_0809,
+          .key_col = uid,
+          .counts_col = total,
+          .group_col = target_taxon)
+
+taxa_pct_rich(.dataframe = nrsa_nap_0809,
+              .key_col = uid,
+              .counts_col = total,
+              .group_col = target_taxon,
+              .filter = order %in% c("ephemeroptera",
+                                     "plecoptera",
+                                     "trichoptera"))
+
+taxa_abund(.dataframe = nrsa_nap_0809,
+           .key_col = uid,
+           .counts_col = total,
+           .filter = order %in% c("ephemeroptera",
+                                  "plecoptera",
+                                  "trichoptera"))
+
+taxa_pct(.dataframe = nrsa_nap_0809,
+         .key_col = uid,
+         .counts_col = total,
+         .filter = order %in% c("ephemeroptera",
+                                "plecoptera",
+                                "trichoptera"))
+
+taxa_dom(.dataframe = nrsa_nap_0809,
+         .key_col = uid,
+         .counts_col = total,
+         .group_col = target_taxon,
+         .dom_level = 1)
+
+taxa_tol_index(.dataframe = nrsa_nap_0809,
+               .key_col = uid,
+               .counts_col = total,
+               .tol_col = ptv)
 ```
 
