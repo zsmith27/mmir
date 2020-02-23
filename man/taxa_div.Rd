@@ -11,7 +11,7 @@ taxa_div(
   .group_col,
   .filter = NULL,
   .job,
-  .base_log,
+  .base_log = 2,
   .q,
   .unnest_col = NULL
 )
@@ -31,11 +31,34 @@ or group of interest.}
 \item{.filter}{A logical statement to subset the data frame prior to calculating
 the metric of interest.}
 
+\item{.job}{A character string specifying the diversity metric of interest.
+Below is a list of exceptable inputs:
+\itemize{
+ \item{"shannon"}{Description needed}
+ \item{"effective_shannon"}{Description needed}
+ \item{"simpson""}{Description needed}
+ \item{"invsimpson"}{Description needed}
+ \item{"gini_simpson"}{Description needed}
+ \item{"effective_simpson"}{Description needed}
+ \item{"pielou"}{Description needed}
+ \item{"margalef"}{Description needed}
+ \item{"menhinick"}{Description needed}
+ \item{"hill"}{Description needed}
+ \item{"renyi"}{Description needed}
+}}
+
+\item{.base_log}{The base log value used during the calculation of
+Shannon Diversity index ("shannon") or Effective Shannon Diversity ("effective_shannon").
+The default value is two.}
+
+\item{.q}{The exponent used during the calculation of Hill Numbers ("hill") and
+Renyi Entropy ("renyi").}
+
 \item{.unnest_col}{One unqouted column name that represents nested data.
 If this column is NULL (default), then the data will not be unnested.}
 }
 \value{
-A numeric vector of percentages.
+A numeric vector.
 }
 \description{
 Calculate the percentage of each sample represented by the

@@ -15,14 +15,34 @@
 #'  If this column is NULL (default), then the data will not be unnested.
 #' @param .group_col One unquoted column name that represents a taxomic rank
 #'  or group of interest.
-#' @return A numeric vector of percentages.
+#' @param .job A character string specifying the diversity metric of interest.
+#' Below is a list of exceptable inputs:
+##' \itemize{
+##'  \item{"shannon"}{Description needed}
+##'  \item{"effective_shannon"}{Description needed}
+##'  \item{"simpson""}{Description needed}
+##'  \item{"invsimpson"}{Description needed}
+##'  \item{"gini_simpson"}{Description needed}
+##'  \item{"effective_simpson"}{Description needed}
+##'  \item{"pielou"}{Description needed}
+##'  \item{"margalef"}{Description needed}
+##'  \item{"menhinick"}{Description needed}
+##'  \item{"hill"}{Description needed}
+##'  \item{"renyi"}{Description needed}
+##' }
+#' @param .base_log The base log value used during the calculation of
+#' Shannon Diversity index ("shannon") or Effective Shannon Diversity ("effective_shannon").
+#' The default value is two.
+#' @param .q The exponent used during the calculation of Hill Numbers ("hill") and
+#' Renyi Entropy ("renyi").
+#' @return A numeric vector.
 #' @importFrom rlang .data
 #' @export
 
 taxa_div <- function(.dataframe, .key_col, .counts_col,
                      .group_col,
                      .filter = NULL,
-                     .job, .base_log, .q,
+                     .job, .base_log = 2, .q,
                      .unnest_col = NULL) {
   #------------------------------------------------------------------------------
   prep.df <- .prep_div(
@@ -33,13 +53,6 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
     .filter = {{ .filter }},
     .unnest_col = {{ .unnest_col }}
   )
-
-  prep.df <- .prep_div(.data = .data,
-                      .key_col = {{.key_col}},
-                      .counts_col = {{.counts_col}},
-                      .group_col = {{.group_col}},
-                      .filter = {{.filter}},
-                      .unnest_col = {{.unnest_col}})
   #------------------------------------------------------------------------------
   if (.job %in% c("shannon", "effective_shannon")) {
     final.vec <- prep.df %>%

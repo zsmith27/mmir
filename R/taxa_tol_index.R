@@ -15,7 +15,12 @@
 #'  If this column is NULL (default), then the data will not be unnested.
 #' @param .group_col One unquoted column name that represents a taxomic rank
 #'  or group of interest.
-#' @return A numeric vector of percentages.
+#' @param .tol_col One unqouted column name that represents numeric tolerance values.
+#' @param na.rm A logical value indicating if taxa with missing tolerance values (.tol_val = NA)
+#' should be removed prior to calculating the tolerance index. The default is TRUE, NA values should
+#' will be removed, becuase missing values will be effectively treated as zeros during calculations;
+#' this will incorrectly skew the final value to the lower range of the index spectrum.
+#' @return A numeric vector.
 #' @importFrom rlang .data
 #' @export
 
@@ -24,7 +29,8 @@ taxa_tol_index <- function(.dataframe, .key_col,
                            .counts_col, .group_col,
                            .filter,
                            .unnest_col = NULL,
-                           .tol_col, na.rm = TRUE) {
+                           .tol_col,
+                           na.rm = TRUE) {
   prep.df <- prep_taxa_df(
     .dataframe = .dataframe,
     .key_col = {{ .key_col }},

@@ -36,7 +36,7 @@ the metric of interest.}
 If this column is NULL (default), then the data will not be unnested.}
 }
 \value{
-Percent of individuals that represent the most abundant taxon or taxa.
+A numeric vector. Percent of individuals that represent the most abundant taxon or taxa.
 .dom_level can be used to specify 1st-5th most abundant taxa by specifying
 the corresponding numeric value (1-5).  Values >1 include all of the previous
 dominance levels. For example, .dom_level = 3 is the percentage of the most

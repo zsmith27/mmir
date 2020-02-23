@@ -10,12 +10,12 @@
 #'  If this column is NULL (default), then the data will not be unnested.
 #' @param .group_col One unquoted column name that represents a taxomic rank
 #'  or group of interest.
-#' @return The number of taxa identified.
+#' @return A numeric vector.
 #' @importFrom rlang .data
 #' @export
 
 
-taxa_rich <- function(.dataframe, .key_col, .group_col,
+taxa_rich <- function(.dataframe, .key_col, .group_col, .counts_col,
                       .filter = NULL,
                       .unnest_col = NULL) {
   if (nrow(.dataframe) < 1) {

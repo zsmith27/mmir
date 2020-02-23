@@ -24,6 +24,9 @@ prep_taxa_df <- function(.dataframe, .key_col, .unnest_col, .filter) {
 
 #------------------------------------------------------------------------------
 #' Return the Data Frame to the Order Orginally Provided
+#' @param .mod_data a data frame containing metric calculations and the key column.
+#' @param .org_data the original data frame supplied to parent function containing the key column.
+#' @param .key_col a single unqouted column representing unique values for sampling events.
 
 original_order <- function(.mod_data, .org_data, .key_col) {
   final.df <- .org_data %>%

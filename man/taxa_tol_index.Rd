@@ -32,9 +32,16 @@ the metric of interest.}
 
 \item{.unnest_col}{One unqouted column name that represents nested data.
 If this column is NULL (default), then the data will not be unnested.}
+
+\item{.tol_col}{One unqouted column name that represents numeric tolerance values.}
+
+\item{na.rm}{A logical value indicating if taxa with missing tolerance values (.tol_val = NA)
+should be removed prior to calculating the tolerance index. The default is TRUE, NA values should
+will be removed, becuase missing values will be effectively treated as zeros during calculations;
+this will incorrectly skew the final value to the lower range of the index spectrum.}
 }
 \value{
-A numeric vector of percentages.
+A numeric vector.
 }
 \description{
 Calculate the percentage of each sample represented by the

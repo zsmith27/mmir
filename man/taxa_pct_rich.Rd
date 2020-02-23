@@ -8,6 +8,7 @@ taxa_pct_rich(
   .dataframe,
   .key_col,
   .group_col,
+  .counts_col,
   .filter = NULL,
   .unnest_col = NULL
 )
@@ -22,16 +23,16 @@ for a sampling event for which to group (i.e., aggregate) the data.}
 \item{.group_col}{One unquoted column name that represents a taxomic rank
 or group of interest.}
 
+\item{.counts_col}{One unquoted column name that represents taxonomic counts.}
+
 \item{.filter}{A logical statement to subset the data frame prior to calculating
 the metric of interest.}
 
 \item{.unnest_col}{One unqouted column name that represents nested data.
 If this column is NULL (default), then the data will not be unnested.}
-
-\item{.counts_col}{One unquoted column name that represents taxonomic counts.}
 }
 \value{
-A numeric vector of percentages.
+A numeric vector.
 }
 \description{
 Calculate the percentage of each sample represented by the

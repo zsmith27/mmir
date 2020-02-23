@@ -11,9 +11,8 @@ taxa_seq(
   .filter_cols_vec,
   .group_col,
   .unnest_col = NULL,
-  .keep_na = FALSE,
   .job,
-  .base_log = NULL,
+  .base_log = 2,
   .q = NULL
 )
 }
@@ -35,12 +34,39 @@ or group of interest.}
 \item{.unnest_col}{One unqouted column name that represents nested data.
 If this column is NULL (default), then the data will not be unnested.}
 
-\item{.job}{To calculate the percent of each taxon specify "pct". To calculate
-the richness of each tax}
+\item{.job}{A character string specifying the metric of interest.
+Below is a list of exceptable inputs:
+\itemize{
+ \item{"abund"}{Description needed}
+ \item{"pct"}{Description needed}
+ \item{"rich"}{Description needed}
+ \item{"pct_rich"}{Description needed}
+ \item{"shannon"}{Description needed}
+ \item{"effective_shannon"}{Description needed}
+ \item{"simpson""}{Description needed}
+ \item{"invsimpson"}{Description needed}
+ \item{"gini_simpson"}{Description needed}
+ \item{"effective_simpson"}{Description needed}
+ \item{"pielou"}{Description needed}
+ \item{"margalef"}{Description needed}
+ \item{"menhinick"}{Description needed}
+ \item{"hill"}{Description needed}
+ \item{"renyi"}{Description needed}
+}}
+
+\item{.base_log}{The base log value used during the calculation of
+Shannon Diversity index ("shannon") or Effective Shannon Diversity ("effective_shannon").
+The default value is two.}
+
+\item{.q}{The exponent used during the calculation of Hill Numbers ("hill") and
+Renyi Entropy ("renyi").}
 }
 \value{
-The percent of the sample represented by each taxa per taxon level.
+A data frame where each column represents numeric metric values.
 }
 \description{
-Sequence Through Taxonomic Metrics
+This function is a wrapper for the other "taxa_" functions that sequences
+through unique values within specified columns. The intent is to provide the ability to
+quickly calculate metrics for a large number of taxa without having to call a "taxa_"
+function for each taxon of interest.
 }

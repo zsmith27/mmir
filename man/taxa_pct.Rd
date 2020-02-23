@@ -22,7 +22,7 @@ the metric of interest.}
 If this column is NULL (default), then the data will not be unnested.}
 }
 \value{
-A numeric vector of percentages.
+A numeric vector.
 }
 \description{
 Calculate the percentage of each sample represented by the

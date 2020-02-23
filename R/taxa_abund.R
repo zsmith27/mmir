@@ -10,7 +10,7 @@
 #' the metric of interest.
 #' @param .unnest_col One unqouted column name that represents nested data.
 #'  If this column is NULL (default), then the data will not be unnested.
-#' @return A numeric vector of percentages.
+#' @return A numeric vector.
 #' @export
 
 taxa_abund <- function(.dataframe, .key_col, .counts_col,

@@ -6,6 +6,13 @@
 \usage{
 original_order(.mod_data, .org_data, .key_col)
 }
+\arguments{
+\item{.mod_data}{a data frame containing metric calculations and the key column.}
+
+\item{.org_data}{the original data frame supplied to parent function containing the key column.}
+
+\item{.key_col}{a single unqouted column representing unique values for sampling events.}
+}
 \description{
 Return the Data Frame to the Order Orginally Provided
 }

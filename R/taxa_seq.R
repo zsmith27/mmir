@@ -1,5 +1,8 @@
 #' Sequence Through Taxonomic Metrics
-#' @description
+#' @description This function is a wrapper for the other "taxa_" functions that sequences
+#' through unique values within specified columns. The intent is to provide the ability to
+#' quickly calculate metrics for a large number of taxa without having to call a "taxa_"
+#' function for each taxon of interest.
 #' @param .dataframe A data frame where each row should represent the number of
 #' individuals enumerated for a single taxon collected during a single sampling event.
 #' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
@@ -11,9 +14,31 @@
 #' the function will sequence through each unique value to perform the specified .job.
 #' @param .group_col One unquoted column name that represents a taxomic rank
 #'  or group of interest.
-#' @param .job To calculate the percent of each taxon specify "pct". To calculate
-#' the richness of each tax
-#' @return The percent of the sample represented by each taxa per taxon level.
+#' @param .job A character string specifying the metric of interest.
+#' Below is a list of exceptable inputs:
+##' \itemize{
+##'  \item{"abund"}{Description needed}
+##'  \item{"pct"}{Description needed}
+##'  \item{"rich"}{Description needed}
+##'  \item{"pct_rich"}{Description needed}
+##'  \item{"shannon"}{Description needed}
+##'  \item{"effective_shannon"}{Description needed}
+##'  \item{"simpson""}{Description needed}
+##'  \item{"invsimpson"}{Description needed}
+##'  \item{"gini_simpson"}{Description needed}
+##'  \item{"effective_simpson"}{Description needed}
+##'  \item{"pielou"}{Description needed}
+##'  \item{"margalef"}{Description needed}
+##'  \item{"menhinick"}{Description needed}
+##'  \item{"hill"}{Description needed}
+##'  \item{"renyi"}{Description needed}
+##' }
+#' @param .base_log The base log value used during the calculation of
+#' Shannon Diversity index ("shannon") or Effective Shannon Diversity ("effective_shannon").
+#' The default value is two.
+#' @param .q The exponent used during the calculation of Hill Numbers ("hill") and
+#' Renyi Entropy ("renyi").
+#' @return A data frame where each column represents numeric metric values.
 #' @importFrom rlang .data
 #' @export
 # ==============================================================================
@@ -21,16 +46,15 @@
 taxa_seq <- function(.dataframe, .key_col, .counts_col, .filter_cols_vec,
                      .group_col,
                      .unnest_col = NULL,
-                     .keep_na = FALSE, .job,
-                     .base_log = NULL, .q = NULL) {
+                     .job,
+                     .base_log = 2,
+                     .q = NULL) {
   prep.df <- prep_taxa_df(
     .dataframe = .dataframe,
     .key_col = {{ .key_col }},
     .unnest_col = {{ .unnest_col }},
     .filter = NULL
   )
-
-  kn <- .keep_na
   #----------------------------------------------------------------------------
   list.metrics <- lapply(.filter_cols_vec, function(col.i) {
     # print(col.i)

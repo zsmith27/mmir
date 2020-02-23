@@ -15,12 +15,13 @@
 #'  If this column is NULL (default), then the data will not be unnested.
 #' @param .group_col One unquoted column name that represents a taxomic rank
 #'  or group of interest.
-#' @return A numeric vector of percentages.
+#' @return A numeric vector.
 #' @importFrom rlang .data
+#' @importFrom magrittr "%>%"
 #' @export
 
 
-taxa_pct_rich <- function(.dataframe, .key_col, .group_col,
+taxa_pct_rich <- function(.dataframe, .key_col, .group_col, .counts_col,
                           .filter = NULL,
                           .unnest_col = NULL) {
   prep.df <- prep_taxa_df(
@@ -30,17 +31,19 @@ taxa_pct_rich <- function(.dataframe, .key_col, .group_col,
     .filter = NULL
   )
   #----------------------------------------------------------------------------
-  final.vec <- prep.df %>%
-    dplyr::group_nest({{ .key_col }}, .key = "data") %>%
+  group.df <- prep.df %>%
+    dplyr::group_nest({{ .key_col }}, .key = "data")
+
+  final.vec <- group.df %>%
     dplyr::mutate(
       rich = taxa_rich(
-        .dataframe = .,
+        .dataframe = group.df,
         .key_col = {{ .key_col }},
         .group_col = {{ .group_col }},
         .unnest_col = .data$data
       ),
       taxa_rich = taxa_rich(
-        .dataframe = .,
+        .dataframe = group.df,
         .key_col = {{ .key_col }},
         .group_col = {{ .group_col }},
         .filter = {{ .filter }},
