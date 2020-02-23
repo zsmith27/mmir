@@ -10,7 +10,7 @@ taxa_dom(
   .counts_col,
   .group_col,
   .dom_level,
-  .filter,
+  .filter = NULL,
   .unnest_col = NULL
 )
 }

@@ -8,8 +8,7 @@ taxa_tol_index(
   .dataframe,
   .key_col,
   .counts_col,
-  .group_col,
-  .filter,
+  .filter = NULL,
   .unnest_col = NULL,
   .tol_col,
   na.rm = TRUE
@@ -23,9 +22,6 @@ individuals enumerated for a single taxon collected during a single sampling eve
 for a sampling event for which to group (i.e., aggregate) the data.}
 
 \item{.counts_col}{One unquoted column name that represents taxonomic counts.}
-
-\item{.group_col}{One unquoted column name that represents a taxomic rank
-or group of interest.}
 
 \item{.filter}{A logical statement to subset the data frame prior to calculating
 the metric of interest.}

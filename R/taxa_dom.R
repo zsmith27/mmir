@@ -31,7 +31,8 @@
 #' @importFrom rlang .data
 #' @export
 
-taxa_dom <- function(.dataframe, .key_col, .counts_col, .group_col, .dom_level, .filter,
+taxa_dom <- function(.dataframe, .key_col, .counts_col, .group_col, .dom_level,
+                     .filter = NULL,
                      .unnest_col = NULL) {
   prep.df <- prep_taxa_df(
     .dataframe = .dataframe,
@@ -43,6 +44,7 @@ taxa_dom <- function(.dataframe, .key_col, .counts_col, .group_col, .dom_level, 
   final.vec <- prep.df %>%
     dplyr::group_by({{ .key_col }}, {{ .group_col }}) %>%
     dplyr::summarize(count = sum({{ .counts_col }})) %>%
+    dplyr::ungroup() %>%
     dplyr::group_by({{ .key_col }}) %>%
     dplyr::mutate(total = sum(.data$count)) %>%
     dplyr::filter(dplyr::row_number(dplyr::desc(.data$count)) <= .dom_level) %>%

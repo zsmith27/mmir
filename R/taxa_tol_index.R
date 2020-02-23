@@ -13,8 +13,6 @@
 #' the metric of interest.
 #' @param .unnest_col One unqouted column name that represents nested data.
 #'  If this column is NULL (default), then the data will not be unnested.
-#' @param .group_col One unquoted column name that represents a taxomic rank
-#'  or group of interest.
 #' @param .tol_col One unqouted column name that represents numeric tolerance values.
 #' @param na.rm A logical value indicating if taxa with missing tolerance values (.tol_val = NA)
 #' should be removed prior to calculating the tolerance index. The default is TRUE, NA values should
@@ -26,8 +24,8 @@
 
 
 taxa_tol_index <- function(.dataframe, .key_col,
-                           .counts_col, .group_col,
-                           .filter,
+                           .counts_col,
+                           .filter = NULL,
                            .unnest_col = NULL,
                            .tol_col,
                            na.rm = TRUE) {
@@ -38,29 +36,15 @@ taxa_tol_index <- function(.dataframe, .key_col,
     .filter = {{ .filter }}
   )
 
-  # .dataframe <- .dataframe %>%
-  #   dplyr::mutate({{.group_col}} := trimws({{.group_col}}),
-  #                 {{.group_col}} := ifelse({{.group_col}} == "", NA, {{.group_col}}))
-
   if (na.rm == TRUE) {
-    prep.df <- prep.df[!is.na(prep.df[, rlang::quo_name(.group_col)]), ]
+    prep.df <- dplyr::filter(prep.df, !is.na({{ .tol_col }}))
   }
 
   score.vec <- prep.df %>%
-    dplyr::group_by({{ .key_col }}, {{ .group_col }}, {{ .tol_col }}) %>%
-    dplyr::summarize(count = sum({{ .counts_col }})) %>%
-    dplyr::filter(
-      !is.na(!{{ .tol_col }}),
-      !({{ .tol_col }}) %in% c("")
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::select({{ .key_col }}, {{ .tol_col }}, .data$count) %>%
-    dplyr::mutate(score = .data$count * ({{ .tol_col }})) %>%
+    dplyr::mutate(score = {{ .counts_col }} * {{ .tol_col }}) %>%
     dplyr::group_by({{ .key_col }}) %>%
     dplyr::summarize(
-      score = sum(.data$score),
-      taxa = sum(.data$count),
-      score = .data$score / .data$taxa
+      score = sum(.data$score) / sum({{ .counts_col }})
     ) %>%
     original_order(.dataframe, {{ .key_col }}) %>%
     dplyr::pull(.data$score)
