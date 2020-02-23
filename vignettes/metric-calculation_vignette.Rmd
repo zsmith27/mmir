@@ -27,9 +27,9 @@ The package, __devtools__, must be installed to use the `devtools::install_githu
 install.packages("devtools", "DT")
 ```
 
-Install the Multi-Metric Index (MMI) package, __mmir__, that I am developing from Git Hub.  Make sure you install the development version of __mmir__ (`ref = "dev"`).
+Install the Multi-Metric Index (MMI) package, __mmir__, that I am developing from GitHub.
 ```{r, eval=FALSE}
-devtools::install_github("zsmith27/mmir", ref = "dev", force = TRUE, quiet = TRUE)
+devtools::install_github("zsmith27/mmir")
 ```
 
 Once __mmir__ is installed, load the packages with `library()`.
@@ -43,17 +43,15 @@ One of the major goals of the __mmir__ package was to simplify the metric calcul
 
 ## Preparation
 
-__mmir__ contains my thesis data, _onondaga_, as an example data set. My thesis compared the litoral benthic macorinvertebrate community in a recoverying preturbed lake, Onondaga Lake, to the communities found in two, less disturbed local lakes (i.e., Otisco and Cazenovia Lake). Sixteen stations were sampled within each lake (`station_id`) and two samples were collected at each site (`sample_number`).
-
-This data is not ideal for this example because it was not collected with the intention of developing an MMI. However, this is the only data set that I have the right to make publicly available. Additionally, the Onondaga Lake samples can effectively represent a set of Degraded sites and the Cazenovia Lake samples can effectively represent Reference sites.
+As an example data set, __mmir__ contains benthic macroinvertebrates data collected in the Northern Appalachians as part of the 2008-2009 National Rivers and Streams Assessment conducted by the United States Environmental Protection Agency.
 ```{r}
-data("onondaga", package = "mmir")
+data("nrsa_nap_0809", package = "mmir")
 ```
 
 Create a data frame that will store the calculated metrics. This should include a unique site ID and possibly a few other important columns, such as stream gradient classification column (e.g., Reference and Degraded). I recommend not carrying all of the site information through the metric calculation process because it can easily be appended at the end of the calculation process or at another later step. This will reduce clutter, allowing you to focus on the metric values, and will help you manage memory allocation. Additionally, do __NOT__ alter the order of the unique identifier. The output from each metric function is a vector in the order of the supplied data frame of taxonomic counts (in this case `onondaga`). If the unique identifier is rearranged, no error will appear but the metric values will be associated with incorrect unique identifier.
 ```{r}
-metrics.df <- onondaga %>% 
-  dplyr::group_nest(unique_id, .key = "data") 
+metrics.df <- nrsa_nap_0809 %>% 
+  dplyr::group_nest(uid, .key = "data") 
 ```
 
 ## Input Variable Definitions
@@ -73,16 +71,16 @@ Richness refers to the number of unique taxa. Typically, richness is used to ref
 
 ### Community Richness
 
-`taxa_rich()` is used to calculate richness. A long format data frame containing taxonomic counts is specified as the `.dataframe` variable (`onondaga`). The name of a unique ID column is specified for the `.key_col` variable (`unique_id`). Note that this is done with NSE syntax (i.e., no quotes). The `.group_col` and `.filter_col` refer to low resolution and high resolution taxonomic rank columns of interest. `.filter_col` is required but `.group_col` is only necessary when calculating subgroup richness. Furthermore, the `taxon` variable is only necessary for specifying which taxon or taxa will be used to calculate subgroup richness; therefore, when calculating community richness, `taxon` should be set to `NULL`. In this example family-level and genus-level community richness are calculated and appended to `metrics.key`. `DT::datatable()` is only used to present interactive tables in this document.
+`taxa_rich()` is used to calculate richness. A long format data frame containing taxonomic counts is specified as the `.dataframe` variable (`onondaga`). The name of a unique ID column is specified for the `.key_col` variable (`uid`). Note that this is done with NSE syntax (i.e., no quotes). The `.group_col` and `.filter_col` refer to low resolution and high resolution taxonomic rank columns of interest. `.filter_col` is required but `.group_col` is only necessary when calculating subgroup richness. Furthermore, the `taxon` variable is only necessary for specifying which taxon or taxa will be used to calculate subgroup richness; therefore, when calculating community richness, `taxon` should be set to `NULL`. In this example family-level and genus-level community richness are calculated and appended to `metrics.key`. `DT::datatable()` is only used to present interactive tables in this document.
 ```{r}
 metrics.df <- metrics.df %>% 
   dplyr::mutate(
     rich_family = taxa_rich(.dataframe = .,
-                            .key_col = unique_id,
+                            .key_col = uid,
                             .group_col = family,
                             .unnest_col = data),
     rich_genus = taxa_rich(.dataframe = .,
-                            .key_col = unique_id,
+                            .key_col = uid,
                             .group_col = genus,
                             .unnest_col = data)
   )
@@ -98,17 +96,17 @@ DT::datatable(metrics.df, options = list(scrollX = TRUE))
 metrics.df <- metrics.df %>% 
   dplyr::mutate(
     rich_ephemeroptera_fam = taxa_rich(.dataframe = .,
-                            .key_col = unique_id,
+                            .key_col = uid,
                             .group_col = family,
                             .filter = order %in% "ephemeroptera",
                             .unnest_col = data),
     rich_ephemeroptera_gen = taxa_rich(.dataframe = .,
-                            .key_col = unique_id,
+                            .key_col = uid,
                             .group_col = genus,
                             .filter = order %in% "ephemeroptera",
                             .unnest_col = data),
     rich_ept_gen = taxa_rich(.dataframe = .,
-                            .key_col = unique_id,
+                            .key_col = uid,
                             .group_col = genus,
                             .filter = order %in% c("ephemeroptera",
                                                        "plecoptera",
@@ -131,33 +129,33 @@ A number of diversity metrics can be calculated using `taxa_div()`: _Shannon-Wie
 metrics.df <- metrics.df %>% 
   dplyr::mutate(
     shannon_genus = taxa_div(.dataframe = .,
-                            .key_col = unique_id,
-                            .counts_col = reporting_value,
+                            .key_col = uid,
+                            .counts_col = total,
                             .group_col = genus,
                             .job = "shannon",
                              .base_log = 2,
                             .unnest_col = data),
     simpson_genus = taxa_div(.dataframe = .,
-                            .key_col = unique_id,
-                            .counts_col = reporting_value,
+                            .key_col = uid,
+                            .counts_col = total,
                             .group_col = genus,
                             .job = "simpson",
                             .unnest_col = data),
     margalef_genus = taxa_div(.dataframe = .,
-                            .key_col = unique_id,
-                            .counts_col = reporting_value,
+                            .key_col = uid,
+                            .counts_col = total,
                             .group_col = genus,
                             .job = "margalef",
                             .unnest_col = data),
     menhinick_genus = taxa_div(.dataframe = .,
-                            .key_col = unique_id,
-                            .counts_col = reporting_value,
+                            .key_col = uid,
+                            .counts_col = total,
                             .group_col = genus,
                             .job = "menhinick",
                             .unnest_col = data),
     pielou_genus = taxa_div(.dataframe = .,
-                            .key_col = unique_id,
-                            .counts_col = reporting_value,
+                            .key_col = uid,
+                            .counts_col = total,
                             .group_col = genus,
                             .job = "pielou",
                             .unnest_col = data)
@@ -172,8 +170,8 @@ DT::datatable(metrics.df, options = list(scrollX = TRUE))
 metrics.df <- metrics.df %>% 
   dplyr::mutate(
     gini_simpson_ept = taxa_div(.dataframe = .,
-                            .key_col = unique_id,
-                            .counts_col = reporting_value,
+                            .key_col = uid,
+                            .counts_col = total,
                             .group_col = order,
                             .filter = genus %in% c("ephemeroptera",
                                                        "plecoptera",
@@ -181,8 +179,8 @@ metrics.df <- metrics.df %>%
                             .job = "gini_simpson",
                             .unnest_col = data),
     simpson_ept = taxa_div(.dataframe = .,
-                            .key_col = unique_id,
-                            .counts_col = reporting_value,
+                            .key_col = uid,
+                            .counts_col = total,
                             .group_col = order,
                             .filter = genus %in% c("ephemeroptera",
                                                        "plecoptera",
@@ -190,8 +188,8 @@ metrics.df <- metrics.df %>%
                             .job = "simpson",
                             .unnest_col = data),
     shannon_ept = taxa_div(.dataframe = .,
-                            .key_col = unique_id,
-                            .counts_col = reporting_value,
+                            .key_col = uid,
+                            .counts_col = total,
                             .group_col = order,
                             .filter = genus %in% c("ephemeroptera",
                                                        "plecoptera",
@@ -213,13 +211,13 @@ DT::datatable(subdiv.df, options = list(scrollX = TRUE))
 metrics.df <- metrics.df %>% 
   dplyr::mutate(
     pct_ephemeroptera = taxa_pct(.dataframe = .,
-                                  .key_col = unique_id,
-                                  .counts_col = reporting_value,
+                                  .key_col = uid,
+                                  .counts_col = total,
                                   .filter = order %in% "ephemeroptera",
                                  .unnest_col = data),
     pct_ept = taxa_pct(.dataframe = .,
-                        .key_col = unique_id,
-                        .counts_col = reporting_value,
+                        .key_col = uid,
+                        .counts_col = total,
                         .filter = order %in% c("ephemeroptera",
                                                    "plecoptera",
                                                    "trichoptera"),
@@ -236,13 +234,13 @@ Abundance refers to reported taxonomic count but may represent counts aggregated
 metrics.df <- metrics.df %>% 
   dplyr::mutate(
     abund_ephemeroptera = taxa_abund(.,
-                                  .key_col = unique_id,
-                                  .counts_col = reporting_value,
+                                  .key_col = uid,
+                                  .counts_col = total,
                                   .filter = order %in% "ephemeroptera",
                                   .unnest_col = data),
     abund_ept = taxa_abund(.,
-                        .key_col = unique_id,
-                        .counts_col = reporting_value,
+                        .key_col = uid,
+                        .counts_col = total,
                         .filter = order %in% c("ephemeroptera",
                                                    "plecoptera",
                                                    "trichoptera"),
@@ -263,29 +261,29 @@ The example below calculates taxa richness, percent taxa richness, taxa percenta
 metrics.df <- metrics.df %>% 
   dplyr::bind_cols(
     taxa_seq(.dataframe = .,
-             .key_col = unique_id,
-             .counts_col = reporting_value,
+             .key_col = uid,
+             .counts_col = total,
              .filter_cols_vec = c("class", "order", "family"),
              .group_col = genus,
              .job = "rich",
              .unnest_col = data),
     taxa_seq(.dataframe = .,
-             .key_col = unique_id,
-             .counts_col = reporting_value,
+             .key_col = uid,
+             .counts_col = total,
              .filter_cols_vec = c("class", "order", "family"),
              .group_col = genus,
              .job = "pct_rich",
              .unnest_col = data),
     taxa_seq(.dataframe = .,
-             .key_col = unique_id,
-             .counts_col = reporting_value,
+             .key_col = uid,
+             .counts_col = total,
              .filter_cols_vec = c("class", "order", "family"),
              .group_col = genus,
              .job = "pct",
              .unnest_col = data),
     taxa_seq(.dataframe = .,
-             .key_col = unique_id,
-             .counts_col = reporting_value,
+             .key_col = uid,
+             .counts_col = total,
              .filter_cols_vec = c("class", "order", "family"),
              .group_col = genus,
              .base_log = 2,

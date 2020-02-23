@@ -11,3 +11,4 @@
 ^\.covrignore$
 ^\.github$
 ^icons$
+^data-raw$
