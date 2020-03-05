@@ -135,10 +135,17 @@ taxa_seq <- function(.dataframe, .key_col, .counts_col, .filter_cols_vec,
       as.data.frame() %>%
       dplyr::rename_all(tolower)
 
-    names(taxa.df) <- paste(.job,
-                            rlang::quo_name(rlang::enquo(.group_col)),
-                            names(taxa.df),
-                            sep = "_")
+    if (!rlang::quo_is_null(rlang::enquo(.group_col))) {
+      names(taxa.df) <- paste(.job,
+                              names(taxa.df),
+                              sep = "_")
+    } else {
+      names(taxa.df) <- paste(.job,
+                              rlang::quo_name(rlang::enquo(.group_col)),
+                              names(taxa.df),
+                              sep = "_")
+    }
+
     return(taxa.df)
   })
   final.df <- dplyr::bind_cols(list.metrics)
