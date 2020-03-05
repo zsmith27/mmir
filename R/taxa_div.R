@@ -56,9 +56,9 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
   #------------------------------------------------------------------------------
   if (.job %in% c("shannon", "effective_shannon")) {
     final.vec <- prep.df %>%
-      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$total) %>%
+      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$mmir_total) %>%
       dplyr::summarize(count = sum({{ .counts_col }})) %>%
-      dplyr::mutate(p = .data$count / .data$total) %>%
+      dplyr::mutate(p = .data$count / .data$mmir_total) %>%
       dplyr::mutate(log_p = -.data$p * log(.data$p, .base_log)) %>%
       dplyr::group_by({{ .key_col }}) %>%
       dplyr::summarize(final = sum(.data$log_p, na.rm = TRUE)) %>%
@@ -72,10 +72,10 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
   #------------------------------------------------------------------------------
   if (.job %in% c("simpson", "invsimpson", "gini_simpson", "effective_simpson")) {
     final.vec <- prep.df %>%
-      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$total) %>%
+      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$mmir_total) %>%
       dplyr::summarize(count = sum({{ .counts_col }})) %>%
       dplyr::mutate(
-        p = .data$count / .data$total,
+        p = .data$count / .data$mmir_total,
         p = .data$p^2
       ) %>%
       dplyr::group_by({{ .key_col }}) %>%
@@ -133,13 +133,13 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
   #------------------------------------------------------------------------------
   if (.job %in% c("hill", "renyi")) {
     final.vec <- prep.df %>%
-      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$total) %>%
+      dplyr::group_by({{ .key_col }}, {{ .group_col }}, .data$mmir_total) %>%
       dplyr::summarize(
         .counts_col = sum({{ .counts_col }}),
         na.rm = TRUE
       ) %>%
       dplyr::mutate(
-        p = {{ .counts_col }} / .data$total,
+        p = {{ .counts_col }} / .data$mmir_total,
         p = .data$p^.q
       ) %>%
       dplyr::group_by({{ .key_col }}) %>%
@@ -170,7 +170,7 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
       as.double({{ .counts_col }})
     )) %>%
     dplyr::group_by({{ .key_col }}) %>%
-    dplyr::mutate(total = sum({{ .counts_col }})) %>%
+    dplyr::mutate(mmir_total = sum({{ .counts_col }})) %>%
     dplyr::ungroup()
 
   return(final.df)
