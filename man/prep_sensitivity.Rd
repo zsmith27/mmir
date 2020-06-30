@@ -4,8 +4,14 @@
 \alias{prep_sensitivity}
 \title{Prepare Sensitivity}
 \usage{
-prep_sensitivity(metrics.long, metric.col, value.col, condition.col,
-  ref.cond, deg.cond)
+prep_sensitivity(
+  metrics.long,
+  metric.col,
+  value.col,
+  condition.col,
+  ref.cond,
+  deg.cond
+)
 }
 \arguments{
 \item{metrics.long}{PARAM_DESCRIPTION}

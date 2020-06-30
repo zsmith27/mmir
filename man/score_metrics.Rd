@@ -4,9 +4,16 @@
 \alias{score_metrics}
 \title{Score Metrics}
 \usage{
-score_metrics(metrics.df, scoring.method, sensitivity.df,
-  sensitivity.colname, sensitivity.threshold = 0, first.metric,
-  condition.colname = NULL, ref.cond = NULL)
+score_metrics(
+  metrics.df,
+  scoring.method,
+  sensitivity.df,
+  sensitivity.colname,
+  sensitivity.threshold = 0,
+  first.metric,
+  condition.colname = NULL,
+  ref.cond = NULL
+)
 }
 \arguments{
 \item{metrics.df}{<- a data frame of samples to be scored.}

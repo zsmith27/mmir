@@ -4,8 +4,14 @@
 \alias{metric_plots}
 \title{Metric Plots}
 \usage{
-metric_plots(metrics.df, condition.colname, first.metric, order.condition,
-  include.title = TRUE, name.pdf)
+metric_plots(
+  metrics.df,
+  condition.colname,
+  first.metric,
+  order.condition,
+  include.title = TRUE,
+  name.pdf
+)
 }
 \arguments{
 \item{metrics.df}{= data frame of metric values for each station}

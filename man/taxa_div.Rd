@@ -4,8 +4,18 @@
 \alias{taxa_div}
 \title{Percentage of a Specified Taxon}
 \usage{
-taxa_div(long.df, unique.id.col, count.col, low.taxa.col = NULL,
-  high.taxa.col, taxon = NULL, job, base.log, q)
+taxa_div(
+  long.df,
+  unique.id.col,
+  count.col,
+  low.taxa.col = NULL,
+  high.taxa.col,
+  taxon = NULL,
+  job,
+  base.log,
+  q,
+  unnest.cols = data
+)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}

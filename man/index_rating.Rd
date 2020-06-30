@@ -4,8 +4,12 @@
 \alias{index_rating}
 \title{Index Rating}
 \usage{
-index_rating(scores.df, index.colname, condition.colname = NULL,
-  ref.cond = NULL)
+index_rating(
+  scores.df,
+  index.colname,
+  condition.colname = NULL,
+  ref.cond = NULL
+)
 }
 \arguments{
 \item{scores.df}{= a long data frame format containing the index scores.}

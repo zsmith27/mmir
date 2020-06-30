@@ -4,8 +4,14 @@
 \alias{sensitivity}
 \title{Metric Sensitivity}
 \usage{
-sensitivity(metrics.long, metric.col, value.col, condition.col, ref.cond,
-  deg.cond)
+sensitivity(
+  metrics.long,
+  metric.col,
+  value.col,
+  condition.col,
+  ref.cond,
+  deg.cond
+)
 }
 \arguments{
 \item{metrics.long}{PARAM_DESCRIPTION}

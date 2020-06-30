@@ -4,8 +4,14 @@
 \alias{index_plot}
 \title{Index Plot}
 \usage{
-index_plot(index.df, condition.colname, condition.order = NULL,
-  index.colname = "INDEX", threshold, plot.title)
+index_plot(
+  index.df,
+  condition.colname,
+  condition.order = NULL,
+  index.colname = "INDEX",
+  threshold,
+  plot.title
+)
 }
 \arguments{
 \item{scores.df}{= data frame of metric values for each station}

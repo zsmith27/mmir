@@ -4,8 +4,7 @@
 \alias{spread_condition}
 \title{Spread Condition}
 \usage{
-spread_condition(x, metric.col, condition.col, value.col, ref.cond,
-  deg.cond)
+spread_condition(x, metric.col, condition.col, value.col, ref.cond, deg.cond)
 }
 \arguments{
 \item{x}{PARAM_DESCRIPTION}

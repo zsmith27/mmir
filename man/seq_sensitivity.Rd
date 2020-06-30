@@ -4,8 +4,13 @@
 \alias{seq_sensitivity}
 \title{Chunk Sensitivity}
 \usage{
-seq_sensitivity(metrics.df, condition.colname, ref.cond = "REF",
-  deg.cond = "DEG", method)
+seq_sensitivity(
+  metrics.df,
+  condition.colname,
+  ref.cond = "REF",
+  deg.cond = "DEG",
+  method
+)
 }
 \arguments{
 \item{metrics.df}{= data frame of metric values for each station with site

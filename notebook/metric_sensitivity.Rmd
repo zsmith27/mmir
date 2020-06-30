@@ -63,8 +63,6 @@ DT::datatable(metrics.long)
 
 ## Calculate Metric Sensitivity
 
-
-
 Barbour et al. (1996) created a visual method for evaluating metric response to a defined disturbance gradient.
 
 * 0 = The medians of both the reference and degraded conditions overlap the interquartile range of one another.

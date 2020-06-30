@@ -4,8 +4,16 @@
 \alias{taxa_abund}
 \title{Abundance of a Specified Taxon}
 \usage{
-taxa_abund(long.df, unique.id.col, count.col, taxon.col, taxon = NULL,
-  exclusion.col = NULL, exclusion.vec = NULL)
+taxa_abund(
+  long.df,
+  unique.id.col,
+  count.col,
+  taxon.col,
+  taxon = NULL,
+  exclusion.col = NULL,
+  exclusion.vec = NULL,
+  unnest.cols = data
+)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}

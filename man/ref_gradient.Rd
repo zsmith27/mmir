@@ -4,8 +4,13 @@
 \alias{ref_gradient}
 \title{Scoring Method: Reference Gradient}
 \usage{
-ref_gradient(metrics.df, sensitivity.df, first.metric, condition.colname,
-  ref.cond)
+ref_gradient(
+  metrics.df,
+  sensitivity.df,
+  first.metric,
+  condition.colname,
+  ref.cond
+)
 }
 \arguments{
 \item{long.df}{<- a data frame of samples to be scored.}

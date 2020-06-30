@@ -26,7 +26,9 @@
 #' with degradation.
 #'@export
 
-taxa_dom <- function(long.df, unique.id.col, count.col, taxon.col, dom.level){
+taxa_dom <- function(long.df, unique.id.col, count.col, taxon.col, dom.level,
+                     unnest.cols = data){
+  long.df <- tidyr::unnest(long.df, cols = !!rlang::enquo(unnest.cols))
   unique.id.col = rlang::enquo(unique.id.col)
   count.col = rlang::enquo(count.col)
   taxon.col = rlang::enquo(taxon.col)

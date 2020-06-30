@@ -4,8 +4,16 @@
 \alias{taxa_pct}
 \title{Percentage of a Specified Taxon}
 \usage{
-taxa_pct(long.df, unique.id.col, count.col, taxon.col, taxon,
-  exclusion.col = NULL, exclusion.vec = NULL)
+taxa_pct(
+  long.df,
+  unique.id.col,
+  count.col,
+  taxon.col,
+  taxon,
+  exclusion.col = NULL,
+  exclusion.vec = NULL,
+  unnest.cols = data
+)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}

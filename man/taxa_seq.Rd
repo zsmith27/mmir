@@ -4,9 +4,17 @@
 \alias{taxa_seq}
 \title{The percentage each taxon makes up of a sample}
 \usage{
-taxa_seq(long.df, unique.id.col, count.col, taxa.cols,
-  high.taxa.col = NULL, keep.na = FALSE, job, base.log = NULL,
-  q = NULL)
+taxa_seq(
+  long.df,
+  unique.id.col,
+  count.col,
+  taxa.cols,
+  high.taxa.col = NULL,
+  keep.na = FALSE,
+  job,
+  base.log = NULL,
+  q = NULL
+)
 }
 \arguments{
 \item{long.df}{Taxonomic counts arranged in a long data format.}
