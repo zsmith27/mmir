@@ -318,17 +318,17 @@ dplyr::tibble(
 ) %>% 
 knitr::kable()
 
-seq.df %>% 
-  dplyr::mutate(data = "nested dataframe") %>% 
-  head() %>% 
-  dplyr::select(uid:rich_genus_bivalvia) %>% 
-  knitr::kable()
+# seq.df %>% 
+#   dplyr::mutate(data = "nested dataframe") %>% 
+#   head() %>% 
+#   dplyr::select(uid:rich_genus_bivalvia) %>% 
+#   knitr::kable()
 ```
 
 # Putting it All Together
 
 The following code-chunk will produce more than 1,000 biological metrics.
-```{r putting_it_together, eval=FALSE}
+```{r putting_it_together, eval=TRUE}
 metrics.df <- nest.df %>% 
   dplyr::mutate(
     rich_family = taxa_rich(.dataframe = .,
@@ -435,6 +435,13 @@ metrics.df <- nest.df %>%
   )
 ```
 
+```{r}
+nrsa_nap_metrics.df <- metrics.df %>% 
+  dplyr::select(-data)
+
+usethis::use_data(nrsa_nap_metrics.df,
+                  overwrite = TRUE)
+```
 
 
 

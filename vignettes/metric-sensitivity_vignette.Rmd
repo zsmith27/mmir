@@ -1,0 +1,43 @@
+---
+title: "Vignette Title"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r}
+library(mmir)
+```
+
+```{r}
+data("nrsa_nap_metrics.df")
+```
+
+```{r}
+long.df <- tidyr::pivot_longer(data = nrsa_nap_metrics.df,
+                               cols = -c(uid, rt_nrsa_cat),
+                               names_to = "metric",
+                               values_to = "value")
+```
+
+
+```{r}
+sensitivity.df <- sensitivity(.dataframe = long.df,
+                              .metric_col = metric,
+                              .value_col = value,
+                              .condition_col = rt_nrsa_cat,
+                              .reference = "least disturbed",
+                              .degraded = "most disturbed")
+```
+
