@@ -4,7 +4,8 @@
 \name{nrsa_nap_0809}
 \alias{nrsa_nap_0809}
 \title{National Rivers and Streams Assessment: Northern Appalachians Benthic Macroinvertebrates  (2008-2009)}
-\format{A data frame with 13,609 rows and 16 variables:
+\format{
+A data frame with 13,609 rows and 16 variables:
 \describe{
   \item{uid}{Unique site visit ID}
   \item{site_id}{Site identification code}
@@ -27,7 +28,8 @@
   \item{ptv}{Pollution tolerance value as assigned for NWSA}
   \item{voltinism}{Voltinism as assigned by USGS}
   ...
-}}
+}
+}
 \source{
 \url{https://www.epa.gov/national-aquatic-resource-surveys/data-national-aquatic-resource-surveys}
 }
