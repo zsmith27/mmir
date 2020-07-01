@@ -1,5 +1,5 @@
 ---
-title: "mmir: Metric Calculation"
+title: "Metric Calculation"
 author: "Zachary M. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
