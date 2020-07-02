@@ -15,29 +15,76 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+# Purpose
 
-```{r}
+An overview of the methods available for assessing biological metric sensitivity to a binary disturbance gradient (e.g., Reference vs. Test or Least Impacted vs. Most Impacted) within the __mmir__ package is provided.
+
+# Methods
+
+Metric sensitivity is the measure of a metric’s responsiveness to environmental
+degradation (Barbour et al. 1999). There are three methods for evaluating metric sensitivity in the __mmir__ package: 1) the Barbour et al. (1996) method, 2) Discrimination Efficiency (DE), and 3) Balanced Discrimination Efficiency (BDE). All three methods will be applied with the use of the `sensitivity()` function.
+
+## Barbour et al. (1996)
+
+Barbour et al. (1996) created a visual method for evaluating metric response to a defined disturbance gradient.
+
+* 0 = The medians of both the reference and degraded conditions overlap the interquartile range of one another.
+* 1 = One median (either the reference or degraded) overlaps the interquartile range of the other.
+* 2 = The interquartile ranges of the reference and degraded conditions overlap but neither conditions median overlaps with the interquartile range of the other category.
+* 3 = The interquartile ranges of the reference and degraded conditions do not overlap.
+
+## DE
+
+DE is a measure of the percentage of degraded samples correctly identified below the reference distributions 25th percentile for metrics that decrease with degradation or the percentage of degraded samples correctly identified above the reference distributions 75th percentile for metrics that increase with disturbance.
+
+## BDE
+
+<span style="color: red;">__WARNING: This function is experimental and has not been published in the literature.__</span>
+
+BDE attempts to update the DE method by throwing more computation power at the problem. BDE tests multiple thresholds for separating the reference and degraded distributions in an attempt to find the separation point that results in approximate equivalence of sensitivity and specificity.
+
+# Code
+
+Load the appropriate packages into the R environment.
+```{r load-packages}
+library(tidyr)
+library(dplyr)
 library(mmir)
 ```
 
-```{r}
+Load the data created and exported from the [Metric Calculation vignette](https://zsmith27.github.io/mmir/articles/metric-calculation_vignette.html).
+```{r load-data}
 data("nrsa_nap_metrics.df")
 ```
 
-```{r}
+The metric data is in a wide-format, where each row represents a unique sample and the columns represent unique metrics. To evaluate the sensitivity of these metrics, the data needs to first be transformed to a long-format, where each row represents a unique metric and metric value associated with a unique sample; the column names in the wide-format will become row values in the long-format and the values in the wide-format will be condensed to a single column in the long-format. The __tidyr__ `pivot_longer()` functions simplifies the conversion form a wide- to a long-format. The `cols` argument enables the user to select or ignore columns that will be manipulated. In the example below, the __uid__ (i.e., the unique sample identifier) and __rr_nrsa_cat__ (i.e., the disturbance gradient category) are ignored during the conversion from a wide- to long-format. This means that these columns will still appear in the long-format but they will not be collapsed into the name and value columns.
+```{r pivot-longer}
 long.df <- tidyr::pivot_longer(data = nrsa_nap_metrics.df,
                                cols = -c(uid, rt_nrsa_cat),
                                names_to = "metric",
                                values_to = "value")
 ```
 
+The `sensitivity()` function will provide:
 
-```{r}
+1. `metric`: The name of the metric.
+2. `disturbance`: Indicates if metric increases ("increase"), decreases ("decrease"), or remains the same ("equal") with disturbance. This is determined by comparing the medians of the specified for the `.reference` and `.degraded` arguments.
+3. `barbour`: The Barbour et al. (1996) score.
+4. `de_thresh`: The 25th or 75th percentile of the reference distribution used as the threshold to determine the DE value.
+5. `de`: The DE value.
+6. `bde_thresh`: The threshold determined to equally identify the `.reference` and `.degraded` distributions.
+7. `bde`: The BDE value.
+```{r sensitivity}
 sensitivity.df <- sensitivity(.dataframe = long.df,
                               .metric_col = metric,
                               .value_col = value,
                               .condition_col = rt_nrsa_cat,
                               .reference = "least disturbed",
                               .degraded = "most disturbed")
+```
+
+```{r sens-table, echo=FALSE}
+sensitivity.df  %>% 
+  knitr::kable()
 ```
 
