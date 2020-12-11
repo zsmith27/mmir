@@ -9,7 +9,7 @@ taxa_seq(
   .key_col,
   .counts_col,
   .filter_cols_vec,
-  .group_col,
+  .group_col = NULL,
   .unnest_col = NULL,
   .job,
   .base_log = 2,
