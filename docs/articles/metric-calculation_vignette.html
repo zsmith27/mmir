@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mmir</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -68,6 +68,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -79,13 +82,14 @@
 
       
 
-      </header><div class="row">
+      </header><script src="metric-calculation_vignette_files/header-attrs-2.5/header-attrs.js"></script><link href="metric-calculation_vignette_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="metric-calculation_vignette_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Metric Calculation</h1>
                         <h4 class="author">Zachary M. Smith</h4>
             
-            <h4 class="date">2020-07-02</h4>
+            <h4 class="date">2020-12-11</h4>
       
       
       <div class="hidden name"><code>metric-calculation_vignette.Rmd</code></div>
@@ -103,12 +107,15 @@
 <h1 class="hasAnchor">
 <a href="#preparation" class="anchor"></a>Preparation</h1>
 <p>The package, <strong>devtools</strong>, must be installed to use the <code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github()</a></code> function. You will also need to install the <strong>dplyr</strong> package to aid in data manipulation.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>,
-                 <span class="st">"dplyr"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span>,
+                 <span class="st">"dplyr"</span><span class="op">)</span></pre></div>
 <p>Install the Multi-Metric Index (MMI) package, <strong>mmir</strong>, that I am developing from GitHub.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"zsmith27/mmir"</span>)</pre></body></html></div>
-<p>Once <strong>mmir</strong> is installed, load the packages with <code>library()</code>.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mmir</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"zsmith27/mmir"</span><span class="op">)</span></pre></div>
+<p>Once <strong>mmir</strong> is installed, load the packages with <code><a href="https://rdrr.io/r/base/library.html">library()</a></code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">mmir</span><span class="op">)</span></pre></div>
 </div>
 <div id="calculate-metrics" class="section level1">
 <h1 class="hasAnchor">
@@ -118,10 +125,18 @@
 <h2 class="hasAnchor">
 <a href="#preparation-1" class="anchor"></a>Preparation</h2>
 <p>As an example data set, <strong>mmir</strong> contains benthic macroinvertebrates data collected in the Northern Appalachians as part of the 2008-2009 National Rivers and Streams Assessment conducted by the United States Environmental Protection Agency.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"nrsa_nap_0809"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"mmir"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"nrsa_nap_0809"</span>, package <span class="op">=</span> <span class="st">"mmir"</span><span class="op">)</span></pre></div>
+<p>Use <code>taxa_fill</code> to replace <code>NA</code>s in the taxonomic hierarchy with the nearest identified taxonomic rank. Note that the order the columns are presented is used to create the hierarchy that identifies the previous taxonomic rank. For example, you want your columns to be ordered as: Phylum, Class, Order, Family, Genus.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="va">nrsa_nap_fill</span> <span class="op">&lt;-</span> <span class="va">nrsa_nap_0809</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="../reference/taxa_fill.html">taxa_fill</a></span><span class="op">(</span>.final_id <span class="op">=</span> <span class="va">target_taxon</span>,
+            .prefix <span class="op">=</span> <span class="st">"unidentified"</span>,
+            <span class="va">phylum</span><span class="op">:</span><span class="va">genus</span><span class="op">)</span></pre></div>
 <p>Create a data frame that will store the calculated metrics. This should include a unique site ID and possibly a few other important columns, such as stream gradient classification column (e.g., Reference and Degraded). I recommend not carrying all of the site information through the metric calculation process because it can easily be appended at the end of the calculation process or at another later step. This will reduce clutter, allowing you to focus on the metric values, and will help you manage memory allocation. Additionally, do <strong>NOT</strong> alter the order of the unique identifier. The output from each metric function is a vector in the order of the supplied data frame of taxonomic counts (in this case <code>onondaga</code>). If the unique identifier is rearranged, no error will appear but the metric values will be associated with incorrect unique identifier.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">nest.df</span> <span class="kw">&lt;-</span> <span class="no">nrsa_nap_0809</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_nest.html">group_nest</a></span>(<span class="no">uid</span>,  <span class="no">rt_nrsa_cat</span>, <span class="kw">.key</span> <span class="kw">=</span> <span class="st">"data"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="va">nest.df</span> <span class="op">&lt;-</span> <span class="va">nrsa_nap_fill</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_nest.html">group_nest</a></span><span class="op">(</span><span class="va">uid</span>,  <span class="va">rt_nrsa_cat</span>, .key <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span> </pre></div>
 </div>
 <div id="input-variable-definitions" class="section level2">
 <h2 class="hasAnchor">
@@ -150,23 +165,24 @@
 <h3 class="hasAnchor">
 <a href="#community-richness" class="anchor"></a>Community Richness</h3>
 <p><code><a href="../reference/taxa_rich.html">taxa_rich()</a></code> is used to calculate richness. A long format data frame containing taxonomic counts is specified as the <code>.dataframe</code> variable (<code>onondaga</code>). The name of a unique ID column is specified for the <code>.key_col</code> variable (<code>uid</code>). Note that this is done with NSE syntax (i.e., no quotes). The <code>.group_col</code> and <code>.filter_col</code> refer to low resolution and high resolution taxonomic rank columns of interest. <code>.filter_col</code> is required but <code>.group_col</code> is only necessary when calculating subgroup richness. Furthermore, the <code>taxon</code> variable is only necessary for specifying which taxon or taxa will be used to calculate subgroup richness; therefore, when calculating community richness, <code>taxon</code> should be set to <code>NULL</code>. In this example family-level and genus-level community richness are calculated and appended to <code>metrics.key</code>. <code><a href="https://rdrr.io/pkg/DT/man/datatable.html">DT::datatable()</a></code> is only used to present interactive tables in this document.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">rich.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">rich_family</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">family</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">rich_genus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-  )
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="va">rich.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+    rich_family <span class="op">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .group_col <span class="op">=</span> <span class="va">family</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    rich_genus <span class="op">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .group_col <span class="op">=</span> <span class="va">genus</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+  <span class="op">)</span>
 
 
-<span class="no">rich.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="st">"nested dataframe"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>() <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<span class="va">rich.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"nested dataframe"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">uid</th>
@@ -181,42 +197,42 @@
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
 <td align="right">25</td>
-<td align="right">44</td>
+<td align="right">47</td>
 </tr>
 <tr class="even">
 <td align="right">11135</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">25</td>
-<td align="right">51</td>
+<td align="right">26</td>
+<td align="right">54</td>
 </tr>
 <tr class="odd">
 <td align="right">11136</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">27</td>
-<td align="right">44</td>
+<td align="right">28</td>
+<td align="right">48</td>
 </tr>
 <tr class="even">
 <td align="right">11137</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">22</td>
-<td align="right">35</td>
+<td align="right">23</td>
+<td align="right">36</td>
 </tr>
 <tr class="odd">
 <td align="right">11138</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">25</td>
-<td align="right">35</td>
+<td align="right">26</td>
+<td align="right">37</td>
 </tr>
 <tr class="even">
 <td align="right">11564</td>
 <td align="left">most disturbed</td>
 <td align="left">nested dataframe</td>
 <td align="right">19</td>
-<td align="right">27</td>
+<td align="right">36</td>
 </tr>
 </tbody>
 </table>
@@ -225,32 +241,41 @@
 <h3 class="hasAnchor">
 <a href="#subgroup-richness" class="anchor"></a>Subgroup Richness</h3>
 <p><code><a href="../reference/taxa_rich.html">taxa_rich()</a></code> can also be used to calculate subgroup richness, which refers to calculating the richness of only select set of taxa. In the example below Ephemeroptera (Mayfly) richness is calculated at the family- and genus-levels. More than one taxonomic group can be specified, as shown for <code>rich_ept_gen</code> (<code>taxon = c("ephemeroptera", "plecoptera", "trichoptera")</code>). The <code>taxon</code> variable is used to filter the data frame based on character string matches found in specified <code>.group_col</code>. In the example, the <code>onondaga</code> data frame is subset to only include rows where the <code>order</code> column specifies “ephemeroptera”. The <code>.filter_col</code> (e.g., <code>family</code> or <code>genus</code>) is then used to find the number of unique ephemeroptera taxa at this specified taxonomic level. If <code>taxon</code> was set to “baetidae” (a family of ephmeroptera) in the example below, then <code><a href="../reference/taxa_rich.html">taxa_rich()</a></code> would return all zeros because the character string “baetidae” would never be found in the order-level column.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">sub_rich.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">rich_ephemeroptera_fam</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">family</span>,
-                            <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="st">"ephemeroptera"</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">rich_ephemeroptera_gen</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                            <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="st">"ephemeroptera"</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">rich_ept_gen</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                            <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="va">sub_rich.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+    rich_ephemeroptera_fam <span class="op">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .group_col <span class="op">=</span> <span class="va">family</span>,
+                            .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="st">"ephemeroptera"</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    rich_ephemeroptera_gen <span class="op">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .group_col <span class="op">=</span> <span class="va">genus</span>,
+                            .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="st">"ephemeroptera"</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    rich_ept_gen <span class="op">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .group_col <span class="op">=</span> <span class="va">genus</span>,
+                            .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                        <span class="st">"plecoptera"</span>,
-                                                       <span class="st">"trichoptera"</span>),
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-  )
+                                                       <span class="st">"trichoptera"</span><span class="op">)</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="no">sub_rich.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="st">"nested dataframe"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>() <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<span class="va">sub_rich.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"nested dataframe"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span> </pre></div>
 <table class="table">
+<colgroup>
+<col width="6%">
+<col width="16%">
+<col width="17%">
+<col width="23%">
+<col width="23%">
+<col width="13%">
+</colgroup>
 <thead><tr class="header">
 <th align="right">uid</th>
 <th align="left">rt_nrsa_cat</th>
@@ -274,7 +299,7 @@
 <td align="left">nested dataframe</td>
 <td align="right">4</td>
 <td align="right">9</td>
-<td align="right">24</td>
+<td align="right">25</td>
 </tr>
 <tr class="odd">
 <td align="right">11136</td>
@@ -282,7 +307,7 @@
 <td align="left">nested dataframe</td>
 <td align="right">4</td>
 <td align="right">8</td>
-<td align="right">21</td>
+<td align="right">22</td>
 </tr>
 <tr class="even">
 <td align="right">11137</td>
@@ -290,7 +315,7 @@
 <td align="left">nested dataframe</td>
 <td align="right">5</td>
 <td align="right">8</td>
-<td align="right">20</td>
+<td align="right">21</td>
 </tr>
 <tr class="odd">
 <td align="right">11138</td>
@@ -298,7 +323,7 @@
 <td align="left">nested dataframe</td>
 <td align="right">4</td>
 <td align="right">4</td>
-<td align="right">15</td>
+<td align="right">16</td>
 </tr>
 <tr class="even">
 <td align="right">11564</td>
@@ -319,46 +344,57 @@
 <div id="community-diversity" class="section level3">
 <h3 class="hasAnchor">
 <a href="#community-diversity" class="anchor"></a>Community Diversity</h3>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">div.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">shannon_genus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                            <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"shannon"</span>,
-                             <span class="kw">.base_log</span> <span class="kw">=</span> <span class="fl">2</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">simpson_genus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                            <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"simpson"</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">margalef_genus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                            <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"margalef"</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">menhinick_genus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                            <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"menhinick"</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">pielou_genus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                            <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"pielou"</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-  )
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="va">div.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+    shannon_genus <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .counts_col <span class="op">=</span> <span class="va">total</span>,
+                            .group_col <span class="op">=</span> <span class="va">genus</span>,
+                            .job <span class="op">=</span> <span class="st">"shannon"</span>,
+                             .base_log <span class="op">=</span> <span class="fl">2</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    simpson_genus <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .counts_col <span class="op">=</span> <span class="va">total</span>,
+                            .group_col <span class="op">=</span> <span class="va">genus</span>,
+                            .job <span class="op">=</span> <span class="st">"simpson"</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    margalef_genus <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .counts_col <span class="op">=</span> <span class="va">total</span>,
+                            .group_col <span class="op">=</span> <span class="va">genus</span>,
+                            .job <span class="op">=</span> <span class="st">"margalef"</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    menhinick_genus <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .counts_col <span class="op">=</span> <span class="va">total</span>,
+                            .group_col <span class="op">=</span> <span class="va">genus</span>,
+                            .job <span class="op">=</span> <span class="st">"menhinick"</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    pielou_genus <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .counts_col <span class="op">=</span> <span class="va">total</span>,
+                            .group_col <span class="op">=</span> <span class="va">genus</span>,
+                            .job <span class="op">=</span> <span class="st">"pielou"</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="no">div.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="st">"nested dataframe"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>() <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<span class="va">div.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"nested dataframe"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span> </pre></div>
 <table class="table">
+<colgroup>
+<col width="5%">
+<col width="14%">
+<col width="15%">
+<col width="12%">
+<col width="12%">
+<col width="13%">
+<col width="14%">
+<col width="11%">
+</colgroup>
 <thead><tr class="header">
 <th align="right">uid</th>
 <th align="left">rt_nrsa_cat</th>
@@ -374,61 +410,61 @@
 <td align="right">11134</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">3.926699</td>
-<td align="right">0.1086484</td>
-<td align="right">16.297205</td>
-<td align="right">2.109638</td>
-<td align="right">1.643453</td>
+<td align="right">4.074962</td>
+<td align="right">0.1018417</td>
+<td align="right">17.43422</td>
+<td align="right">2.253477</td>
+<td align="right">1.672098</td>
 </tr>
 <tr class="even">
 <td align="right">11135</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">4.513017</td>
-<td align="right">0.0714882</td>
-<td align="right">19.223576</td>
-<td align="right">2.553193</td>
-<td align="right">1.707570</td>
+<td align="right">4.584539</td>
+<td align="right">0.0694405</td>
+<td align="right">20.37699</td>
+<td align="right">2.703381</td>
+<td align="right">1.732394</td>
 </tr>
 <tr class="odd">
 <td align="right">11136</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">4.104728</td>
-<td align="right">0.1036547</td>
-<td align="right">17.073560</td>
-<td align="right">2.422120</td>
-<td align="right">1.643453</td>
+<td align="right">4.202079</td>
+<td align="right">0.1019651</td>
+<td align="right">18.66180</td>
+<td align="right">2.642313</td>
+<td align="right">1.681241</td>
 </tr>
 <tr class="even">
 <td align="right">11137</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">3.700175</td>
-<td align="right">0.1822792</td>
-<td align="right">15.483403</td>
-<td align="right">2.793304</td>
-<td align="right">1.544068</td>
+<td align="right">3.723167</td>
+<td align="right">0.1819546</td>
+<td align="right">15.93880</td>
+<td align="right">2.873113</td>
+<td align="right">1.556302</td>
 </tr>
 <tr class="odd">
 <td align="right">11138</td>
 <td align="left">least disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">2.848210</td>
-<td align="right">0.3292656</td>
-<td align="right">13.281734</td>
-<td align="right">1.837024</td>
-<td align="right">1.544068</td>
+<td align="right">2.869174</td>
+<td align="right">0.3291442</td>
+<td align="right">14.06301</td>
+<td align="right">1.941996</td>
+<td align="right">1.568202</td>
 </tr>
 <tr class="even">
 <td align="right">11564</td>
 <td align="left">most disturbed</td>
 <td align="left">nested dataframe</td>
-<td align="right">2.564710</td>
-<td align="right">0.2878571</td>
-<td align="right">9.596681</td>
-<td align="right">1.193243</td>
-<td align="right">1.431364</td>
+<td align="right">2.678898</td>
+<td align="right">0.2865829</td>
+<td align="right">12.91861</td>
+<td align="right">1.590990</td>
+<td align="right">1.556302</td>
 </tr>
 </tbody>
 </table>
@@ -436,66 +472,68 @@
 <div id="subgroup-diversity" class="section level3">
 <h3 class="hasAnchor">
 <a href="#subgroup-diversity" class="anchor"></a>Subgroup Diversity</h3>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">sub_div.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">gini_simpson_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">order</span>,
-                            <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">genus</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="va">sub_div.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+    gini_simpson_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .counts_col <span class="op">=</span> <span class="va">total</span>,
+                            .group_col <span class="op">=</span> <span class="va">order</span>,
+                            .filter <span class="op">=</span> <span class="va">genus</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                        <span class="st">"plecoptera"</span>,
-                                                       <span class="st">"trichoptera"</span>),
-                            <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"gini_simpson"</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">simpson_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">order</span>,
-                            <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">genus</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+                                                       <span class="st">"trichoptera"</span><span class="op">)</span>,
+                            .job <span class="op">=</span> <span class="st">"gini_simpson"</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    simpson_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .counts_col <span class="op">=</span> <span class="va">total</span>,
+                            .group_col <span class="op">=</span> <span class="va">order</span>,
+                            .filter <span class="op">=</span> <span class="va">genus</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                        <span class="st">"plecoptera"</span>,
-                                                       <span class="st">"trichoptera"</span>),
-                            <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"simpson"</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">shannon_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">order</span>,
-                            <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">genus</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+                                                       <span class="st">"trichoptera"</span><span class="op">)</span>,
+                            .job <span class="op">=</span> <span class="st">"simpson"</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    shannon_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .counts_col <span class="op">=</span> <span class="va">total</span>,
+                            .group_col <span class="op">=</span> <span class="va">order</span>,
+                            .filter <span class="op">=</span> <span class="va">genus</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                        <span class="st">"plecoptera"</span>,
-                                                       <span class="st">"trichoptera"</span>),
-                            <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"shannon"</span>,
-                            <span class="kw">.base_log</span> <span class="kw">=</span> <span class="fl">2</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-  )
+                                                       <span class="st">"trichoptera"</span><span class="op">)</span>,
+                            .job <span class="op">=</span> <span class="st">"shannon"</span>,
+                            .base_log <span class="op">=</span> <span class="fl">2</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="no">sub_div.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="st">"nested dataframe"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>() <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<span class="va">sub_div.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"nested dataframe"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span> </pre></div>
 </div>
 <div id="dominance" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dominance" class="anchor"></a>Dominance</h3>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">dom.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">dom_1_target_taxon</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_dom.html">taxa_dom</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                                  <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                                  <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                                  <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-                                  <span class="kw">.dom_level</span> <span class="kw">=</span> <span class="fl">1</span>,
-                                  <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">dom_5_target_taxon</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_dom.html">taxa_dom</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                                  <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                                  <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                                  <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-                                  <span class="kw">.dom_level</span> <span class="kw">=</span> <span class="fl">5</span>,
-                                  <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-  )
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="va">dom.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+    dom_1_target_taxon <span class="op">=</span> <span class="fu"><a href="../reference/taxa_dom.html">taxa_dom</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                                  .key_col <span class="op">=</span> <span class="va">uid</span>,
+                                  .counts_col <span class="op">=</span> <span class="va">total</span>,
+                                  .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+                                  .dom_level <span class="op">=</span> <span class="fl">1</span>,
+                                  .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    dom_5_target_taxon <span class="op">=</span> <span class="fu"><a href="../reference/taxa_dom.html">taxa_dom</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                                  .key_col <span class="op">=</span> <span class="va">uid</span>,
+                                  .counts_col <span class="op">=</span> <span class="va">total</span>,
+                                  .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+                                  .dom_level <span class="op">=</span> <span class="fl">5</span>,
+                                  .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="no">dom.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="st">"nested dataframe"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>() <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<span class="va">dom.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"nested dataframe"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span> </pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">uid</th>
@@ -558,26 +596,27 @@
 <h3 class="hasAnchor">
 <a href="#percentages" class="anchor"></a>Percentages</h3>
 <p><code><a href="../reference/taxa_pct.html">taxa_pct()</a></code> calculates the percentage of the sample represented by a taxon or taxa. The example below shows how to calculate the percentage of a single taxon, Ephemeroptera (<code>pct_ephemeroptera</code>), and multiple taxa, EPT (<code>pct_ept</code>). Remember that <code>.filter_col</code> refers to the name of the column that contains the taxon or taxa of interest. The <code>.filter_vec</code> variable is then used to specify these taxon or taxa.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">pct.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">pct_ephemeroptera</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_pct.html">taxa_pct</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                                  <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                                  <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                                  <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="st">"ephemeroptera"</span>,
-                                 <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">pct_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_pct.html">taxa_pct</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                        <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                        <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                        <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="va">pct.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+    pct_ephemeroptera <span class="op">=</span> <span class="fu"><a href="../reference/taxa_pct.html">taxa_pct</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                                  .key_col <span class="op">=</span> <span class="va">uid</span>,
+                                  .counts_col <span class="op">=</span> <span class="va">total</span>,
+                                  .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="st">"ephemeroptera"</span>,
+                                 .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    pct_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_pct.html">taxa_pct</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                        .key_col <span class="op">=</span> <span class="va">uid</span>,
+                        .counts_col <span class="op">=</span> <span class="va">total</span>,
+                        .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                    <span class="st">"plecoptera"</span>,
-                                                   <span class="st">"trichoptera"</span>),
-                       <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-  )
+                                                   <span class="st">"trichoptera"</span><span class="op">)</span>,
+                       .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="no">pct.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="st">"nested dataframe"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>() <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<span class="va">pct.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"nested dataframe"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">uid</th>
@@ -636,26 +675,27 @@
 <h3 class="hasAnchor">
 <a href="#abundances" class="anchor"></a>Abundances</h3>
 <p>Abundance refers to reported taxonomic count but may represent counts aggregated at a lower resolution taxonomic rank. For example, taxa may be reported at the genus-level but abundance could be calculated at the order-level. Generally, I have not found abundance metrics used in macorinvertebrate indices but they are common in fish indices. <code><a href="../reference/taxa_abund.html">taxa_abund()</a></code> has the same input as <code><a href="../reference/taxa_pct.html">taxa_pct()</a></code> (See <a href="#percentages">Percentages</a>).</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">abund.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">abund_ephemeroptera</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_abund.html">taxa_abund</a></span>(<span class="no">.</span>,
-                                  <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                                  <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                                  <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="st">"ephemeroptera"</span>,
-                                  <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">abund_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_abund.html">taxa_abund</a></span>(<span class="no">.</span>,
-                        <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                        <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                        <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="va">abund.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+    abund_ephemeroptera <span class="op">=</span> <span class="fu"><a href="../reference/taxa_abund.html">taxa_abund</a></span><span class="op">(</span><span class="va">.</span>,
+                                  .key_col <span class="op">=</span> <span class="va">uid</span>,
+                                  .counts_col <span class="op">=</span> <span class="va">total</span>,
+                                  .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="st">"ephemeroptera"</span>,
+                                  .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    abund_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_abund.html">taxa_abund</a></span><span class="op">(</span><span class="va">.</span>,
+                        .key_col <span class="op">=</span> <span class="va">uid</span>,
+                        .counts_col <span class="op">=</span> <span class="va">total</span>,
+                        .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                    <span class="st">"plecoptera"</span>,
-                                                   <span class="st">"trichoptera"</span>),
-                        <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-  )
+                                                   <span class="st">"trichoptera"</span><span class="op">)</span>,
+                        .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="no">abund.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="st">"nested dataframe"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>() <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<span class="va">abund.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>data <span class="op">=</span> <span class="st">"nested dataframe"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">uid</th>
@@ -717,21 +757,32 @@
 <p>When developing a new index, the developer usually tries to evaluate as many metrics as possible to obtain the most sensitive metrics. Writing individual lines of code for each taxon using <code><a href="../reference/taxa_rich.html">taxa_rich()</a></code>, <code><a href="../reference/taxa_pct_rich.html">taxa_pct_rich()</a></code>, <code><a href="../reference/taxa_pct.html">taxa_pct()</a></code>, or <code><a href="../reference/taxa_abund.html">taxa_abund()</a></code> would be very time consuming and prone to typos. <code><a href="../reference/taxa_seq.html">taxa_seq()</a></code> was developed to make these calculations simple and safe.</p>
 <p>This is a wrapper function around the previously discussed taxa metrics (<code><a href="../reference/taxa_rich.html">taxa_rich()</a></code>, <code><a href="../reference/taxa_pct_rich.html">taxa_pct_rich()</a></code>, <code><a href="../reference/taxa_pct.html">taxa_pct()</a></code>, or <code><a href="../reference/taxa_abund.html">taxa_abund()</a></code>), which loops through each taxon in the specified taxonomic rank or taxonomic attribute column(s) calculating taxon richness, taxon percent richness, taxon percentages, or taxon abundance. The input variable, <code>job</code>, is used to specify which type of metrics to calculate (i.e., “rich”, “pct_rich”, “pct”, and “abund”). The character string used to specify the <code>job</code> will be used as a prefix for the column names (e.g., “rich_ephemeroptera” or “pct_plecoptera”). The remaining inputs are the same as the base taxa functions (<code><a href="../reference/taxa_rich.html">taxa_rich()</a></code>, <code><a href="../reference/taxa_pct_rich.html">taxa_pct_rich()</a></code>, <code><a href="../reference/taxa_pct.html">taxa_pct()</a></code>, or <code><a href="../reference/taxa_abund.html">taxa_abund()</a></code>) that <code><a href="../reference/taxa_seq.html">taxa_seq()</a></code> wraps around. This also means that there will frequently be many input variables that you do not need to use. For example, if <code>job = "pct"</code>, then <code>hich.taxa.col</code>, <code>base.log</code>, and <code>q</code> do not need to be specified because these variables are only used for richness and/or diversity related calculations. It is often helpful to refer back to the base taxa function to identify the necessary inputs for the specified job. Additionally, each metric only represents a single taxon. The output will therefore not include metrics, such as the percentage of EPT taxa or the richness of Gathers’ and Filter Feeder taxa. These metrics will need to be calculated individually using the base taxa functions.</p>
 <p>The example below calculates taxa richness, percent taxa richness, taxa percentage, and taxa abundance for all of the taxa under the order and family columns. The <code>taxa.cols</code> input variable could be reduced to just one column (<code>taxa.cols = "family"</code>) or could be expanded to include as many taxonomic rank and/or taxonomic attribute columns as you want (<code>taxa.cols = c("class", order", "suborder", "family", "tolerance_values", "functional_feeding_groups", "habits")</code>). I suggest specifying all of your taxonomic rank and taxonomic attribute columns. This will create a lot of output, could potentially take awhile to calculate, and the majority of the metrics will have very poor metric sensitivity; however, the <code><a href="../reference/sensitivity.html">sensitivity()</a></code> function (See [Calculate Metric Sensitivity]) will allow you to quickly filter out poorly performing metrics. Calculating a large amount of metrics will give you more opptertunities to identify patterns that reflect your defined disturbance gradient. I used this function during the development of the Chessie BIBI and I found several metrics that are not commonly used to have high metric sensitivity values. For example, the percent of Systellognatha (a suborder of Plecoptera) was more sensitive than the commonly used percent of Plecoptera metric. This extensive exploration of your data also comes with the danger of overfitting your index. To prevent this issue please use index validation procedure (e.g., Hold-Out validation or Cross Validation) during your index development.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">seq.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span>(
-    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-             <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-             <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-             <span class="kw">.filter_cols_vec</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"class"</span>, <span class="st">"order"</span>),
-             <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-             <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"rich"</span>,
-             <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-    )
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="va">seq.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span>
+    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+             .key_col <span class="op">=</span> <span class="va">uid</span>,
+             .counts_col <span class="op">=</span> <span class="va">total</span>,
+             .filter_cols_vec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"class"</span>, <span class="st">"order"</span><span class="op">)</span>,
+             .group_col <span class="op">=</span> <span class="va">genus</span>,
+             .job <span class="op">=</span> <span class="st">"rich"</span>,
+             .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+    <span class="op">)</span>
+<span class="co">#&gt; New names:</span>
+<span class="co">#&gt; * rich_unidentified_nemata -&gt; rich_unidentified_nemata...9</span>
+<span class="co">#&gt; * rich_unidentified_cnidaria -&gt; rich_unidentified_cnidaria...11</span>
+<span class="co">#&gt; * rich_unidentified_nemata -&gt; rich_unidentified_nemata...36</span>
+<span class="co">#&gt; * rich_unidentified_cnidaria -&gt; rich_unidentified_cnidaria...41</span>
+<span class="co">#&gt; New names:</span>
+<span class="co">#&gt; * rich_unidentified_nemata...9 -&gt; rich_unidentified_nemata...12</span>
+<span class="co">#&gt; * rich_unidentified_cnidaria...11 -&gt; rich_unidentified_cnidaria...14</span>
+<span class="co">#&gt; * rich_unidentified_nemata...36 -&gt; rich_unidentified_nemata...39</span>
+<span class="co">#&gt; * rich_unidentified_cnidaria...41 -&gt; rich_unidentified_cnidaria...44</span>
 
-<span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(
-  <span class="st">"List of Column Names"</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">seq.df</span>)
-) <span class="kw">%&gt;%</span>
-<span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
+<span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>
+  <span class="st">"List of Column Names"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">seq.df</span><span class="op">)</span>
+<span class="op">)</span> <span class="op">%&gt;%</span> 
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">List of Column Names</th>
@@ -771,7 +822,13 @@
 <td align="left">rich_enopla</td>
 </tr>
 <tr class="even">
+<td align="left">rich_unidentified_nemata…12</td>
+</tr>
+<tr class="odd">
 <td align="left">rich_hirudinea</td>
+</tr>
+<tr class="even">
+<td align="left">rich_unidentified_cnidaria…14</td>
 </tr>
 <tr class="odd">
 <td align="left">rich_polychaeta</td>
@@ -822,10 +879,16 @@
 <td align="left">rich_amphipoda</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_enchytraeida</td>
+<td align="left">rich_unidentified_turbellaria</td>
 </tr>
 <tr class="even">
+<td align="left">rich_enchytraeida</td>
+</tr>
+<tr class="odd">
 <td align="left">rich_neotaenioglossa</td>
+</tr>
+<tr class="even">
+<td align="left">rich_unidentified_arachnida</td>
 </tr>
 <tr class="odd">
 <td align="left">rich_lepidoptera</td>
@@ -840,7 +903,13 @@
 <td align="left">rich_hoplonemertea</td>
 </tr>
 <tr class="odd">
+<td align="left">rich_unidentified_nemata…39</td>
+</tr>
+<tr class="even">
 <td align="left">rich_architaenioglossa</td>
+</tr>
+<tr class="odd">
+<td align="left">rich_unidentified_gastropoda</td>
 </tr>
 <tr class="even">
 <td align="left">rich_sarcoptiformes</td>
@@ -849,13 +918,19 @@
 <td align="left">rich_rhynchobdellida</td>
 </tr>
 <tr class="even">
-<td align="left">rich_arhynchobdellida</td>
+<td align="left">rich_unidentified_cnidaria…44</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_sabellida</td>
+<td align="left">rich_arhynchobdellida</td>
 </tr>
 <tr class="even">
+<td align="left">rich_sabellida</td>
+</tr>
+<tr class="odd">
 <td align="left">rich_cumacea</td>
+</tr>
+<tr class="even">
+<td align="left">rich_unidentified_hirudinea</td>
 </tr>
 <tr class="odd">
 <td align="left">rich_unionoida</td>
@@ -872,132 +947,179 @@
 <tr class="odd">
 <td align="left">rich_mysida</td>
 </tr>
+<tr class="even">
+<td align="left">rich_unidentified_ostracoda</td>
+</tr>
+<tr class="odd">
+<td align="left">rich_unidentified_bivalvia</td>
+</tr>
+<tr class="even">
+<td align="left">rich_unidentified_oligochaeta</td>
+</tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb14"><html><body><pre class="r">
-# seq.df %&gt;% 
-#   dplyr::mutate(data = "nested dataframe") %&gt;% 
-#   head() %&gt;% 
-#   dplyr::select(uid:rich_genus_bivalvia) %&gt;% 
-#   knitr::kable()</pre></body></html></div>
+<div class="sourceCode" id="cb15"><pre class="downlit">
+
+<span class="co"># seq.df %&gt;% </span>
+<span class="co">#   dplyr::mutate(data = "nested dataframe") %&gt;% </span>
+<span class="co">#   head() %&gt;% </span>
+<span class="co">#   dplyr::select(uid:rich_genus_bivalvia) %&gt;% </span>
+<span class="co">#   knitr::kable()</span></pre></div>
 </div>
 </div>
 <div id="putting-it-all-together" class="section level1">
 <h1 class="hasAnchor">
 <a href="#putting-it-all-together" class="anchor"></a>Putting it All Together</h1>
 <p>The following code-chunk will produce more than 1,000 biological metrics.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">metrics.df</span> <span class="kw">&lt;-</span> <span class="no">nest.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">rich_family</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                            <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                            <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">family</span>,
-                            <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">rich_genus</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                           <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                           <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">genus</span>,
-                           <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">rich_target_taxon</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                                  <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                                  <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-                                  <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">gini_simpson_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                                <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                                <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                                <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-                                <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="va">metrics.df</span> <span class="op">&lt;-</span> <span class="va">nest.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+    rich_family <span class="op">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                            .key_col <span class="op">=</span> <span class="va">uid</span>,
+                            .group_col <span class="op">=</span> <span class="va">family</span>,
+                            .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    rich_genus <span class="op">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                           .key_col <span class="op">=</span> <span class="va">uid</span>,
+                           .group_col <span class="op">=</span> <span class="va">genus</span>,
+                           .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    rich_target_taxon <span class="op">=</span> <span class="fu"><a href="../reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                                  .key_col <span class="op">=</span> <span class="va">uid</span>,
+                                  .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+                                  .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    gini_simpson_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                                .key_col <span class="op">=</span> <span class="va">uid</span>,
+                                .counts_col <span class="op">=</span> <span class="va">total</span>,
+                                .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+                                .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                        <span class="st">"plecoptera"</span>,
-                                                       <span class="st">"trichoptera"</span>),
-                                <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"gini_simpson"</span>,
-                                <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">simpson_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                           <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                           <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                           <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-                           <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+                                                       <span class="st">"trichoptera"</span><span class="op">)</span>,
+                                .job <span class="op">=</span> <span class="st">"gini_simpson"</span>,
+                                .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    simpson_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                           .key_col <span class="op">=</span> <span class="va">uid</span>,
+                           .counts_col <span class="op">=</span> <span class="va">total</span>,
+                           .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+                           .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                   <span class="st">"plecoptera"</span>,
-                                                  <span class="st">"trichoptera"</span>),
-                           <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"simpson"</span>,
-                           <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">shannon_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                           <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                           <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                           <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-                           <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+                                                  <span class="st">"trichoptera"</span><span class="op">)</span>,
+                           .job <span class="op">=</span> <span class="st">"simpson"</span>,
+                           .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    shannon_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_div.html">taxa_div</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                           .key_col <span class="op">=</span> <span class="va">uid</span>,
+                           .counts_col <span class="op">=</span> <span class="va">total</span>,
+                           .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+                           .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                                   <span class="st">"plecoptera"</span>,
-                                                  <span class="st">"trichoptera"</span>),
-                           <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"shannon"</span>,
-                           <span class="kw">.base_log</span> <span class="kw">=</span> <span class="fl">2</span>,
-                           <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">pct_ept</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_pct.html">taxa_pct</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                       <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                       <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                       <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+                                                  <span class="st">"trichoptera"</span><span class="op">)</span>,
+                           .job <span class="op">=</span> <span class="st">"shannon"</span>,
+                           .base_log <span class="op">=</span> <span class="fl">2</span>,
+                           .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    pct_ept <span class="op">=</span> <span class="fu"><a href="../reference/taxa_pct.html">taxa_pct</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                       .key_col <span class="op">=</span> <span class="va">uid</span>,
+                       .counts_col <span class="op">=</span> <span class="va">total</span>,
+                       .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                               <span class="st">"plecoptera"</span>,
-                                              <span class="st">"trichoptera"</span>),
-                       <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">pct_cote</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_pct.html">taxa_pct</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                        <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                        <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                        <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"coleoptera"</span>,
+                                              <span class="st">"trichoptera"</span><span class="op">)</span>,
+                       .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    pct_cote <span class="op">=</span> <span class="fu"><a href="../reference/taxa_pct.html">taxa_pct</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                        .key_col <span class="op">=</span> <span class="va">uid</span>,
+                        .counts_col <span class="op">=</span> <span class="va">total</span>,
+                        .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"coleoptera"</span>,
                                                <span class="st">"odonata"</span>,
                                                <span class="st">"trichoptera"</span>,
-                                               <span class="st">"ephemeroptera"</span>),
-                        <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">dom_1_target_taxon</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_dom.html">taxa_dom</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                                  <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                                  <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                                  <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-                                  <span class="kw">.dom_level</span> <span class="kw">=</span> <span class="fl">1</span>,
-                                  <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">dom_5_target_taxon</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_dom.html">taxa_dom</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                                  <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                                  <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                                  <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-                                  <span class="kw">.dom_level</span> <span class="kw">=</span> <span class="fl">5</span>,
-                                  <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="kw">tol_index</span> <span class="kw">=</span> <span class="fu"><a href="../reference/taxa_tol_index.html">taxa_tol_index</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-                               <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-                               <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-                               <span class="kw">.tol_col</span> <span class="kw">=</span> <span class="no">ptv</span>,
-                               <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>)
-  ) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span>(
-    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-             <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-             <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-             <span class="kw">.filter_cols_vec</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"class"</span>, <span class="st">"order"</span>, <span class="st">"family"</span>),
-             <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-             <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"rich"</span>,
-             <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-             <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-             <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-             <span class="kw">.filter_cols_vec</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"class"</span>, <span class="st">"order"</span>, <span class="st">"family"</span>),
-             <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-             <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"pct_rich"</span>,
-             <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-             <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-             <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-             <span class="kw">.filter_cols_vec</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"class"</span>, <span class="st">"order"</span>, <span class="st">"family"</span>, <span class="st">"genus"</span>),
-             <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"pct"</span>,
-             <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">.</span>,
-             <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-             <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-             <span class="kw">.filter_cols_vec</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"class"</span>, <span class="st">"order"</span>, <span class="st">"family"</span>),
-             <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-             <span class="kw">.job</span> <span class="kw">=</span> <span class="st">"simpson"</span>,
-             <span class="kw">.unnest_col</span> <span class="kw">=</span> <span class="no">data</span>),
-  )</pre></body></html></div>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">nrsa_nap_metrics.df</span> <span class="kw">&lt;-</span> <span class="no">metrics.df</span> <span class="kw">%&gt;%</span>
-  <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(-<span class="no">data</span>)
+                                               <span class="st">"ephemeroptera"</span><span class="op">)</span>,
+                        .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    dom_1_target_taxon <span class="op">=</span> <span class="fu"><a href="../reference/taxa_dom.html">taxa_dom</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                                  .key_col <span class="op">=</span> <span class="va">uid</span>,
+                                  .counts_col <span class="op">=</span> <span class="va">total</span>,
+                                  .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+                                  .dom_level <span class="op">=</span> <span class="fl">1</span>,
+                                  .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    dom_5_target_taxon <span class="op">=</span> <span class="fu"><a href="../reference/taxa_dom.html">taxa_dom</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                                  .key_col <span class="op">=</span> <span class="va">uid</span>,
+                                  .counts_col <span class="op">=</span> <span class="va">total</span>,
+                                  .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+                                  .dom_level <span class="op">=</span> <span class="fl">5</span>,
+                                  .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    tol_index <span class="op">=</span> <span class="fu"><a href="../reference/taxa_tol_index.html">taxa_tol_index</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+                               .key_col <span class="op">=</span> <span class="va">uid</span>,
+                               .counts_col <span class="op">=</span> <span class="va">total</span>,
+                               .tol_col <span class="op">=</span> <span class="va">ptv</span>,
+                               .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span><span class="op">(</span>
+    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+             .key_col <span class="op">=</span> <span class="va">uid</span>,
+             .counts_col <span class="op">=</span> <span class="va">total</span>,
+             .filter_cols_vec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"class"</span>, <span class="st">"order"</span>, <span class="st">"family"</span><span class="op">)</span>,
+             .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+             .job <span class="op">=</span> <span class="st">"rich"</span>,
+             .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+             .key_col <span class="op">=</span> <span class="va">uid</span>,
+             .counts_col <span class="op">=</span> <span class="va">total</span>,
+             .filter_cols_vec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"class"</span>, <span class="st">"order"</span>, <span class="st">"family"</span><span class="op">)</span>,
+             .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+             .job <span class="op">=</span> <span class="st">"pct_rich"</span>,
+             .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+             .key_col <span class="op">=</span> <span class="va">uid</span>,
+             .counts_col <span class="op">=</span> <span class="va">total</span>,
+             .filter_cols_vec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"class"</span>, <span class="st">"order"</span>, <span class="st">"family"</span>, <span class="st">"genus"</span><span class="op">)</span>,
+             .job <span class="op">=</span> <span class="st">"pct"</span>,
+             .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+    <span class="fu"><a href="../reference/taxa_seq.html">taxa_seq</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">.</span>,
+             .key_col <span class="op">=</span> <span class="va">uid</span>,
+             .counts_col <span class="op">=</span> <span class="va">total</span>,
+             .filter_cols_vec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"class"</span>, <span class="st">"order"</span>, <span class="st">"family"</span><span class="op">)</span>,
+             .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+             .job <span class="op">=</span> <span class="st">"simpson"</span>,
+             .unnest_col <span class="op">=</span> <span class="va">data</span><span class="op">)</span>,
+  <span class="op">)</span>
+<span class="co">#&gt; New names:</span>
+<span class="co">#&gt; * rich_unidentified_nemata -&gt; rich_unidentified_nemata...9</span>
+<span class="co">#&gt; * rich_unidentified_cnidaria -&gt; rich_unidentified_cnidaria...11</span>
+<span class="co">#&gt; * rich_unidentified_turbellaria -&gt; rich_unidentified_turbellaria...28</span>
+<span class="co">#&gt; * rich_unidentified_arachnida -&gt; rich_unidentified_arachnida...31</span>
+<span class="co">#&gt; * rich_unidentified_nemata -&gt; rich_unidentified_nemata...36</span>
+<span class="co">#&gt; * ...</span>
+<span class="co">#&gt; New names:</span>
+<span class="co">#&gt; * pct_rich_unidentified_nemata -&gt; pct_rich_unidentified_nemata...9</span>
+<span class="co">#&gt; * pct_rich_unidentified_cnidaria -&gt; pct_rich_unidentified_cnidaria...11</span>
+<span class="co">#&gt; * pct_rich_unidentified_turbellaria -&gt; pct_rich_unidentified_turbellaria...28</span>
+<span class="co">#&gt; * pct_rich_unidentified_arachnida -&gt; pct_rich_unidentified_arachnida...31</span>
+<span class="co">#&gt; * pct_rich_unidentified_nemata -&gt; pct_rich_unidentified_nemata...36</span>
+<span class="co">#&gt; * ...</span>
+<span class="co">#&gt; New names:</span>
+<span class="co">#&gt; * pct_NULL_unidentified_nemata -&gt; pct_NULL_unidentified_nemata...9</span>
+<span class="co">#&gt; * pct_NULL_unidentified_cnidaria -&gt; pct_NULL_unidentified_cnidaria...11</span>
+<span class="co">#&gt; * pct_NULL_unidentified_turbellaria -&gt; pct_NULL_unidentified_turbellaria...28</span>
+<span class="co">#&gt; * pct_NULL_unidentified_arachnida -&gt; pct_NULL_unidentified_arachnida...31</span>
+<span class="co">#&gt; * pct_NULL_unidentified_nemata -&gt; pct_NULL_unidentified_nemata...36</span>
+<span class="co">#&gt; * ...</span>
+<span class="co">#&gt; New names:</span>
+<span class="co">#&gt; * simpson_unidentified_nemata -&gt; simpson_unidentified_nemata...9</span>
+<span class="co">#&gt; * simpson_unidentified_cnidaria -&gt; simpson_unidentified_cnidaria...11</span>
+<span class="co">#&gt; * simpson_unidentified_turbellaria -&gt; simpson_unidentified_turbellaria...28</span>
+<span class="co">#&gt; * simpson_unidentified_arachnida -&gt; simpson_unidentified_arachnida...31</span>
+<span class="co">#&gt; * simpson_unidentified_nemata -&gt; simpson_unidentified_nemata...36</span>
+<span class="co">#&gt; * ...</span>
+<span class="co">#&gt; New names:</span>
+<span class="co">#&gt; * rich_unidentified_nemata...9 -&gt; rich_unidentified_nemata...23</span>
+<span class="co">#&gt; * rich_unidentified_cnidaria...11 -&gt; rich_unidentified_cnidaria...25</span>
+<span class="co">#&gt; * rich_unidentified_turbellaria...28 -&gt; rich_unidentified_turbellaria...42</span>
+<span class="co">#&gt; * rich_unidentified_arachnida...31 -&gt; rich_unidentified_arachnida...45</span>
+<span class="co">#&gt; * rich_unidentified_nemata...36 -&gt; rich_unidentified_nemata...50</span>
+<span class="co">#&gt; * ...</span></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="va">nrsa_nap_metrics.df</span> <span class="op">&lt;-</span> <span class="va">metrics.df</span> <span class="op">%&gt;%</span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">data</span><span class="op">)</span>
 
-<span class="kw pkg">usethis</span><span class="kw ns">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_data.html">use_data</a></span>(<span class="no">nrsa_nap_metrics.df</span>,
-                  <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="co">#&gt; v Setting active project to 'C:/Users/zmsmith.000/OneDrive - New York State Office of Information Technology Services/projects/mmir'</span>
-<span class="co">#&gt; v Saving 'nrsa_nap_metrics.df' to 'data/nrsa_nap_metrics.df.rda'</span>
-<span class="co">#&gt; * Document your data (see 'https://r-pkgs.org/data.html')</span></pre></body></html></div>
+<span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_data.html">use_data</a></span><span class="op">(</span><span class="va">nrsa_nap_metrics.df</span>,
+                  overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; √ Setting active project to 'C:/Users/zmsmith.000/OneDrive - New York State Office of Information Technology Services/projects/mmir'</span>
+<span class="co">#&gt; √ Saving 'nrsa_nap_metrics.df' to 'data/nrsa_nap_metrics.df.rda'</span>
+<span class="co">#&gt; * Document your data (see 'https://r-pkgs.org/data.html')</span></pre></div>
 </div>
   </div>
 
@@ -1016,7 +1138,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

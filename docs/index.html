@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mmir</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.2</span>
       </span>
     </div>
 
@@ -68,6 +68,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -92,8 +95,9 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># install.packages("devtools")</span>
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"zsmith27/mmir"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="co"># install.packages("devtools")</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"zsmith27/mmir"</span><span class="op">)</span></pre></div>
 </div>
 <div id="metrics" class="section level2">
 <h2 class="hasAnchor">
@@ -104,14 +108,15 @@
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>This is a basic example which shows you how to call each of biological metric functions.</p>
-<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mmir</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">mmir</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"nrsa_nap_0809"</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"nrsa_nap_0809"</span><span class="op">)</span>
 
-<span class="fu"><a href="reference/taxa_rich.html">taxa_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">nrsa_nap_0809</span>,
-          <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-          <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-          <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>)
+<span class="fu"><a href="reference/taxa_rich.html">taxa_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">nrsa_nap_0809</span>,
+          .key_col <span class="op">=</span> <span class="va">uid</span>,
+          .counts_col <span class="op">=</span> <span class="va">total</span>,
+          .group_col <span class="op">=</span> <span class="va">target_taxon</span><span class="op">)</span>
 <span class="co">#&gt;   [1]  47  54  48  36  37  36  53  54  79  17  98  29  41  45  65  65  42  33</span>
 <span class="co">#&gt;  [19]  67  64  73  47  63  77  86  45  35  64  65  49  33  43  52  61  51  55</span>
 <span class="co">#&gt;  [37]  69  67  79  65  77  74  49  53  36  34  58  70  58  74  55  52  41  55</span>
@@ -126,13 +131,13 @@
 <span class="co">#&gt; [199]  61  44  57  68  47  72  58  48  37  75   9  63  73  95  47 101  79  56</span>
 <span class="co">#&gt; [217]  33  46  44  46  32  50  24  39  51</span>
 
-<span class="fu"><a href="reference/taxa_pct_rich.html">taxa_pct_rich</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">nrsa_nap_0809</span>,
-              <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-              <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-              <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-              <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+<span class="fu"><a href="reference/taxa_pct_rich.html">taxa_pct_rich</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">nrsa_nap_0809</span>,
+              .key_col <span class="op">=</span> <span class="va">uid</span>,
+              .counts_col <span class="op">=</span> <span class="va">total</span>,
+              .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+              .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                      <span class="st">"plecoptera"</span>,
-                                     <span class="st">"trichoptera"</span>))
+                                     <span class="st">"trichoptera"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;   [1] 44.680851 46.296296 45.833333 58.333333 43.243243  8.333333 13.207547</span>
 <span class="co">#&gt;   [8] 14.814815 21.518987  5.882353 31.632653 27.586207 14.634146  6.666667</span>
 <span class="co">#&gt;  [15] 16.923077 24.615385 14.285714  6.060606 40.298507 17.187500 28.767123</span>
@@ -167,12 +172,12 @@
 <span class="co">#&gt; [218] 15.217391 22.727273 23.913043 21.875000 22.000000  4.166667 20.512821</span>
 <span class="co">#&gt; [225]  9.803922</span>
 
-<span class="fu"><a href="reference/taxa_abund.html">taxa_abund</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">nrsa_nap_0809</span>,
-           <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-           <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-           <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+<span class="fu"><a href="reference/taxa_abund.html">taxa_abund</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">nrsa_nap_0809</span>,
+           .key_col <span class="op">=</span> <span class="va">uid</span>,
+           .counts_col <span class="op">=</span> <span class="va">total</span>,
+           .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                   <span class="st">"plecoptera"</span>,
-                                  <span class="st">"trichoptera"</span>))
+                                  <span class="st">"trichoptera"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;   [1]  78 241 137 121  96  12 147  17  59   0 197  26  19  13  31  35  40   2</span>
 <span class="co">#&gt;  [19] 283 148 530  10 143 169 358   7   1  51  97  12  35  61  44  45  39   1</span>
 <span class="co">#&gt;  [37] 166 173  78 381 124 285 191 150   0 312  24 101 269 380  16  18   7 189</span>
@@ -187,12 +192,12 @@
 <span class="co">#&gt; [199] 252   1 122  79   1 116 266   5  26  29   3 242 277 230 212  55  54  27</span>
 <span class="co">#&gt; [217]   2  77 197 132 106 233   0 113  12</span>
 
-<span class="fu"><a href="reference/taxa_pct.html">taxa_pct</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">nrsa_nap_0809</span>,
-         <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-         <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-         <span class="kw">.filter</span> <span class="kw">=</span> <span class="no">order</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ephemeroptera"</span>,
+<span class="fu"><a href="reference/taxa_pct.html">taxa_pct</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">nrsa_nap_0809</span>,
+         .key_col <span class="op">=</span> <span class="va">uid</span>,
+         .counts_col <span class="op">=</span> <span class="va">total</span>,
+         .filter <span class="op">=</span> <span class="va">order</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ephemeroptera"</span>,
                                 <span class="st">"plecoptera"</span>,
-                                <span class="st">"trichoptera"</span>))
+                                <span class="st">"trichoptera"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;   [1] 17.9310345 60.4010025 41.5151515 77.0700637 26.4462810  2.3437500</span>
 <span class="co">#&gt;   [7] 12.9973475  6.7729084  5.2678571  0.0000000 18.3597390 10.0000000</span>
 <span class="co">#&gt;  [13]  3.5447761  2.2413793  5.7090239  9.3833780  7.7071291  0.3584229</span>
@@ -232,11 +237,11 @@
 <span class="co">#&gt; [217]  0.3717472 15.1277014 37.7394636 38.8235294 63.4730539 44.8076923</span>
 <span class="co">#&gt; [223]  0.0000000 34.7692308  2.3346304</span>
 
-<span class="fu"><a href="reference/taxa_dom.html">taxa_dom</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">nrsa_nap_0809</span>,
-         <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-         <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-         <span class="kw">.group_col</span> <span class="kw">=</span> <span class="no">target_taxon</span>,
-         <span class="kw">.dom_level</span> <span class="kw">=</span> <span class="fl">1</span>)
+<span class="fu"><a href="reference/taxa_dom.html">taxa_dom</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">nrsa_nap_0809</span>,
+         .key_col <span class="op">=</span> <span class="va">uid</span>,
+         .counts_col <span class="op">=</span> <span class="va">total</span>,
+         .group_col <span class="op">=</span> <span class="va">target_taxon</span>,
+         .dom_level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt;   [1] 21.379310 18.045113 23.333333 40.127389 55.647383 42.773438 34.305924</span>
 <span class="co">#&gt;   [8] 11.952191 31.428571 44.594595 11.556384 60.769231 22.201493 25.517241</span>
 <span class="co">#&gt;  [15] 31.123389 13.672922 51.445087 43.906810 18.461538 16.412214 14.990689</span>
@@ -271,10 +276,10 @@
 <span class="co">#&gt; [218] 19.646365 30.459770 14.411765 58.682635 17.307692 44.923858 14.461538</span>
 <span class="co">#&gt; [225] 30.350195</span>
 
-<span class="fu"><a href="reference/taxa_tol_index.html">taxa_tol_index</a></span>(<span class="kw">.dataframe</span> <span class="kw">=</span> <span class="no">nrsa_nap_0809</span>,
-               <span class="kw">.key_col</span> <span class="kw">=</span> <span class="no">uid</span>,
-               <span class="kw">.counts_col</span> <span class="kw">=</span> <span class="no">total</span>,
-               <span class="kw">.tol_col</span> <span class="kw">=</span> <span class="no">ptv</span>)
+<span class="fu"><a href="reference/taxa_tol_index.html">taxa_tol_index</a></span><span class="op">(</span>.dataframe <span class="op">=</span> <span class="va">nrsa_nap_0809</span>,
+               .key_col <span class="op">=</span> <span class="va">uid</span>,
+               .counts_col <span class="op">=</span> <span class="va">total</span>,
+               .tol_col <span class="op">=</span> <span class="va">ptv</span><span class="op">)</span>
 <span class="co">#&gt;   [1] 5.263962 3.940503 4.895283 3.135256 4.962291 5.670858 5.290982 6.351948</span>
 <span class="co">#&gt;   [9] 6.857101 7.072973 6.090415 5.852140 6.872505 6.774558 6.919109 6.403022</span>
 <span class="co">#&gt;  [17] 5.994220 6.555856 5.136811 4.955391 4.778470 6.388803 5.690170 5.517782</span>
@@ -348,7 +353,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
