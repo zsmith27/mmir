@@ -17,8 +17,14 @@ library(mmir)
 ## ----load_data----------------------------------------------------------------
 data("nrsa_nap_0809", package = "mmir")
 
+## -----------------------------------------------------------------------------
+nrsa_nap_fill <- nrsa_nap_0809 %>% 
+  taxa_fill(.final_id = target_taxon,
+            .prefix = "unidentified",
+            phylum:genus)
+
 ## ----group_nest---------------------------------------------------------------
-nest.df <- nrsa_nap_0809 %>% 
+nest.df <- nrsa_nap_fill %>% 
   dplyr::group_nest(uid,  rt_nrsa_cat, .key = "data") 
 
 ## ----rich---------------------------------------------------------------------
@@ -229,115 +235,122 @@ dplyr::tibble(
 ) %>% 
 knitr::kable()
 
-seq.df %>% 
-  dplyr::mutate(data = "nested dataframe") %>% 
-  head() %>% 
-  dplyr::select(uid:rich_genus_bivalvia) %>% 
-  knitr::kable()
+# seq.df %>% 
+#   dplyr::mutate(data = "nested dataframe") %>% 
+#   head() %>% 
+#   dplyr::select(uid:rich_genus_bivalvia) %>% 
+#   knitr::kable()
 
-## ----putting_it_together, eval=FALSE------------------------------------------
-#  metrics.df <- nest.df %>%
-#    dplyr::mutate(
-#      rich_family = taxa_rich(.dataframe = .,
-#                              .key_col = uid,
-#                              .group_col = family,
-#                              .unnest_col = data),
-#      rich_genus = taxa_rich(.dataframe = .,
-#                             .key_col = uid,
-#                             .group_col = genus,
-#                             .unnest_col = data),
-#      rich_target_taxon = taxa_rich(.dataframe = .,
-#                                    .key_col = uid,
-#                                    .group_col = target_taxon,
-#                                    .unnest_col = data),
-#      gini_simpson_ept = taxa_div(.dataframe = .,
-#                                  .key_col = uid,
-#                                  .counts_col = total,
-#                                  .group_col = target_taxon,
-#                                  .filter = order %in% c("ephemeroptera",
-#                                                         "plecoptera",
-#                                                         "trichoptera"),
-#                                  .job = "gini_simpson",
-#                                  .unnest_col = data),
-#      simpson_ept = taxa_div(.dataframe = .,
-#                             .key_col = uid,
-#                             .counts_col = total,
-#                             .group_col = target_taxon,
-#                             .filter = order %in% c("ephemeroptera",
-#                                                    "plecoptera",
-#                                                    "trichoptera"),
-#                             .job = "simpson",
-#                             .unnest_col = data),
-#      shannon_ept = taxa_div(.dataframe = .,
-#                             .key_col = uid,
-#                             .counts_col = total,
-#                             .group_col = target_taxon,
-#                             .filter = order %in% c("ephemeroptera",
-#                                                    "plecoptera",
-#                                                    "trichoptera"),
-#                             .job = "shannon",
-#                             .base_log = 2,
-#                             .unnest_col = data),
-#      pct_ept = taxa_pct(.dataframe = .,
-#                         .key_col = uid,
-#                         .counts_col = total,
-#                         .filter = order %in% c("ephemeroptera",
-#                                                "plecoptera",
-#                                                "trichoptera"),
-#                         .unnest_col = data),
-#      pct_cote = taxa_pct(.dataframe = .,
-#                          .key_col = uid,
-#                          .counts_col = total,
-#                          .filter = order %in% c("coleoptera",
-#                                                 "odonata",
-#                                                 "trichoptera",
-#                                                 "ephemeroptera"),
-#                          .unnest_col = data),
-#      dom_1_target_taxon = taxa_dom(.dataframe = .,
-#                                    .key_col = uid,
-#                                    .counts_col = total,
-#                                    .group_col = target_taxon,
-#                                    .dom_level = 1,
-#                                    .unnest_col = data),
-#      dom_5_target_taxon = taxa_dom(.dataframe = .,
-#                                    .key_col = uid,
-#                                    .counts_col = total,
-#                                    .group_col = target_taxon,
-#                                    .dom_level = 5,
-#                                    .unnest_col = data),
-#      tol_index = taxa_tol_index(.dataframe = .,
-#                                 .key_col = uid,
-#                                 .counts_col = total,
-#                                 .tol_col = ptv,
-#                                 .unnest_col = data)
-#    ) %>%
-#    dplyr::bind_cols(
-#      taxa_seq(.dataframe = .,
-#               .key_col = uid,
-#               .counts_col = total,
-#               .filter_cols_vec = c("class", "order", "family"),
-#               .group_col = target_taxon,
-#               .job = "rich",
-#               .unnest_col = data),
-#      taxa_seq(.dataframe = .,
-#               .key_col = uid,
-#               .counts_col = total,
-#               .filter_cols_vec = c("class", "order", "family"),
-#               .group_col = target_taxon,
-#               .job = "pct_rich",
-#               .unnest_col = data),
-#      taxa_seq(.dataframe = .,
-#               .key_col = uid,
-#               .counts_col = total,
-#               .filter_cols_vec = c("class", "order", "family", "genus"),
-#               .job = "pct",
-#               .unnest_col = data),
-#      taxa_seq(.dataframe = .,
-#               .key_col = uid,
-#               .counts_col = total,
-#               .filter_cols_vec = c("class", "order", "family"),
-#               .group_col = target_taxon,
-#               .job = "simpson",
-#               .unnest_col = data),
-#    )
+## ----putting_it_together, eval=TRUE-------------------------------------------
+metrics.df <- nest.df %>% 
+  dplyr::mutate(
+    rich_family = taxa_rich(.dataframe = .,
+                            .key_col = uid,
+                            .group_col = family,
+                            .unnest_col = data),
+    rich_genus = taxa_rich(.dataframe = .,
+                           .key_col = uid,
+                           .group_col = genus,
+                           .unnest_col = data),
+    rich_target_taxon = taxa_rich(.dataframe = .,
+                                  .key_col = uid,
+                                  .group_col = target_taxon,
+                                  .unnest_col = data),
+    gini_simpson_ept = taxa_div(.dataframe = .,
+                                .key_col = uid,
+                                .counts_col = total,
+                                .group_col = target_taxon,
+                                .filter = order %in% c("ephemeroptera",
+                                                       "plecoptera",
+                                                       "trichoptera"),
+                                .job = "gini_simpson",
+                                .unnest_col = data),
+    simpson_ept = taxa_div(.dataframe = .,
+                           .key_col = uid,
+                           .counts_col = total,
+                           .group_col = target_taxon,
+                           .filter = order %in% c("ephemeroptera",
+                                                  "plecoptera",
+                                                  "trichoptera"),
+                           .job = "simpson",
+                           .unnest_col = data),
+    shannon_ept = taxa_div(.dataframe = .,
+                           .key_col = uid,
+                           .counts_col = total,
+                           .group_col = target_taxon,
+                           .filter = order %in% c("ephemeroptera",
+                                                  "plecoptera",
+                                                  "trichoptera"),
+                           .job = "shannon",
+                           .base_log = 2,
+                           .unnest_col = data),
+    pct_ept = taxa_pct(.dataframe = .,
+                       .key_col = uid,
+                       .counts_col = total,
+                       .filter = order %in% c("ephemeroptera",
+                                              "plecoptera",
+                                              "trichoptera"),
+                       .unnest_col = data),
+    pct_cote = taxa_pct(.dataframe = .,
+                        .key_col = uid,
+                        .counts_col = total,
+                        .filter = order %in% c("coleoptera",
+                                               "odonata",
+                                               "trichoptera",
+                                               "ephemeroptera"),
+                        .unnest_col = data),
+    dom_1_target_taxon = taxa_dom(.dataframe = .,
+                                  .key_col = uid,
+                                  .counts_col = total,
+                                  .group_col = target_taxon,
+                                  .dom_level = 1,
+                                  .unnest_col = data),
+    dom_5_target_taxon = taxa_dom(.dataframe = .,
+                                  .key_col = uid,
+                                  .counts_col = total,
+                                  .group_col = target_taxon,
+                                  .dom_level = 5,
+                                  .unnest_col = data),
+    tol_index = taxa_tol_index(.dataframe = .,
+                               .key_col = uid,
+                               .counts_col = total,
+                               .tol_col = ptv,
+                               .unnest_col = data)
+  ) %>% 
+  dplyr::bind_cols(
+    taxa_seq(.dataframe = .,
+             .key_col = uid,
+             .counts_col = total,
+             .filter_cols_vec = c("class", "order", "family"),
+             .group_col = target_taxon,
+             .job = "rich",
+             .unnest_col = data),
+    taxa_seq(.dataframe = .,
+             .key_col = uid,
+             .counts_col = total,
+             .filter_cols_vec = c("class", "order", "family"),
+             .group_col = target_taxon,
+             .job = "pct_rich",
+             .unnest_col = data),
+    taxa_seq(.dataframe = .,
+             .key_col = uid,
+             .counts_col = total,
+             .filter_cols_vec = c("class", "order", "family", "genus"),
+             .job = "pct",
+             .unnest_col = data),
+    taxa_seq(.dataframe = .,
+             .key_col = uid,
+             .counts_col = total,
+             .filter_cols_vec = c("class", "order", "family"),
+             .group_col = target_taxon,
+             .job = "simpson",
+             .unnest_col = data),
+  )
+
+## -----------------------------------------------------------------------------
+nrsa_nap_metrics.df <- metrics.df %>% 
+  dplyr::select(-data)
+
+usethis::use_data(nrsa_nap_metrics.df,
+                  overwrite = TRUE)
 

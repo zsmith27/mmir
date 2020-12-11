@@ -49,9 +49,17 @@ As an example data set, __mmir__ contains benthic macroinvertebrates data collec
 data("nrsa_nap_0809", package = "mmir")
 ```
 
+Use `taxa_fill` to replace `NA`s in the taxonomic hierarchy with the nearest identified taxonomic rank. Note that the order the columns are presented is used to create the hierarchy that identifies the previous taxonomic rank. For example, you want your columns to be ordered as: Phylum, Class, Order, Family, Genus.
+```{r}
+nrsa_nap_fill <- nrsa_nap_0809 %>% 
+  taxa_fill(.final_id = target_taxon,
+            .prefix = "unidentified",
+            phylum:genus)
+```
+
 Create a data frame that will store the calculated metrics. This should include a unique site ID and possibly a few other important columns, such as stream gradient classification column (e.g., Reference and Degraded). I recommend not carrying all of the site information through the metric calculation process because it can easily be appended at the end of the calculation process or at another later step. This will reduce clutter, allowing you to focus on the metric values, and will help you manage memory allocation. Additionally, do __NOT__ alter the order of the unique identifier. The output from each metric function is a vector in the order of the supplied data frame of taxonomic counts (in this case `onondaga`). If the unique identifier is rearranged, no error will appear but the metric values will be associated with incorrect unique identifier.
 ```{r group_nest}
-nest.df <- nrsa_nap_0809 %>% 
+nest.df <- nrsa_nap_fill %>% 
   dplyr::group_nest(uid,  rt_nrsa_cat, .key = "data") 
 ```
 
