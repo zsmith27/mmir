@@ -135,7 +135,7 @@ taxa_seq <- function(.dataframe, .key_col, .counts_col, .filter_cols_vec,
       as.data.frame() %>%
       dplyr::rename_all(tolower)
 
-    if (!rlang::quo_is_null(rlang::enquo(.group_col))) {
+    if (rlang::quo_is_null(rlang::enquo(.group_col))) {
       names(taxa.df) <- paste(.job,
                               names(taxa.df),
                               sep = "_")
