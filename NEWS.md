@@ -1,5 +1,9 @@
 # mmir 0.0.3
 
+## Bug Fix
+
+* `taxa_seq()`: when the argument `.group_col = NULL` and the `.job = "pct"` "NULL" would appear in the metric name. Now "NULL" will be correctly filtered out of the name.
+
 # mmir 0.0.2
 
 * Added a `NEWS.md` file to track changes to the package.
