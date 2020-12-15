@@ -23,7 +23,8 @@ for a sampling event for which to group (i.e., aggregate) the data.}
 \item{.group_col}{One unquoted column name that represents a taxomic rank
 or group of interest.}
 
-\item{.counts_col}{One unquoted column name that represents taxonomic counts.}
+\item{.counts_col}{One unquoted column name that represents taxonomic counts.
+zero counts are filtered out of the richness count.}
 
 \item{.filter}{A logical statement to subset the data frame prior to calculating
 the metric of interest.}

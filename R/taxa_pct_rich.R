@@ -9,6 +9,7 @@
 #' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
 #'  for a sampling event for which to group (i.e., aggregate) the data.
 #' @param .counts_col One unquoted column name that represents taxonomic counts.
+#' Zero counts will be excluded from the calculation.
 #' @param .filter A logical statement to subset the data frame prior to calculating
 #' the metric of interest.
 #' @param .unnest_col One unqouted column name that represents nested data.
@@ -26,27 +27,29 @@ taxa_pct_rich <- function(.dataframe, .key_col, .group_col, .counts_col,
                           .unnest_col = NULL) {
   prep.df <- prep_taxa_df(
     .dataframe = .dataframe,
-    .key_col = {{ .key_col }},
-    .unnest_col = {{ .unnest_col }},
+    .key_col = {{.key_col}},
+    .unnest_col = {{.unnest_col}},
     .filter = NULL
   )
   #----------------------------------------------------------------------------
   group.df <- prep.df %>%
-    dplyr::group_nest({{ .key_col }}, .key = "data")
+    dplyr::group_nest({{.key_col}}, .key = "data")
 
   final.vec <- group.df %>%
     dplyr::mutate(
       rich = taxa_rich(
         .dataframe = group.df,
-        .key_col = {{ .key_col }},
-        .group_col = {{ .group_col }},
+        .key_col = {{.key_col}},
+        .group_col = {{.group_col}},
+        .counts_col = {{.counts_col}},
         .unnest_col = .data$data
       ),
       taxa_rich = taxa_rich(
         .dataframe = group.df,
-        .key_col = {{ .key_col }},
-        .group_col = {{ .group_col }},
-        .filter = {{ .filter }},
+        .key_col = {{.key_col}},
+        .group_col = {{.group_col}},
+        .counts_col = {{.counts_col}},
+        .filter = {{.filter}},
         .unnest_col = .data$data
       ),
       pct_rich = dplyr::if_else(
@@ -55,7 +58,7 @@ taxa_pct_rich <- function(.dataframe, .key_col, .group_col, .counts_col,
         as.double(.data$taxa_rich / .data$rich * 100)
       )
     ) %>%
-    original_order(.dataframe, {{ .key_col }}) %>%
+    original_order(.dataframe, {{.key_col}}) %>%
     dplyr::pull(.data$pct_rich)
   #----------------------------------------------------------------------------
   return(final.vec)

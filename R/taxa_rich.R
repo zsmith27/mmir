@@ -4,6 +4,7 @@
 #' @param .key_col One unquoted column name that represents a key (i.e., unique ID)
 #'  for a sampling event for which to group (i.e., aggregate) the data.
 #' @param .counts_col One unquoted column name that represents taxonomic counts.
+#' zero counts are filtered out of the richness count.
 #' @param .filter A logical statement to subset the data frame prior to calculating
 #' the metric of interest.
 #' @param .unnest_col One unqouted column name that represents nested data.
@@ -24,18 +25,20 @@ taxa_rich <- function(.dataframe, .key_col, .group_col, .counts_col,
 
   prep.df <- prep_taxa_df(
     .dataframe = .dataframe,
-    .key_col = {{ .key_col }},
-    .unnest_col = {{ .unnest_col }},
-    .filter = {{ .filter }}
+    .key_col = {{.key_col}},
+    .unnest_col = {{.unnest_col}},
+    .filter = {{.filter}}
   )
   #----------------------------------------------------------------------------
   final.vec <- prep.df %>%
-    dplyr::select({{ .key_col }}, {{ .group_col }}) %>%
+    dplyr::filter(!is.na({{.group_col}}),
+                  {{.counts_col}} != 0) %>%
+    dplyr::select({{.key_col}}, {{.group_col}}) %>%
     dplyr::distinct() %>%
-    dplyr::count({{ .key_col }}) %>%
+    dplyr::count({{.key_col}}) %>%
     original_order(
       .org_data = .dataframe,
-      .key_col = {{ .key_col }}
+      .key_col = {{.key_col}}
     ) %>%
     dplyr::mutate(n = dplyr::if_else(!is.na(.data$n),
                                      .data$n,

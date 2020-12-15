@@ -12,6 +12,7 @@ taxa_seq(
   .group_col = NULL,
   .unnest_col = NULL,
   .job,
+  .exclude_pattern = NULL,
   .base_log = 2,
   .q = NULL
 )
@@ -53,6 +54,16 @@ Below is a list of exceptable inputs:
  \item{"hill"}{Description needed}
  \item{"renyi"}{Description needed}
 }}
+
+\item{.exclude_pattern}{a character vector of patterns found in taxonomic names
+that should be excluded from the sequence. This argument does not filter these taxa from the
+ data during calculations (use the .filter argument for that purpose), but instead
+ reduces the number of metrics that will be calculated by removing taxa that
+ contain the specified patter. For example,
+.exclude_pattern = "unidentified" would remove any taxonomic name that contains
+"unidentified" from the iterative taxa sequence (i.e., no metrics will be returned for
+ taxa that contain this pattern). Multiple patterns can be supplied within a character vector
+ (e.g., .exclude_pattern = c("unidentified", "hyallella").}
 
 \item{.base_log}{The base log value used during the calculation of
 Shannon Diversity index ("shannon") or Effective Shannon Diversity ("effective_shannon").
