@@ -33,11 +33,13 @@ rich.df <- nest.df %>%
     rich_family = taxa_rich(.dataframe = .,
                             .key_col = uid,
                             .group_col = family,
+                            .counts_col = total,
                             .unnest_col = data),
     rich_genus = taxa_rich(.dataframe = .,
-                            .key_col = uid,
-                            .group_col = genus,
-                            .unnest_col = data)
+                           .key_col = uid,
+                           .group_col = genus,
+                           .counts_col = total,
+                           .unnest_col = data)
   )
 
 
@@ -53,11 +55,13 @@ sub_rich.df <- nest.df %>%
                             .key_col = uid,
                             .group_col = family,
                             .filter = order %in% "ephemeroptera",
+                            .counts_col = total,
                             .unnest_col = data),
     rich_ephemeroptera_gen = taxa_rich(.dataframe = .,
                             .key_col = uid,
                             .group_col = genus,
                             .filter = order %in% "ephemeroptera",
+                            .counts_col = total,
                             .unnest_col = data),
     rich_ept_gen = taxa_rich(.dataframe = .,
                             .key_col = uid,
@@ -65,6 +69,7 @@ sub_rich.df <- nest.df %>%
                             .filter = order %in% c("ephemeroptera",
                                                        "plecoptera",
                                                        "trichoptera"),
+                            .counts_col = total,
                             .unnest_col = data)
   )
 
@@ -227,6 +232,7 @@ seq.df <- nest.df %>%
              .filter_cols_vec = c("class", "order"),
              .group_col = genus,
              .job = "rich",
+             .exclude_pattern = "unidentified",
              .unnest_col = data)
     )
 
@@ -247,14 +253,17 @@ metrics.df <- nest.df %>%
     rich_family = taxa_rich(.dataframe = .,
                             .key_col = uid,
                             .group_col = family,
+                            .counts_col = total,
                             .unnest_col = data),
     rich_genus = taxa_rich(.dataframe = .,
                            .key_col = uid,
                            .group_col = genus,
+                           .counts_col = total,
                            .unnest_col = data),
     rich_target_taxon = taxa_rich(.dataframe = .,
                                   .key_col = uid,
                                   .group_col = target_taxon,
+                                  .counts_col = total,
                                   .unnest_col = data),
     gini_simpson_ept = taxa_div(.dataframe = .,
                                 .key_col = uid,
@@ -324,6 +333,7 @@ metrics.df <- nest.df %>%
              .filter_cols_vec = c("class", "order", "family"),
              .group_col = target_taxon,
              .job = "rich",
+             .exclude_pattern = "unidentified",
              .unnest_col = data),
     taxa_seq(.dataframe = .,
              .key_col = uid,

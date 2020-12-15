@@ -12,7 +12,7 @@
 
 <meta name="author" content="Zachary M. Smith" />
 
-<meta name="date" content="2020-12-11" />
+<meta name="date" content="2020-12-15" />
 
 <title>Metric Calculation</title>
 
@@ -363,7 +363,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Metric Calculation</h1>
 <h4 class="author">Zachary M. Smith</h4>
-<h4 class="date">2020-12-11</h4>
+<h4 class="date">2020-12-15</h4>
 
 
 
@@ -420,18 +420,20 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_family =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.key_col =</span> uid,</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.group_col =</span> family,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data),</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_genus =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.key_col =</span> uid,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.group_col =</span> genus,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>rich.df <span class="sc">%&gt;%</span> </span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">data =</span> <span class="st">&quot;nested dataframe&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.counts_col =</span> total,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_genus =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.key_col =</span> uid,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.group_col =</span> genus,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.counts_col =</span> total,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.unnest_col =</span> data)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>rich.df <span class="sc">%&gt;%</span> </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">data =</span> <span class="st">&quot;nested dataframe&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -497,25 +499,28 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.key_col =</span> uid,</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.group_col =</span> family,</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="st">&quot;ephemeroptera&quot;</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_ephemeroptera_gen =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.key_col =</span> uid,</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.group_col =</span> genus,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="st">&quot;ephemeroptera&quot;</span>,</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data),</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_ept_gen =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.key_col =</span> uid,</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.group_col =</span> genus,</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;plecoptera&quot;</span>,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;trichoptera&quot;</span>),</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>sub_rich.df <span class="sc">%&gt;%</span> </span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">data =</span> <span class="st">&quot;nested dataframe&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() </span></code></pre></div>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.counts_col =</span> total,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_ephemeroptera_gen =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.key_col =</span> uid,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.group_col =</span> genus,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="st">&quot;ephemeroptera&quot;</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.counts_col =</span> total,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_ept_gen =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.key_col =</span> uid,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.group_col =</span> genus,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;plecoptera&quot;</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;trichoptera&quot;</span>),</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.counts_col =</span> total,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>sub_rich.df <span class="sc">%&gt;%</span> </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">data =</span> <span class="st">&quot;nested dataframe&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>() </span></code></pre></div>
 <table>
 <colgroup>
 <col width="6%" />
@@ -1011,23 +1016,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>),</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">.group_col =</span> genus,</span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;rich&quot;</span>,</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data)</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_nemata -&gt; rich_unidentified_nemata...9</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_cnidaria -&gt; rich_unidentified_cnidaria...11</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_nemata -&gt; rich_unidentified_nemata...36</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_cnidaria -&gt; rich_unidentified_cnidaria...41</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_nemata...9 -&gt; rich_unidentified_nemata...12</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_cnidaria...11 -&gt; rich_unidentified_cnidaria...14</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_nemata...36 -&gt; rich_unidentified_nemata...39</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_cnidaria...41 -&gt; rich_unidentified_cnidaria...44</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;List of Column Names&quot;</span> <span class="ot">=</span> <span class="fu">names</span>(seq.df)</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">.exclude_pattern =</span> <span class="st">&quot;unidentified&quot;</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;List of Column Names&quot;</span> <span class="ot">=</span> <span class="fu">names</span>(seq.df)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1045,163 +1041,130 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="left">data</td>
 </tr>
 <tr class="even">
-<td align="left">rich_insecta</td>
+<td align="left">rich_genus_insecta</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_arachnida</td>
+<td align="left">rich_genus_arachnida</td>
 </tr>
 <tr class="even">
-<td align="left">rich_gastropoda</td>
+<td align="left">rich_genus_gastropoda</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_oligochaeta</td>
+<td align="left">rich_genus_oligochaeta</td>
 </tr>
 <tr class="even">
-<td align="left">rich_bivalvia</td>
+<td align="left">rich_genus_bivalvia</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_malacostraca</td>
+<td align="left">rich_genus_malacostraca</td>
 </tr>
 <tr class="even">
-<td align="left">rich_turbellaria</td>
+<td align="left">rich_genus_turbellaria</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_enopla</td>
+<td align="left">rich_genus_enopla</td>
 </tr>
 <tr class="even">
-<td align="left">rich_unidentified_nemata…12</td>
+<td align="left">rich_genus_hirudinea</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_hirudinea</td>
+<td align="left">rich_genus_polychaeta</td>
 </tr>
 <tr class="even">
-<td align="left">rich_unidentified_cnidaria…14</td>
+<td align="left">rich_genus_ostracoda</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_polychaeta</td>
+<td align="left">rich_genus_trichoptera</td>
 </tr>
 <tr class="even">
-<td align="left">rich_ostracoda</td>
+<td align="left">rich_genus_diptera</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_trichoptera</td>
+<td align="left">rich_genus_trombidiformes</td>
 </tr>
 <tr class="even">
-<td align="left">rich_diptera</td>
+<td align="left">rich_genus_coleoptera</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_trombidiformes</td>
+<td align="left">rich_genus_ephemeroptera</td>
 </tr>
 <tr class="even">
-<td align="left">rich_coleoptera</td>
+<td align="left">rich_genus_basommatophora</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_ephemeroptera</td>
+<td align="left">rich_genus_plecoptera</td>
 </tr>
 <tr class="even">
-<td align="left">rich_basommatophora</td>
+<td align="left">rich_genus_lumbriculida</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_plecoptera</td>
+<td align="left">rich_genus_megaloptera</td>
 </tr>
 <tr class="even">
-<td align="left">rich_lumbriculida</td>
+<td align="left">rich_genus_odonata</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_megaloptera</td>
+<td align="left">rich_genus_haplotaxida</td>
 </tr>
 <tr class="even">
-<td align="left">rich_odonata</td>
+<td align="left">rich_genus_veneroida</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_haplotaxida</td>
+<td align="left">rich_genus_isopoda</td>
 </tr>
 <tr class="even">
-<td align="left">rich_veneroida</td>
+<td align="left">rich_genus_amphipoda</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_isopoda</td>
+<td align="left">rich_genus_enchytraeida</td>
 </tr>
 <tr class="even">
-<td align="left">rich_amphipoda</td>
+<td align="left">rich_genus_neotaenioglossa</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_unidentified_turbellaria</td>
+<td align="left">rich_genus_lepidoptera</td>
 </tr>
 <tr class="even">
-<td align="left">rich_enchytraeida</td>
+<td align="left">rich_genus_decapoda</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_neotaenioglossa</td>
+<td align="left">rich_genus_hemiptera</td>
 </tr>
 <tr class="even">
-<td align="left">rich_unidentified_arachnida</td>
+<td align="left">rich_genus_hoplonemertea</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_lepidoptera</td>
+<td align="left">rich_genus_architaenioglossa</td>
 </tr>
 <tr class="even">
-<td align="left">rich_decapoda</td>
+<td align="left">rich_genus_sarcoptiformes</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_hemiptera</td>
+<td align="left">rich_genus_rhynchobdellida</td>
 </tr>
 <tr class="even">
-<td align="left">rich_hoplonemertea</td>
+<td align="left">rich_genus_arhynchobdellida</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_unidentified_nemata…39</td>
+<td align="left">rich_genus_sabellida</td>
 </tr>
 <tr class="even">
-<td align="left">rich_architaenioglossa</td>
+<td align="left">rich_genus_cumacea</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_unidentified_gastropoda</td>
+<td align="left">rich_genus_unionoida</td>
 </tr>
 <tr class="even">
-<td align="left">rich_sarcoptiformes</td>
+<td align="left">rich_genus_heterostropha</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_rhynchobdellida</td>
+<td align="left">rich_genus_neuroptera</td>
 </tr>
 <tr class="even">
-<td align="left">rich_unidentified_cnidaria…44</td>
+<td align="left">rich_genus_branchiobdellida</td>
 </tr>
 <tr class="odd">
-<td align="left">rich_arhynchobdellida</td>
-</tr>
-<tr class="even">
-<td align="left">rich_sabellida</td>
-</tr>
-<tr class="odd">
-<td align="left">rich_cumacea</td>
-</tr>
-<tr class="even">
-<td align="left">rich_unidentified_hirudinea</td>
-</tr>
-<tr class="odd">
-<td align="left">rich_unionoida</td>
-</tr>
-<tr class="even">
-<td align="left">rich_heterostropha</td>
-</tr>
-<tr class="odd">
-<td align="left">rich_neuroptera</td>
-</tr>
-<tr class="even">
-<td align="left">rich_branchiobdellida</td>
-</tr>
-<tr class="odd">
-<td align="left">rich_mysida</td>
-</tr>
-<tr class="even">
-<td align="left">rich_unidentified_ostracoda</td>
-</tr>
-<tr class="odd">
-<td align="left">rich_unidentified_bivalvia</td>
-</tr>
-<tr class="even">
-<td align="left">rich_unidentified_oligochaeta</td>
+<td align="left">rich_genus_mysida</td>
 </tr>
 </tbody>
 </table>
@@ -1221,140 +1184,137 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_family =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.key_col =</span> uid,</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.group_col =</span> family,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_genus =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.group_col =</span> genus,</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_target_taxon =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">gini_simpson_ept =</span> <span class="fu">taxa_div</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;plecoptera&quot;</span>,</span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;trichoptera&quot;</span>),</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.job =</span> <span class="st">&quot;gini_simpson&quot;</span>,</span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">simpson_ept =</span> <span class="fu">taxa_div</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">&quot;plecoptera&quot;</span>,</span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">&quot;trichoptera&quot;</span>),</span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.job =</span> <span class="st">&quot;simpson&quot;</span>,</span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">shannon_ept =</span> <span class="fu">taxa_div</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">&quot;plecoptera&quot;</span>,</span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">&quot;trichoptera&quot;</span>),</span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.job =</span> <span class="st">&quot;shannon&quot;</span>,</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.base_log =</span> <span class="dv">2</span>,</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_ept =</span> <span class="fu">taxa_pct</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
-<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>                                              <span class="st">&quot;plecoptera&quot;</span>,</span>
-<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>                                              <span class="st">&quot;trichoptera&quot;</span>),</span>
-<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_cote =</span> <span class="fu">taxa_pct</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;coleoptera&quot;</span>,</span>
-<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&quot;odonata&quot;</span>,</span>
-<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&quot;trichoptera&quot;</span>,</span>
-<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&quot;ephemeroptera&quot;</span>),</span>
-<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">dom_1_target_taxon =</span> <span class="fu">taxa_dom</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.dom_level =</span> <span class="dv">1</span>,</span>
-<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">dom_5_target_taxon =</span> <span class="fu">taxa_dom</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.dom_level =</span> <span class="dv">5</span>,</span>
-<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">tol_index =</span> <span class="fu">taxa_tol_index</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.tol_col =</span> ptv,</span>
-<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.unnest_col =</span> data)</span>
-<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_cols</span>(</span>
-<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">taxa_seq</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>             <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>             <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>),</span>
-<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>             <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;rich&quot;</span>,</span>
-<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">taxa_seq</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>             <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a>             <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>),</span>
-<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>             <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;pct_rich&quot;</span>,</span>
-<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>    <span class="fu">taxa_seq</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>             <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a>             <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>, <span class="st">&quot;genus&quot;</span>),</span>
-<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;pct&quot;</span>,</span>
-<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>    <span class="fu">taxa_seq</span>(<span class="at">.dataframe =</span> .,</span>
-<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>             <span class="at">.key_col =</span> uid,</span>
-<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a>             <span class="at">.counts_col =</span> total,</span>
-<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>),</span>
-<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a>             <span class="at">.group_col =</span> target_taxon,</span>
-<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;simpson&quot;</span>,</span>
-<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data),</span>
-<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
-<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_nemata -&gt; rich_unidentified_nemata...9</span></span>
-<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_cnidaria -&gt; rich_unidentified_cnidaria...11</span></span>
-<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_turbellaria -&gt; rich_unidentified_turbellaria...28</span></span>
-<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_arachnida -&gt; rich_unidentified_arachnida...31</span></span>
-<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_nemata -&gt; rich_unidentified_nemata...36</span></span>
-<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span>
-<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
-<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_unidentified_nemata -&gt; pct_rich_unidentified_nemata...9</span></span>
-<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_unidentified_cnidaria -&gt; pct_rich_unidentified_cnidaria...11</span></span>
-<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_unidentified_turbellaria -&gt; pct_rich_unidentified_turbellaria...28</span></span>
-<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_unidentified_arachnida -&gt; pct_rich_unidentified_arachnida...31</span></span>
-<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_unidentified_nemata -&gt; pct_rich_unidentified_nemata...36</span></span>
-<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span>
-<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
-<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_NULL_unidentified_nemata -&gt; pct_NULL_unidentified_nemata...9</span></span>
-<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_NULL_unidentified_cnidaria -&gt; pct_NULL_unidentified_cnidaria...11</span></span>
-<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_NULL_unidentified_turbellaria -&gt; pct_NULL_unidentified_turbellaria...28</span></span>
-<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_NULL_unidentified_arachnida -&gt; pct_NULL_unidentified_arachnida...31</span></span>
-<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_NULL_unidentified_nemata -&gt; pct_NULL_unidentified_nemata...36</span></span>
-<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span>
-<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
-<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_unidentified_nemata -&gt; simpson_unidentified_nemata...9</span></span>
-<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_unidentified_cnidaria -&gt; simpson_unidentified_cnidaria...11</span></span>
-<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_unidentified_turbellaria -&gt; simpson_unidentified_turbellaria...28</span></span>
-<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_unidentified_arachnida -&gt; simpson_unidentified_arachnida...31</span></span>
-<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_unidentified_nemata -&gt; simpson_unidentified_nemata...36</span></span>
-<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span>
-<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
-<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_nemata...9 -&gt; rich_unidentified_nemata...23</span></span>
-<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_cnidaria...11 -&gt; rich_unidentified_cnidaria...25</span></span>
-<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_turbellaria...28 -&gt; rich_unidentified_turbellaria...42</span></span>
-<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_arachnida...31 -&gt; rich_unidentified_arachnida...45</span></span>
-<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * rich_unidentified_nemata...36 -&gt; rich_unidentified_nemata...50</span></span>
-<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span></code></pre></div>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_genus =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.group_col =</span> genus,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">rich_target_taxon =</span> <span class="fu">taxa_rich</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">gini_simpson_ept =</span> <span class="fu">taxa_div</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;plecoptera&quot;</span>,</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>                                                       <span class="st">&quot;trichoptera&quot;</span>),</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.job =</span> <span class="st">&quot;gini_simpson&quot;</span>,</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>                                <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">simpson_ept =</span> <span class="fu">taxa_div</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">&quot;plecoptera&quot;</span>,</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">&quot;trichoptera&quot;</span>),</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.job =</span> <span class="st">&quot;simpson&quot;</span>,</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">shannon_ept =</span> <span class="fu">taxa_div</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">&quot;plecoptera&quot;</span>,</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">&quot;trichoptera&quot;</span>),</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.job =</span> <span class="st">&quot;shannon&quot;</span>,</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.base_log =</span> <span class="dv">2</span>,</span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>                           <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_ept =</span> <span class="fu">taxa_pct</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ephemeroptera&quot;</span>,</span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>                                              <span class="st">&quot;plecoptera&quot;</span>,</span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>                                              <span class="st">&quot;trichoptera&quot;</span>),</span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>                       <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_cote =</span> <span class="fu">taxa_pct</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.filter =</span> order <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;coleoptera&quot;</span>,</span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&quot;odonata&quot;</span>,</span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&quot;trichoptera&quot;</span>,</span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&quot;ephemeroptera&quot;</span>),</span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>                        <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">dom_1_target_taxon =</span> <span class="fu">taxa_dom</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.dom_level =</span> <span class="dv">1</span>,</span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">dom_5_target_taxon =</span> <span class="fu">taxa_dom</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.dom_level =</span> <span class="dv">5</span>,</span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">tol_index =</span> <span class="fu">taxa_tol_index</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.tol_col =</span> ptv,</span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.unnest_col =</span> data)</span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_cols</span>(</span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">taxa_seq</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>             <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a>             <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>),</span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a>             <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;rich&quot;</span>,</span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a>             <span class="at">.exclude_pattern =</span> <span class="st">&quot;unidentified&quot;</span>,</span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>    <span class="fu">taxa_seq</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a>             <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>             <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>),</span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>             <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;pct_rich&quot;</span>,</span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>    <span class="fu">taxa_seq</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>             <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>             <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>, <span class="st">&quot;genus&quot;</span>),</span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;pct&quot;</span>,</span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">taxa_seq</span>(<span class="at">.dataframe =</span> .,</span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>             <span class="at">.key_col =</span> uid,</span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>             <span class="at">.counts_col =</span> total,</span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>             <span class="at">.filter_cols_vec =</span> <span class="fu">c</span>(<span class="st">&quot;class&quot;</span>, <span class="st">&quot;order&quot;</span>, <span class="st">&quot;family&quot;</span>),</span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a>             <span class="at">.group_col =</span> target_taxon,</span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a>             <span class="at">.job =</span> <span class="st">&quot;simpson&quot;</span>,</span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a>             <span class="at">.unnest_col =</span> data),</span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_nemata -&gt; pct_rich_target_taxon_unidentified_nemata...9</span></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_cnidaria -&gt; pct_rich_target_taxon_unidentified_cnidaria...11</span></span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_turbellaria -&gt; pct_rich_target_taxon_unidentified_turbellaria...28</span></span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_arachnida -&gt; pct_rich_target_taxon_unidentified_arachnida...31</span></span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_nemata -&gt; pct_rich_target_taxon_unidentified_nemata...36</span></span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span>
+<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
+<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_unidentified_nemata -&gt; pct_unidentified_nemata...9</span></span>
+<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_unidentified_cnidaria -&gt; pct_unidentified_cnidaria...11</span></span>
+<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_unidentified_turbellaria -&gt; pct_unidentified_turbellaria...28</span></span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_unidentified_arachnida -&gt; pct_unidentified_arachnida...31</span></span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_unidentified_nemata -&gt; pct_unidentified_nemata...36</span></span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_target_taxon_unidentified_nemata -&gt; simpson_target_taxon_unidentified_nemata...9</span></span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_target_taxon_unidentified_cnidaria -&gt; simpson_target_taxon_unidentified_cnidaria...11</span></span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_target_taxon_unidentified_turbellaria -&gt; simpson_target_taxon_unidentified_turbellaria...28</span></span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_target_taxon_unidentified_arachnida -&gt; simpson_target_taxon_unidentified_arachnida...31</span></span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * simpson_target_taxon_unidentified_nemata -&gt; simpson_target_taxon_unidentified_nemata...36</span></span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span>
+<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; New names:</span></span>
+<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_nemata...9 -&gt; pct_rich_target_taxon_unidentified_nemata...204</span></span>
+<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_cnidaria...11 -&gt; pct_rich_target_taxon_unidentified_cnidaria...206</span></span>
+<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_turbellaria...28 -&gt; pct_rich_target_taxon_unidentified_turbellaria...223</span></span>
+<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_arachnida...31 -&gt; pct_rich_target_taxon_unidentified_arachnida...226</span></span>
+<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * pct_rich_target_taxon_unidentified_nemata...36 -&gt; pct_rich_target_taxon_unidentified_nemata...231</span></span>
+<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; * ...</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>nrsa_nap_metrics.df <span class="ot">&lt;-</span> metrics.df <span class="sc">%&gt;%</span> </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>data)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
