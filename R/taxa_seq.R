@@ -33,6 +33,15 @@
 ##'  \item{"hill"}{Description needed}
 ##'  \item{"renyi"}{Description needed}
 ##' }
+#' @param .exclude_pattern a character vector of patterns found in taxonomic names
+#' that should be excluded from the sequence. This argument does not filter these taxa from the
+#'  data during calculations (use the .filter argument for that purpose), but instead
+#'  reduces the number of metrics that will be calculated by removing taxa that
+#'  contain the specified patter. For example,
+#' .exclude_pattern = "unidentified" would remove any taxonomic name that contains
+#' "unidentified" from the iterative taxa sequence (i.e., no metrics will be returned for
+#'  taxa that contain this pattern). Multiple patterns can be supplied within a character vector
+#'  (e.g., .exclude_pattern = c("unidentified", "hyallella").
 #' @param .base_log The base log value used during the calculation of
 #' Shannon Diversity index ("shannon") or Effective Shannon Diversity ("effective_shannon").
 #' The default value is two.
@@ -47,12 +56,13 @@ taxa_seq <- function(.dataframe, .key_col, .counts_col, .filter_cols_vec,
                      .group_col = NULL,
                      .unnest_col = NULL,
                      .job,
+                     .exclude_pattern = NULL,
                      .base_log = 2,
                      .q = NULL) {
   prep.df <- prep_taxa_df(
     .dataframe = .dataframe,
-    .key_col = {{ .key_col }},
-    .unnest_col = {{ .unnest_col }},
+    .key_col = {{.key_col}},
+    .unnest_col = {{.unnest_col}},
     .filter = NULL
   )
   #----------------------------------------------------------------------------
@@ -60,11 +70,17 @@ taxa_seq <- function(.dataframe, .key_col, .counts_col, .filter_cols_vec,
     # print(col.i)
     col.i <- rlang::sym(col.i)
     taxa.vec <- prep.df %>%
-      dplyr::select({{ col.i }}) %>%
+      dplyr::select({{col.i}}) %>%
       dplyr::distinct() %>%
       tidyr::drop_na() %>%
-      dplyr::pull({{ col.i }}) %>%
+      dplyr::pull({{col.i}}) %>%
       trimws()
+
+    if (!is.null(.exclude_pattern)) {
+      taxa.vec <- taxa.vec[!grepl(pattern = paste(.exclude_pattern,
+                                                  collapse = "|"),
+                                  x = taxa.vec)]
+    }
 
     taxa.vec <- taxa.vec[nchar(taxa.vec) > 0]
 
@@ -97,19 +113,21 @@ taxa_seq <- function(.dataframe, .key_col, .counts_col, .filter_cols_vec,
       #------------------------------------------------------------------------
       if (.job == "rich") {
         vec.i <- taxa_rich(.dataframe,
-          .key_col = {{ .key_col }},
-          .filter = {{ col.i }} %in% taxa.i,
-          .group_col = {{ .group_col }},
-          .unnest_col = {{ .unnest_col }}
+                           .key_col = {{.key_col}},
+                           .filter = {{col.i}} %in% taxa.i,
+                           .counts_col = {{.counts_col}},
+                           .group_col = {{.group_col}},
+                           .unnest_col = {{.unnest_col}}
         )
       }
       #------------------------------------------------------------------------
       if (.job == "pct_rich") {
         vec.i <- taxa_pct_rich(.dataframe,
-          .key_col = {{ .key_col }},
-          .filter = {{ col.i }} %in% taxa.i,
-          .group_col = {{ .group_col }},
-          .unnest_col = {{ .unnest_col }}
+                               .key_col = {{ .key_col }},
+                               .filter = {{ col.i }} %in% taxa.i,
+                               .group_col = {{ .group_col }},
+                               .counts_col = {{.counts_col}},
+                               .unnest_col = {{ .unnest_col }}
         )
       }
       #------------------------------------------------------------------------
