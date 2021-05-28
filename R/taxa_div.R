@@ -103,6 +103,7 @@ taxa_div <- function(.dataframe, .key_col, .counts_col,
     rich.vec <- taxa_rich(
       .dataframe = .dataframe,
       .key_col = {{ .key_col }},
+      .counts_col = {{ .counts_col }},
       .group_col = {{ .group_col }},
       .filter = {{ .filter }},
       .unnest_col = {{ .unnest_col }}
